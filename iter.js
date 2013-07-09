@@ -32,18 +32,6 @@ define(["./name", "./object"], function (name, object) {
   }
 
   // Non-standard but useful stuff
-  function peekIterator(x) {
-    var current = x.next()
-    return {
-      peek: function () {
-        return current
-      },
-      next: function () {
-        current = x.next()
-        return current
-      }
-    }
-  }
 
   // Strict evaluation
   function some(x, f) {
@@ -96,6 +84,24 @@ define(["./name", "./object"], function (name, object) {
   }
 
   // Lazy evaluation
+  function peek(x) {
+    x = toIterator(x)
+    var r = makeIterator(function () {
+      this.peek = x.next()
+      return this.peek
+    })
+    try {
+      r.next()
+    } catch (e) {
+      if (e instanceof StopIteration) {
+        throw new Error("can't call peek on an empty iterator")
+      } else {
+        throw e
+      }
+    }
+    return r
+  }
+
   function map(x, f) {
     x = toIterator(x)
     return makeIterator(function () {
@@ -208,7 +214,7 @@ define(["./name", "./object"], function (name, object) {
     allItems: allItems,
 
     // Non-standard
-    peekIterator: peekIterator,
+    peek: peek,
     each: each, // TODO maybe rename to forOf or forof ?
     some: some,
     every: every,
