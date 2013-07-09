@@ -3,8 +3,28 @@ define(["./name", "./object"], function (name, object) {
 
   var hasOwn = {}.hasOwnProperty
 
+  /*function until(x) {
+    var y, r = []
+    try {
+      while (true) {
+        r.push((y = x.next()))
+        if (y === "\n") {
+          break
+        }
+      }
+    } catch (e) {
+      if (!(e instanceof StopIteration)) {
+        throw e
+      }
+    }
+    return r.join("")
+  }*/
+
   function toIterator(x) {
-    if (iterator in x) {
+    // TODO codepoints
+    if (typeof x === "string") {
+      return toIterator(x.split(""))
+    } else if (iterator in x) {
       return x[iterator]()
     } else if ("length" in x) {
       var i = 0
@@ -84,23 +104,54 @@ define(["./name", "./object"], function (name, object) {
   }
 
   // Lazy evaluation
-  function peek(x) {
+  /*function peek(x) {
     x = toIterator(x)
     var r = makeIterator(function () {
-      this.peek = x.next()
-      return this.peek
-    })
-    try {
-      r.next()
-    } catch (e) {
-      if (e instanceof StopIteration) {
-        throw new Error("can't call peek on an empty iterator")
+      if (this.stopped) {
+        throw new StopIteration()
       } else {
-        throw e
+        var old = this.peek
+        try {
+          this.peek = x.next()
+        } catch (e) {
+          if (e instanceof StopIteration) {
+            this.stopped = true
+            delete this.peek
+          } else {
+            throw e
+          }
+        }
+        return old
       }
-    }
+    })
+    r.next()
     return r
   }
+
+  function buffer(x) {
+    x = toIterator(x)
+    var r = makeIterator(function () {
+      var s = this.text[this.column]
+      if (this.column > this.text.length) {
+        var y = until(x)
+        // TODO: a little bit hacky
+        if (y === "") {
+          throw new StopIteration()
+        } else {
+          this.text = y
+          this.column = 0
+          ++this.line
+        }
+      } else {
+        ++this.column
+      }
+      return s
+    })
+    r.text   = until(x)
+    r.line   = 1
+    r.column = 0
+    return r
+  }*/
 
   function map(x, f) {
     x = toIterator(x)
@@ -214,7 +265,7 @@ define(["./name", "./object"], function (name, object) {
     allItems: allItems,
 
     // Non-standard
-    peek: peek,
+    //peek: peek,
     each: each, // TODO maybe rename to forOf or forof ?
     some: some,
     every: every,
