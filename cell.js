@@ -21,7 +21,7 @@ define(["./object"], function (object) {
       // TODO binds duplicates if called multiple times; is this a problem?
       bind: function (f) {
         events.push(f)
-      },
+      }/*,
       unbind: function (f) {
         var i = events.indexOf(f)
         if (i !== -1) {
@@ -30,7 +30,7 @@ define(["./object"], function (object) {
 
           }
         }
-      }
+      }*/
     }
   }
 
@@ -45,12 +45,31 @@ define(["./object"], function (object) {
     return o
   }
 
+  function call(a, f) {
+    return f.apply(null, a.map(function (x) {
+      return x.get()
+    }))
+  }
+
+  // Takes an array of signals and a function; returns a signal
+  // When any of the signals change, the function is called with the value of the signals
+  function maps(a, f) {
+    var o = value(call(a, f))
+    a.forEach(function (x) {
+      x.bind(function () {
+        o.set(call(a, f))
+      })
+    })
+    return o
+  }
+
   // Takes a signal and function; returns a signal
   // Maps the function over the input signal
   function map(x, f) {
-    return fold(f(x.get()), x, function (l, r) {
+    return maps([x], f)
+    /*return fold(f(x.get()), x, function (l, r) {
       return f(r)
-    })
+    })*/
   }
 
   // Takes a signal; returns a signal
@@ -60,7 +79,7 @@ define(["./object"], function (object) {
   // TODO is there a better way to implement this?
   function dedupe(x) {
     var o = value(x.get())
-    map(x, function (x) {
+    x.bind(function (x) {
       if (object.isnt(o.get(), x)) {
         o.set(x)
       }
@@ -68,10 +87,32 @@ define(["./object"], function (object) {
     return o
   }
 
+  // Takes an integer; returns a signal
+  // Updates the signal ASAP, but not faster than the input integer (in FPS)
+  // http://www.sitepoint.com/creating-accurate-timers-in-javascript/
+  // TODO is there a better implementation for this?
+  function fps(i) {
+    i = 1000 / i
+    var start = Date.now()
+      , count = 0
+      , o     = value(0)
+    setTimeout(function anon() {
+      ++count
+
+      var diff = (Date.now() - start) - (count * i)
+      o.set(diff)
+
+      setTimeout(anon, i - diff)
+    }, i)
+    return o
+  }
+
   return Object.freeze({
     value: value,
     fold: fold,
+    maps: maps,
     map: map,
     dedupe: dedupe,
+    fps: fps,
   })
 })
