@@ -18,7 +18,7 @@ define(["./iter"], function (iter) {
 
   // Buffers a string by line and keeps track of line and column information
   // This is useful for error messages
-  // Can also be used as iterator that moves through the string one character at a time
+  // Can also be used as an iterator that moves through the string one character at a time
   function Buffer(s, filename) {
     if (filename == null) {
       filename = null
@@ -69,7 +69,6 @@ define(["./iter"], function (iter) {
   }
   Buffer.prototype.next = Buffer.prototype.read
 
-  // https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Error#Custom_Error_Types
   function BufferError(o, s) {
     var a = [s]
     // tests that `o` is an object
@@ -78,27 +77,37 @@ define(["./iter"], function (iter) {
         var b1 = (o.start.text != null)
           , b2 = (o.start.line != null)
           , b3 = (o.start.column != null)
-        if (b1 || b2 || b3) {
-          var iOffset = 0
+          , b4 = (o.source != null)
+        if (b1 || b2 || b3 || b4) {
+          var iOffset = (function () {
+            if (b1) {
+              var a = /^ +/.exec(o.start.text)
+              if (a) {
+                return a[0].length
+              }
+            }
+            return 0
+          })()
           a.push("\n")
           if (b1) {
-            a.push("  ", o.start.text.replace(/^( +)|\n$/g, function (_, s1) {
-              if (s1) {
-                iOffset = s1.length
-              }
-              return ""
-            }))
+            a.push("  ", /^ *([^\n]*)/.exec(o.start.text)[1])
           }
-          if (b2 || b3) {
+          if (b2 || b3 || b4) {
             a.push("  (")
-            if (b2) {
-              a.push("line ", o.start.line)
+            if (b4) {
+              a.push(o.source)
             }
-            if (b2 && b3) {
-              a.push(", ")
+            if (b2) {
+              if (b4) {
+                a.push(":")
+              }
+              a.push(o.start.line)
             }
             if (b3) {
-              a.push("column ", o.start.column + 1)
+              if (b2 || b4) {
+                a.push(":")
+              }
+              a.push(o.start.column + 1)
             }
             a.push(")")
           }
@@ -116,9 +125,13 @@ define(["./iter"], function (iter) {
       this.fileName   = o.source
       this.lineNumber = o.start.line
     }
-    var err = new Error()
-    err.name = this.name
-    this.stack = err.stack // TODO test this
+    // http://stackoverflow.com/a/8460753/449477
+    if (typeof Error.captureStackTrace === "function") {
+      Error.captureStackTrace(this, this.constructor) // TODO test this
+    }
+    //var err = new Error()
+    //err.name = this.name
+    //this.stack = err.stack // TODO test this
     this.originalMessage = s
     this.message = a.join("")
   }
