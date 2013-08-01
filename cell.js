@@ -1,10 +1,13 @@
 // Extremely light-weight Functional Reactive Programming implementation
 // Event dispatch is handled synchronously: no concurrency or parallelism
-// Based on Elm (http://elm-lang.org/)
+// Loosely based on Elm (http://elm-lang.org/)
 define(["./name", "./object"], function (name, object) {
   "use strict";
 
   var events = new name.Name()
+    , info   = new name.Name()
+
+  //var skip = {}
 
   function call(a, f) {
     return f.apply(null, a.map(function (x) {
@@ -13,9 +16,16 @@ define(["./name", "./object"], function (name, object) {
   }
 
   function bind(x, unbind, f) {
+    if (x[events].length === 0 && x[info].bind != null) {
+      x[info].bind(x)
+    }
     x[events].push(f)
     unbind.push({ object: x, bind: f })
   }
+
+  return Object.freeze({
+    value: value,
+  })
 
   function make(win) {
     var unbind = []
@@ -33,22 +43,35 @@ define(["./name", "./object"], function (name, object) {
     win.addEventListener("beforeunload", unload, true)
 
     return Object.freeze({
+      // If this is thrown inside of a cell, it will cause the cell to not update
+      //skip: skip,
+
+      //events: events, // TODO test this
+
       // Reifies a JavaScript value as a signal
       // use the get method to get the current value
       // use the set method to set the current value
-      value: function (x) {
+      value: function (x, obj) {
+        if (obj == null) {
+          obj = {}
+        }
         var o = {
           get: function () {
             return x
           },
+          // TODO: maybe don't allow for setting ?
           set: function (v) {
             x = v
+            if (obj.set != null) {
+              obj.set(o, x)
+            }
             this[events].forEach(function (f) {
               f(x)
             })
           }
         }
         o[events] = []
+        o[info]   = obj
         return o
       },
 
@@ -71,27 +94,44 @@ define(["./name", "./object"], function (name, object) {
         }, i)
         return o
       },
-/*
-      // Takes an array of signals and a function; returns a signal
+
+      // Takes an array of signals and a function
       // When any of the signals change, the function is called with the value of the signals
       event: function (a, f) {
-        var o = this.value()
         a.forEach(function (x) {
           bind(x, unbind, function () {
-            o.set(call(a, f))
+            //try {
+              call(a, f)
+            /*} catch (e) {
+              if (e !== skip) {
+                throw e
+              }
+            }*/
           })
         })
-        return o
-      },*/
+      },
 
       // Takes an array of signals and a function; returns a signal
       // Initially, and when any of the signals change,
       // the function is called with the value of the signals
       lift: function (a, f) {
-        var o = this.value(call(a, f))
+        //try {
+          var x = call(a, f)
+        /*} catch (e) {
+          if (e !== skip) {
+            throw e
+          }
+        }*/
+        var o = this.value(x)
         a.forEach(function (x) {
           bind(x, unbind, function () {
-            o.set(call(a, f))
+            //try {
+              o.set(call(a, f))
+            /*} catch (e) {
+              if (e !== skip) {
+                throw e
+              }
+            }*/
           })
         })
         return o
@@ -103,7 +143,13 @@ define(["./name", "./object"], function (name, object) {
       fold: function (init, x, f) {
         var o = this.value(init)
         bind(x, unbind, function (x) {
-          o.set((init = f(init, x)))
+          //try {
+            o.set((init = f(init, x)))
+          /*} catch (e) {
+            if (e !== skip) {
+              throw e
+            }
+          }*/
         })
         return o
       },
@@ -115,11 +161,37 @@ define(["./name", "./object"], function (name, object) {
       filter: function (init, x, f) {
         var o = this.value(init)
         bind(x, unbind, function (x) {
-          if (f(x)) {
-            o.set(x)
-          }
+          //try {
+            if (f(x)) {
+              o.set(x)
+            }
+          /*} catch (e) {
+            if (e !== skip) {
+              throw e
+            }
+          }*/
         })
         return o
+      },
+
+      // Takes an array of signals and a function
+      // When all of the signals have a truthy value,
+      // the function is called with the values of the signals
+      when: function (a, f) {
+        this.lift(a, function () {
+          for (var i = 0, iLen = arguments.length; i < iLen; ++i) {
+            if (!arguments[i]) {
+              break
+            }
+          }
+          //try {
+            f.apply(null, arguments)
+          /*} catch (e) {
+            if (e !== skip) {
+              throw e
+            }
+          }*/
+        })
       },
 
       // Takes one or more signals; returns a signal
@@ -160,24 +232,6 @@ define(["./name", "./object"], function (name, object) {
             return true
           }
         })
-      },
-
-      // Takes an array of signals and a function; returns a signal
-      // When all of the signals have a truthy value,
-      // the function is called with the values of the signals
-      // Updates the returned signal with whatever the function returns
-      // If the signals are not truthy, then the result is initially undefined
-      when: function (a, f) {
-        var o = this.value()
-        this.lift(a, function () {
-          for (var i = 0, iLen = arguments.length; i < iLen; ++i) {
-            if (!arguments[i]) {
-              break
-            }
-          }
-          o.set(f.apply(null, arguments))
-        })
-        return o
       },
 
       // Takes a signal and function; returns a signal

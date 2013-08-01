@@ -86,6 +86,14 @@ define(function () {
     return y
   }
 
+  function set(o, k, v) {
+    if (k in o) {
+      o = Object.create(o)
+    }
+    o[k] = v
+    return o
+  }
+
   return Object.freeze({
     create: create,
     is: is,
@@ -97,5 +105,6 @@ define(function () {
     merge: merge,
     clone: clone,
     deepClone: deepClone,
+    set: set,
   })
 })

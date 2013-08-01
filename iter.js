@@ -188,6 +188,33 @@ define(["./name", "./object"], function (name, object) {
     })
   }
 
+  function dedupe(x) {
+    var seen = {}
+    return filter(x, function (x) {
+      if (seen[x]) {
+        return false
+      } else {
+        seen[x] = true
+        return true
+      }
+    })
+  }
+
+  function range(min, max) {
+    if (min > max) {
+      var temp = min
+      min = max
+      max = min
+    }
+    return makeIterator(function () {
+      if (min < max) {
+        return min++
+      } else {
+        throw new StopIteration()
+      }
+    })
+  }
+
 
   // Standard stuff
   var iterator = new name.Name()
@@ -275,5 +302,7 @@ define(["./name", "./object"], function (name, object) {
     has: has,
     filter: filter,
     pair: pair,
+    dedupe: dedupe,
+    range: range,
   }
 })
