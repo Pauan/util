@@ -2,21 +2,20 @@
 define(["./name", "./cell"], function (name, cell) {
   "use strict";
 
-  cell = cell(window)
-
   function join(a, i, s) {
     return [].slice.call(a, i).join(s == null ? " " : s)
   }
 
   var highestZIndex = "2147483647" /* 32-bit signed int */
 
-  var element = new name.Name()
+  var element  = new name.Name()
+    , bindings = new name.Name()
 
   function isOver(self, e) {
     return !self.contains(e.relatedTarget)
   }
 
-  function makeSet(Block, name, s) {
+  /*function makeSet(Block, name, s) {
     Block.prototype[name] = function (s2) {
       this[element].style[s] = s2
     }
@@ -26,10 +25,12 @@ define(["./name", "./cell"], function (name, cell) {
     Block.prototype[name] = function () {
       this[element].style[s] = join(arguments, 0, s2)
     }
-  }
+  }*/
 
+  // TODO closure
   function Block(o) {
-    this[element] = o
+    this[element]  = o
+    this[bindings] = []
     /*this.mouseclick = cell.value(undefined, {
       bind: function (self) {
         o.addEventListener("click", function (e) {
@@ -39,23 +40,35 @@ define(["./name", "./cell"], function (name, cell) {
     })*/
     this.mouseclick = cell.value(undefined, {
       bind: function (self) {
-        o.addEventListener("click", function (e) {
+        function click(e) {
           e.preventDefault()
           var oEvent = { left:   (e.button === 0)
                        , middle: (e.button === 1)
                        , right:  false }
           oEvent[element] = e.target
           self.set(oEvent)
-        }, true)
+        }
 
-        o.addEventListener("contextmenu", function (e) {
+        function contextmenu(e) {
           e.preventDefault()
           var oEvent = { left:   false
                        , middle: false
                        , right:  true }
           oEvent[element] = e.target
           self.set(oEvent)
-        }, true)
+        }
+
+        o.addEventListener("click", click, true)
+        o.addEventListener("contextmenu", contextmenu, true)
+
+        return {
+          click: click,
+          contextmenu: contextmenu
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("click", e.click, true)
+        o.removeEventListener("contextmenu", e.contextmenu, true)
       }
     })
 
@@ -63,12 +76,11 @@ define(["./name", "./cell"], function (name, cell) {
     seen[element] = o // TODO is this correct?
     this.mousedown = cell.value(seen, {
       bind: function (self) {
-        o.addEventListener("contextmenu", function (e) {
+        function contextmenu(e) {
           e.preventDefault()
-        }, true)
+        }
 
-        // TODO blur
-        o.addEventListener("mousedown", function (e) {
+        function mousedown(e) {
           if (e.button === 0) {
             seen.left = true
           } else if (e.button === 1) {
@@ -93,25 +105,51 @@ define(["./name", "./cell"], function (name, cell) {
               self.set(seen)
             }
           }, true)
-        }, true)
+        }
+
+        // TODO blur
+        o.addEventListener("contextmenu", contextmenu, true)
+        o.addEventListener("mousedown", mousedown, true)
+
+        return {
+          contextmenu: contextmenu,
+          mousedown: mousedown
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("contextmenu", e.contextmenu, true)
+        o.removeEventListener("mousedown", e.mousedown, true)
       }
     })
 
     this.mouseover = cell.value(false, {
       bind: function (self) {
-        // TODO blur
-        o.addEventListener("mouseover", function (e) {
+        function mouseover(e) {
           if (isOver(o, e)) {
             var oEvent = { mouseX: e.clientX, mouseY: e.clientY }
             oEvent[element] = e.target
             self.set(oEvent)
           }
-        })
-        o.addEventListener("mouseout", function (e) {
+        }
+
+        function mouseout(e) {
           if (isOver(o, e)) {
             self.set(false)
           }
-        })
+        }
+
+        // TODO blur
+        o.addEventListener("mouseover", mouseover, true)
+        o.addEventListener("mouseout", mouseout, true)
+
+        return {
+          mouseover: mouseover,
+          mouseout: mouseout
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("mouseover", e.mouseover, true)
+        o.removeEventListener("mouseout", e.mouseout, true)
       }
     })
   }
@@ -140,11 +178,25 @@ define(["./name", "./cell"], function (name, cell) {
   makeJoin(Block, "backgroundImage", "backgroundImage", ", ")
   makeJoin(Block, "textShadow", "textShadow", ", ")*/
 
+  Block.prototype.remove = function () {
+    if (this[element].parentNode) {
+      this[element].parentNode.removeChild(this[element])
+    }
+    this[bindings].forEach(function (x) {
+      x.unbind()
+    })
+    //delete this.mouseclick
+    //delete this.mousedown
+    //delete this.mouseover
+    delete this[element]
+    delete this[bindings]
+  }
+
   Block.prototype.bind = function (a, f) {
-    cell.lift(a, f)
+    this[bindings].push(cell.lift(a, f))
   }
   Block.prototype.on = function (a, f) {
-    cell.event(a, f)
+    this[bindings].push(cell.event(a, f))
   }
 
   Block.prototype.title = function (s) {
@@ -220,6 +272,7 @@ define(["./name", "./cell"], function (name, cell) {
     this[element].style.webkitFilter = s
   }
 
+  // TODO closure
   function makeBorderSide(style, name) {
     return function (f) {
       f({
@@ -236,6 +289,7 @@ define(["./name", "./cell"], function (name, cell) {
     }
   }
 
+  // TODO closure
   function makeBorderCorner(style, name) {
     return function (f) {
       f({
@@ -246,6 +300,7 @@ define(["./name", "./cell"], function (name, cell) {
     }
   }
 
+  // TODO closure
   Block.prototype.border = function (f) {
     var style = this[element].style
     f({
@@ -276,6 +331,7 @@ define(["./name", "./cell"], function (name, cell) {
     return this[element].getBoundingClientRect()
   }
 
+  // TODO closure
   Block.prototype.padding = function (f) {
     var style = this[element].style
     f({
@@ -300,6 +356,7 @@ define(["./name", "./cell"], function (name, cell) {
     })
   }
 
+  // TODO closure
   Block.prototype.panel = function (f) {
     var style = this[element].style
     style.position = "fixed"
@@ -320,6 +377,7 @@ define(["./name", "./cell"], function (name, cell) {
     })
   }
 
+  // TODO closure
   Block.prototype.text = function (f) {
     var self  = this[element]
       , style = self.style
@@ -384,6 +442,7 @@ define(["./name", "./cell"], function (name, cell) {
     })
   }
 
+  // TODO closure
   Block.prototype.background = function (f) {
     var style = this[element].style
     f({
@@ -434,6 +493,7 @@ define(["./name", "./cell"], function (name, cell) {
   }
 
   // TODO size
+  // TODO closure
   Block.prototype.shadow = function (f) {
     var style = this[element].style
       , inset = []
@@ -477,6 +537,7 @@ define(["./name", "./cell"], function (name, cell) {
     style.boxShadow = r.join(",")
   }
 
+  // TODO closure
   Block.prototype.transition = function (f) {
     var style = this[element].style
     f({
@@ -492,14 +553,25 @@ define(["./name", "./cell"], function (name, cell) {
     })
   }
 
+  // TODO closure
   function Search(o) {
     Block.call(this, o)
     this.value = cell.value(o.value, {
       bind: function (self) {
         console.log("HIYA")
-        o.addEventListener("search", function () {
+
+        function search() {
           self.set(o.value)
-        }, true)
+        }
+
+        o.addEventListener("search", search, true)
+
+        return {
+          search: search
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("search", e.search, true)
       },
       set: function (self, x) {
         o.value = x
