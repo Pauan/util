@@ -59,9 +59,10 @@ define(["./name", "./object"], function (name, object) {
     if (this[info].set != null) {
       this[info].set(this, v)
     }
-    this[events].forEach(function (f) {
-      f(v)
-    })
+    var a = this[events]
+    for (var i = 0, iLen = a.length; i < iLen; ++i) {
+      a[i](v)
+    }
   }
 
   // Reifies a JavaScript value as a signal
@@ -79,19 +80,23 @@ define(["./name", "./object"], function (name, object) {
   // http://www.sitepoint.com/creating-accurate-timers-in-javascript/
   // TODO is there a better implementation for this?
   function fps(i) {
-    i = 1000 / i
-    var start = Date.now()
-      , count = 0
-      , o     = value(0)
-    setTimeout(function anon() {
-      ++count
+    // TODO is this any faster/less memory than using a closure?
+    var state = {
+      fps: 1000 / i,
+      start: Date.now(),
+      count: 0,
+      cell: value(0),
+      step: function anon() {
+        ++this.count
 
-      var diff = (Date.now() - start) - (count * i)
-      o.set(diff)
+        var diff = (Date.now() - this.start) - (this.count * this.fps)
+        this.cell.set(diff)
 
-      setTimeout(anon, i - diff)
-    }, i)
-    return o
+        setTimeout(anon, this.fps - diff)
+      }
+    }
+    setTimeout(state.step, state.fps)
+    return state.cell
   }
 
   // Takes an array of signals and a function

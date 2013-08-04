@@ -10,6 +10,8 @@ define(["./name", "./cell"], function (name, cell) {
 
   var element  = new name.Name()
     , bindings = new name.Name()
+    , actions  = new name.Name()
+    , id       = new name.Name()
 
   function isOver(self, e) {
     return !self.contains(e.relatedTarget)
@@ -27,10 +29,374 @@ define(["./name", "./cell"], function (name, cell) {
     }
   }*/
 
+  var ruleId = 0
+
+  function Rule() {
+    var self = this
+
+    self[actions] = []
+    self[id]      = "__rule__" + (++ruleId)
+
+    addRule(document, "." + self[id], function (o) {
+      self[element] = o
+    })
+  }
+  Rule.prototype.width = function (s) {
+    // TODO necessary due to flexbox
+    this[element].minWidth = this[element].maxWidth = s
+  }
+  Rule.prototype.height = function (s) {
+    // TODO necessary due to flexbox
+    this[element].minHeight = this[element].maxHeight = s
+  }
+  // TODO maybe remove these two
+  Rule.prototype.maxWidth = function (s) {
+    this[element].maxWidth = s
+  }
+  Rule.prototype.maxHeight = function (s) {
+    this[element].maxHeight = s
+  }
+  Rule.prototype.scrollbars = function () {
+    this[element].overflow = "auto"
+  }
+  Rule.prototype.order = function (s) {
+    this[element].order = s
+  }
+  Rule.prototype.opacity = function (s) {
+    this[element].opacity = s
+  }
+  Rule.prototype.cursor = function (s) {
+    this[element].cursor = s
+  }
+  Rule.prototype.stretch = function () {
+    this[element].flexGrow = "1"
+    this[element].flexShrink = "1"
+    this[element].flexBasis = "0%"
+  }
+  Rule.prototype.filter = function (s) {
+    // TODO
+    this[element].webkitFilter = s
+  }
+  Rule.prototype.rule = function (s) {
+    this[actions].push(function (x) {
+      x.classList.add(s[id])
+    })
+  }
+
+  Rule.prototype.autofocus = function () {
+    this[actions].push(function (x) {
+      x.autofocus = true
+    })
+  }
+  Rule.prototype.stopDragging = function () {
+    this[actions].push(function (x) {
+      console.log(x)
+      x.addEventListener("mousedown", function (e) {
+        if (e.target.localName !== "input"/* && !e.target.draggable*/) {
+          e.preventDefault()
+        }
+      }, true)
+    })
+  }
+
+  // TODO closure
+  function makeBorderSide(style, name) {
+    return function (f) {
+      f({
+        size: function (s) {
+          style[name + "Width"] = s
+        },
+        color: function (s) {
+          style[name + "Color"] = s
+        },
+        remove: function () {
+          style[name] = "none"
+        }
+      })
+    }
+  }
+
+  // TODO closure
+  function makeBorderCorner(style, name) {
+    return function (f) {
+      f({
+        rounded: function (s) {
+          style[name + "Radius"] = s
+        }
+      })
+    }
+  }
+
+  // TODO closure
+  Rule.prototype.border = function (f) {
+    var style = this[element]
+    f({
+      top: makeBorderSide(style, "borderTop"),
+      right: makeBorderSide(style, "borderRight"),
+      bottom: makeBorderSide(style, "borderBottom"),
+      left: makeBorderSide(style, "borderLeft"),
+      topRight: makeBorderCorner(style, "borderTopRight"),
+      topLeft: makeBorderCorner(style, "borderTopLeft"),
+      bottomRight: makeBorderCorner(style, "borderBottomRight"),
+      bottomLeft: makeBorderCorner(style, "borderBottomLeft"),
+      rounded: function (s) {
+        style.borderRadius = s
+      },
+      size: function (s) {
+        style.borderWidth = s
+      },
+      color: function (s) {
+        style.borderColor = s
+      },
+      remove: function () {
+        style.border = "none"
+      }
+    })
+  }
+
+  // TODO closure
+  Rule.prototype.move = function (f) {
+    var style = this[element]
+    style.position = "relative"
+    f({
+      left: function (s) {
+        style.left = s
+      },
+      top: function (s) {
+        style.top = s
+      },
+      right: function (s) {
+        style.right = s
+      },
+      bottom: function (s) {
+        style.bottom = s
+      }
+    })
+  }
+
+  // TODO closure
+  Rule.prototype.padding = function (f) {
+    var style = this[element]
+    f({
+      left: function (s) {
+        style.paddingLeft = s
+      },
+      top: function (s) {
+        style.paddingTop = s
+      },
+      right: function (s) {
+        style.paddingRight = s
+      },
+      bottom: function (s) {
+        style.paddingBottom = s
+      },
+      vertical: function (s) {
+        style.paddingTop = style.paddingBottom = s
+      },
+      horizontal: function (s) {
+        style.paddingLeft = style.paddingRight = s
+      }
+    })
+  }
+
+  // TODO closure
+  Rule.prototype.panel = function (f) {
+    var style = this[element]
+    style.position = "fixed"
+    style.zIndex = highestZIndex
+    f({
+      left: function (s) {
+        style.left = s
+      },
+      top: function (s) {
+        style.top = s
+      },
+      right: function (s) {
+        style.right = s
+      },
+      bottom: function (s) {
+        style.bottom = s
+      }
+    })
+  }
+
+  // TODO closure
+  Rule.prototype.text = function (f) {
+    var style = this[element]
+    f({
+      font: function () {
+        style.fontFamily = join(arguments, 0, ",")
+      },
+      size: function (s) {
+        if (arguments.length > 1) {
+          throw new Error() // TODO
+        }
+        style.fontSize = s
+      },
+      ellipsis: function () {
+        style.textOverflow = "ellipsis"
+        style.overflow = "hidden"
+      },
+      weight: function (s) {
+        style.fontWeight = s
+      },
+      color: function (s) {
+        style.color = s
+      },
+      shadow: function (f) {
+        var left  = []
+          , top   = []
+          , blur  = []
+          , color = []
+          , r     = []
+        f({
+          left: function () {
+            left = [].slice.call(arguments)
+          },
+          top: function () {
+            top = [].slice.call(arguments)
+          },
+          blur: function () {
+            blur = [].slice.call(arguments)
+          },
+          color: function () {
+            color = [].slice.call(arguments)
+          },
+          remove: function () {
+            left  = []
+            top   = []
+            blur  = []
+            color = []
+            r     = ["none"]
+          }
+        })
+        while (left.length || top.length || blur.length || color.length) {
+          r.push((left.pop() || "0px") + " " +
+                 (top.pop()  || "0px") + " " +
+                 (blur.pop() || "0px") + " " +
+                 color.pop())
+        }
+        style.textShadow = r.join(",")
+      }
+    })
+  }
+
+  // TODO closure
+  Rule.prototype.background = function (f) {
+    var style = this[element]
+    f({
+      color: function (s) {
+        if (arguments.length > 1) {
+          throw new Error() // TODO
+        }
+        style.backgroundColor = s
+      },
+      position: function (f) {
+        var left = []
+          , top  = []
+        f({
+          left: function () {
+            left = [].slice.call(arguments)
+          },
+          top: function () {
+            top = [].slice.call(arguments)
+          }
+        })
+        var r = []
+        while (left.length || top.length) {
+          r.push((left.pop() || "0px") + " " +
+                 (top.pop()  || "0px"))
+        }
+        style.backgroundPosition = r.join(",")
+      },
+      image: function () {
+        style.backgroundImage = join(arguments, 0, ",")
+      },
+      gradient: function (x) {
+        var r = [x]
+        ;[].slice.call(arguments, 1).forEach(function (a) {
+          r.push(a[1] + " " + a[0])
+        })
+        // TODO
+        return "-webkit-linear-gradient(" + r.join(",") + ")"
+      },
+      repeatingGradient: function (x) {
+        var r = [x]
+        ;[].slice.call(arguments, 1).forEach(function (a) {
+          r.push(a[1] + " " + a[0])
+        })
+        // TODO
+        return "-webkit-repeating-linear-gradient(" + r.join(",") + ")"
+      }
+    })
+  }
+
+  // TODO size
+  // TODO closure
+  Rule.prototype.shadow = function (f) {
+    var style = this[element]
+      , inset = []
+      , left  = []
+      , top   = []
+      , blur  = []
+      , color = []
+      , r     = []
+    f({
+      inset: function () {
+        inset = [].slice.call(arguments)
+      },
+      left: function () {
+        left = [].slice.call(arguments)
+      },
+      top: function () {
+        top = [].slice.call(arguments)
+      },
+      blur: function () {
+        blur = [].slice.call(arguments)
+      },
+      color: function () {
+        color = [].slice.call(arguments)
+      },
+      remove: function () {
+        inset = []
+        left  = []
+        top   = []
+        blur  = []
+        color = []
+        r     = ["none"]
+      }
+    })
+    while (inset.length || left.length || top.length || blur.length || color.length) {
+      r.push((inset.pop() ? "inset " : "") +
+             (left.pop() || "0px") + " " +
+             (top.pop()  || "0px") + " " +
+             (blur.pop() || "0px") + " " +
+             color.pop())
+    }
+    style.boxShadow = r.join(",")
+  }
+
+  // TODO closure
+  Rule.prototype.transition = function (f) {
+    var style = this[element]
+    f({
+      duration: function () {
+        style.transitionDuration = join(arguments, 0, ",")
+      },
+      property: function () {
+        style.transitionProperty = join(arguments, 0, ",")
+      },
+      timingFunction: function () {
+        style.transitionTimingFunction = join(arguments, 0, ",")
+      }
+    })
+  }
+
   // TODO closure
   function Block(o) {
     this[element]  = o
     this[bindings] = []
+
     /*this.mouseclick = cell.value(undefined, {
       bind: function (self) {
         o.addEventListener("click", function (e) {
@@ -178,18 +544,15 @@ define(["./name", "./cell"], function (name, cell) {
   makeJoin(Block, "backgroundImage", "backgroundImage", ", ")
   makeJoin(Block, "textShadow", "textShadow", ", ")*/
 
+
+  Block.prototype.text = function (s) {
+    this[element].textContent = s || ""
+  }
+
   Block.prototype.remove = function () {
     if (this[element].parentNode) {
       this[element].parentNode.removeChild(this[element])
     }
-    this[bindings].forEach(function (x) {
-      x.unbind()
-    })
-    //delete this.mouseclick
-    //delete this.mousedown
-    //delete this.mouseover
-    delete this[element]
-    delete this[bindings]
   }
 
   Block.prototype.bind = function (a, f) {
@@ -208,34 +571,6 @@ define(["./name", "./cell"], function (name, cell) {
   Block.prototype.show = function () {
     this[element].hidden = false
   }
-  Block.prototype.width = function (s) {
-    // TODO necessary due to flexbox
-    this[element].style.minWidth = this[element].style.maxWidth = s
-  }
-  Block.prototype.height = function (s) {
-    // TODO necessary due to flexbox
-    this[element].style.minHeight = this[element].style.maxHeight = s
-  }
-  // TODO maybe remove these two
-  Block.prototype.maxWidth = function (s) {
-    this[element].style.maxWidth = s
-  }
-  Block.prototype.maxHeight = function (s) {
-    this[element].style.maxHeight = s
-  }
-  Block.prototype.autofocus = function () {
-    this[element].autofocus = true
-  }
-  Block.prototype.scrollbars = function () {
-    this[element].style.overflow = "auto"
-  }
-  Block.prototype.stopDragging = function () {
-    this[element].addEventListener("mousedown", function (e) {
-      if (e.target.localName !== "input"/* && !e.target.draggable*/) {
-        e.preventDefault()
-      }
-    }, true)
-  }
 
   /*
   Block.prototype.roundedCorners = function (info) {
@@ -253,304 +588,26 @@ define(["./name", "./cell"], function (name, cell) {
     }
   }*/
 
-  Block.prototype.order = function (s) {
-    this[element].style.order = s
-  }
-  Block.prototype.opacity = function (s) {
-    this[element].style.opacity = s
-  }
-  Block.prototype.cursor = function (s) {
-    this[element].style.cursor = s
-  }
-  Block.prototype.stretch = function () {
-    this[element].style.flexGrow = "1"
-    this[element].style.flexShrink = "1"
-    this[element].style.flexBasis = "0%"
-  }
-  Block.prototype.filter = function (s) {
-    // TODO
-    this[element].style.webkitFilter = s
-  }
-
-  // TODO closure
-  function makeBorderSide(style, name) {
-    return function (f) {
-      f({
-        size: function (s) {
-          style[name + "Width"] = s
-        },
-        color: function (s) {
-          style[name + "Color"] = s
-        },
-        remove: function () {
-          style[name] = "none"
-        }
-      })
-    }
-  }
-
-  // TODO closure
-  function makeBorderCorner(style, name) {
-    return function (f) {
-      f({
-        rounded: function (s) {
-          style[name + "Radius"] = s
-        }
-      })
-    }
-  }
-
-  // TODO closure
-  Block.prototype.border = function (f) {
-    var style = this[element].style
-    f({
-      top: makeBorderSide(style, "borderTop"),
-      right: makeBorderSide(style, "borderRight"),
-      bottom: makeBorderSide(style, "borderBottom"),
-      left: makeBorderSide(style, "borderLeft"),
-      topRight: makeBorderCorner(style, "borderTopRight"),
-      topLeft: makeBorderCorner(style, "borderTopLeft"),
-      bottomRight: makeBorderCorner(style, "borderBottomRight"),
-      bottomLeft: makeBorderCorner(style, "borderBottomLeft"),
-      rounded: function (s) {
-        style.borderRadius = s
-      },
-      size: function (s) {
-        style.borderWidth = s
-      },
-      color: function (s) {
-        style.borderColor = s
-      },
-      remove: function () {
-        style.border = "none"
-      }
-    })
-  }
-
   Block.prototype.getPosition = function () {
     return this[element].getBoundingClientRect()
   }
 
-  // TODO closure
-  Block.prototype.padding = function (f) {
-    var style = this[element].style
-    f({
-      left: function (s) {
-        style.paddingLeft = s
-      },
-      top: function (s) {
-        style.paddingTop = s
-      },
-      right: function (s) {
-        style.paddingRight = s
-      },
-      bottom: function (s) {
-        style.paddingBottom = s
-      },
-      vertical: function (s) {
-        style.paddingTop = style.paddingBottom = s
-      },
-      horizontal: function (s) {
-        style.paddingLeft = style.paddingRight = s
-      }
-    })
+  Block.prototype.rule = function () {
+    var self = this[element]
+    self.className = [].map.call(arguments, function (x) {
+      x[actions].forEach(function (f) {
+        f(self)
+      })
+      return x[id]
+    }).join(" ")
   }
 
-  // TODO closure
-  Block.prototype.panel = function (f) {
-    var style = this[element].style
-    style.position = "fixed"
-    style.zIndex = highestZIndex
-    f({
-      left: function (s) {
-        style.left = s
-      },
-      top: function (s) {
-        style.top = s
-      },
-      right: function (s) {
-        style.right = s
-      },
-      bottom: function (s) {
-        style.bottom = s
-      }
-    })
-  }
-
-  // TODO closure
-  Block.prototype.text = function (f) {
-    var self  = this[element]
-      , style = self.style
-    f({
-      font: function () {
-        style.fontFamily = join(arguments, 0, ",")
-      },
-      size: function (s) {
-        if (arguments.length > 1) {
-          throw new Error() // TODO
-        }
-        style.fontSize = s
-      },
-      ellipsis: function () {
-        style.textOverflow = "ellipsis"
-        style.overflow = "hidden"
-      },
-      weight: function (s) {
-        style.fontWeight = s
-      },
-      color: function (s) {
-        style.color = s
-      },
-      set: function (s) {
-        self.textContent = s || ""
-      },
-      shadow: function (f) {
-        var left  = []
-          , top   = []
-          , blur  = []
-          , color = []
-          , r     = []
-        f({
-          left: function () {
-            left = [].slice.call(arguments)
-          },
-          top: function () {
-            top = [].slice.call(arguments)
-          },
-          blur: function () {
-            blur = [].slice.call(arguments)
-          },
-          color: function () {
-            color = [].slice.call(arguments)
-          },
-          remove: function () {
-            left  = []
-            top   = []
-            blur  = []
-            color = []
-            r     = ["none"]
-          }
-        })
-        while (left.length || top.length || blur.length || color.length) {
-          r.push((left.pop() || "0px") + " " +
-                 (top.pop()  || "0px") + " " +
-                 (blur.pop() || "0px") + " " +
-                 color.pop())
-        }
-        style.textShadow = r.join(",")
-      }
-    })
-  }
-
-  // TODO closure
-  Block.prototype.background = function (f) {
-    var style = this[element].style
-    f({
-      color: function (s) {
-        if (arguments.length > 1) {
-          throw new Error() // TODO
-        }
-        style.backgroundColor = s
-      },
-      position: function (f) {
-        var left = []
-          , top  = []
-        f({
-          left: function () {
-            left = [].slice.call(arguments)
-          },
-          top: function () {
-            top = [].slice.call(arguments)
-          }
-        })
-        var r = []
-        while (left.length || top.length) {
-          r.push((left.pop() || "0px") + " " +
-                 (top.pop()  || "0px"))
-        }
-        style.backgroundPosition = r.join(",")
-      },
-      image: function () {
-        style.backgroundImage = join(arguments, 0, ",")
-      },
-      gradient: function (x) {
-        var r = [x]
-        ;[].slice.call(arguments, 1).forEach(function (a) {
-          r.push(a[1] + " " + a[0])
-        })
-        // TODO
-        return "-webkit-linear-gradient(" + r.join(",") + ")"
-      },
-      repeatingGradient: function (x) {
-        var r = [x]
-        ;[].slice.call(arguments, 1).forEach(function (a) {
-          r.push(a[1] + " " + a[0])
-        })
-        // TODO
-        return "-webkit-repeating-linear-gradient(" + r.join(",") + ")"
-      }
-    })
-  }
-
-  // TODO size
-  // TODO closure
-  Block.prototype.shadow = function (f) {
-    var style = this[element].style
-      , inset = []
-      , left  = []
-      , top   = []
-      , blur  = []
-      , color = []
-      , r     = []
-    f({
-      inset: function () {
-        inset = [].slice.call(arguments)
-      },
-      left: function () {
-        left = [].slice.call(arguments)
-      },
-      top: function () {
-        top = [].slice.call(arguments)
-      },
-      blur: function () {
-        blur = [].slice.call(arguments)
-      },
-      color: function () {
-        color = [].slice.call(arguments)
-      },
-      remove: function () {
-        inset = []
-        left  = []
-        top   = []
-        blur  = []
-        color = []
-        r     = ["none"]
-      }
-    })
-    while (inset.length || left.length || top.length || blur.length || color.length) {
-      r.push((inset.pop() ? "inset " : "") +
-             (left.pop() || "0px") + " " +
-             (top.pop()  || "0px") + " " +
-             (blur.pop() || "0px") + " " +
-             color.pop())
+  Block.prototype.ruleIf = function (b, s) {
+    if (b) {
+      this[element].classList.add(s[id])
+    } else {
+      this[element].classList.remove(s[id])
     }
-    style.boxShadow = r.join(",")
-  }
-
-  // TODO closure
-  Block.prototype.transition = function (f) {
-    var style = this[element].style
-    f({
-      duration: function () {
-        style.transitionDuration = join(arguments, 0, ",")
-      },
-      property: function () {
-        style.transitionProperty = join(arguments, 0, ",")
-      },
-      timingFunction: function () {
-        style.transitionTimingFunction = join(arguments, 0, ",")
-      }
-    })
   }
 
   // TODO closure
@@ -598,6 +655,7 @@ define(["./name", "./cell"], function (name, cell) {
 
   function append(constructor, parent, o, f) {
     var e = new constructor(o)
+    o[element] = e
     if (f != null) {
       f(e)
     }
@@ -613,30 +671,33 @@ define(["./name", "./cell"], function (name, cell) {
     var sheet = document.styleSheets[document.styleSheets.length - 1]
     sheet.addRule(s)
 
-    f(sheet.cssRules[sheet.cssRules.length - 1].style)
+    return f(sheet.cssRules[sheet.cssRules.length - 1].style)
   }
 
   function normalize(document, f) {
-    document.documentElement.style.height = document.body.style.height = "100%"
-    document.body.style.margin = "0px"
-    document.body.style.display = "flex"
-    document.body.style.flexDirection = "column"
+    document.body.dataset.direction = "vert"
+
+    addRule(document, "html, body", function (o) {
+      o.margin = "0px"
+      o.height = "100%"
+    })
 
     addRule(document, "[hidden]", function (o) {
       o.setProperty("display", "none", "important")
     })
 
     addRule(document, "*", function (o) {
-      o.boxSizing = "border-box"
+      //o.boxSizing = "border-box"
       // TODO I wish there was a way to get rid of these two
       o.borderWidth = "0px"
       o.borderColor = "transparent"
       o.borderStyle = "solid"
       o.whiteSpace = "pre"
       o.backgroundSize = "100% 100%"
-      o.flexGrow = "0"
-      o.flexShrink = "0"
-      o.flexBasis = "auto"
+      //o.flexGrow = "0"
+      //o.flexShrink = "0"
+      //o.flexBasis = "auto"
+      o.tableLayout = "fixed"
     })
 
     addRule(document, "input[type=search]", function (o) {
@@ -645,14 +706,46 @@ define(["./name", "./cell"], function (name, cell) {
       o.margin = "0px"
     })
 
-    addRule(document, ".horiz", function (o) {
-      o.display = "flex"
-      o.flexDirection = "row"
+    addRule(document, "[data-direction='horiz']", function (o) {
+      o.display = "table"
+      //o.display = "flex"
+      //o.flexDirection = "row"
     })
 
-    addRule(document, ".vert", function (o) {
+    addRule(document, "[data-direction='horiz'] > *", function (o) {
+      o.display = "table-cell"
+    })
+
+    addRule(document, "[data-direction='vert']", function (o) {
       o.display = "flex"
       o.flexDirection = "column"
+    })
+
+    new MutationObserver(function (a) {
+      a.forEach(function (x) {
+        if (x.type === "childList") {
+          ;[].forEach.call(x.removedNodes, function (x) {
+            if (element in x) {
+              var y = x[element]
+              y[bindings].forEach(function (x) {
+                x.unbind()
+              })
+              //delete this.mouseclick
+              //delete this.mousedown
+              //delete this.mouseover
+              delete x[element]
+              delete y[element]
+              delete y[bindings]
+            }/* else {
+              console.log(x)
+              console.dir(x)
+            }*/
+          })
+        }
+      })
+    }).observe(document, {
+      childList: true,
+      subtree: true,
     })
 
     return call(Block, document.body, f)
@@ -661,14 +754,14 @@ define(["./name", "./cell"], function (name, cell) {
   function horiz(x, f) {
     var o = document.createElement("div")
     //o.style.minWidth = o.style.minHeight = "auto"
-    o.className = "horiz"
+    o.dataset.direction = "horiz"
     return append(Block, x, o, f)
   }
 
   function vert(x, f) {
     var o = document.createElement("div")
     //o.style.minWidth = o.style.minHeight = "auto"
-    o.className = "vert"
+    o.dataset.direction = "vert"
     return append(Block, x, o, f)
   }
 
@@ -708,6 +801,12 @@ define(["./name", "./cell"], function (name, cell) {
     })
   }
 
+  function rule(f) {
+    var o = new Rule()
+    f(o)
+    return o
+  }
+
   return Object.create({
     normalize: normalize,
     horiz: horiz,
@@ -719,5 +818,6 @@ define(["./name", "./cell"], function (name, cell) {
     highestZIndex: highestZIndex,
     calc: calc,
     exclude: exclude,
+    rule: rule,
   })
 })
