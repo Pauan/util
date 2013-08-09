@@ -49,9 +49,6 @@ define(["./iter"], function (iter) {
     return this.index < this.input.length || this.column < this.text.length
   }
   Buffer.prototype.peek = function () {
-    if (!this.has()) {
-      throw new iter.StopIteration()
-    }
     return this.text[this.column]
   }
   Buffer.prototype.read = function () {
@@ -67,7 +64,12 @@ define(["./iter"], function (iter) {
   Buffer.prototype[iter.iterator] = function () {
     return this
   }
-  Buffer.prototype.next = Buffer.prototype.read
+  Buffer.prototype.next = function () {
+    if (!this.has()) {
+      throw new iter.StopIteration()
+    }
+    return this.read()
+  }
 
   function BufferError(o, s) {
     var a = [s]
