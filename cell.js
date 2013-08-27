@@ -17,14 +17,14 @@ define(["./name", "./object"], function (name, object) {
     }))
   }
 
-  function bind(x, f) {
+  function bind1(x, f) {
     if (x[events].length === 0 && x[info].bind != null) {
       x[saved] = x[info].bind(x)
     }
     x[events].push(f)
   }
 
-  function unbind(x, f) {
+  function unbind1(x, f) {
     var i = x[events].indexOf(f)
     if (i !== -1) {
       x[events].splice(i, 1)
@@ -37,11 +37,11 @@ define(["./name", "./object"], function (name, object) {
   // TODO closure
   function binder(o, a, f) {
     for (var i = 0, iLen = a.length; i < iLen; ++i) {
-      bind(a[i], f)
+      bind1(a[i], f)
     }
     o.unbind = function () {
      for (var i = 0, iLen = a.length; i < iLen; ++i) {
-        unbind(a[i], f)
+        unbind1(a[i], f)
       }
     }
   }
@@ -118,7 +118,7 @@ define(["./name", "./object"], function (name, object) {
   // Takes an array of signals and a function; returns a signal
   // Initially, and when any of the signals change,
   // the function is called with the value of the signals
-  function lift(a, f) {
+  function bind(a, f) {
     //try {
       var x = call(a, f)
     /*} catch (e) {
@@ -180,7 +180,7 @@ define(["./name", "./object"], function (name, object) {
   // When all of the signals have a truthy value,
   // the function is called with the values of the signals
   function when(a, f) {
-    lift(a, function () {
+    bind(a, function () {
       for (var i = 0, iLen = arguments.length; i < iLen; ++i) {
         if (!arguments[i]) {
           return
@@ -238,7 +238,7 @@ define(["./name", "./object"], function (name, object) {
   // Takes a signal and function; returns a signal
   // Maps the function over the input signal
   function map(x, f) {
-    return lift([x], f)
+    return bind([x], f)
   }
 
   // Takes two signals; returns a signal
@@ -253,7 +253,7 @@ define(["./name", "./object"], function (name, object) {
     value: value,
     fps: fps,
     event: event,
-    lift: lift,
+    bind: bind,
     fold: fold,
     filter: filter,
     when: when,

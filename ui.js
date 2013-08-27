@@ -10,11 +10,20 @@ define(["./name", "./cell"], function (name, cell) {
 
   var element  = new name.Name()
     , bindings = new name.Name()
-    , actions  = new name.Name()
-    , id       = new name.Name()
 
   function isOver(self, e) {
     return !self.contains(e.relatedTarget)
+  }
+
+  function addRule(document, s, f) {
+    var e = document.createElement("style")
+    e.type = "text/css"
+    document.head.appendChild(e)
+
+    var sheet = document.styleSheets[document.styleSheets.length - 1]
+    sheet.insertRule(s + "{}", sheet.cssRules.length) //sheet.addRule(s)
+
+    return f(sheet.cssRules[sheet.cssRules.length - 1].style)
   }
 
   /*function makeSet(Block, name, s) {
@@ -29,79 +38,10 @@ define(["./name", "./cell"], function (name, cell) {
     }
   }*/
 
-  var ruleId = 0
-
-  function Rule() {
-    var self = this
-
-    self[actions] = []
-    self[id]      = "__rule__" + (++ruleId)
-
-    addRule(document, "." + self[id], function (o) {
-      self[element] = o
-    })
-  }
-  Rule.prototype.width = function (s) {
-    // TODO necessary due to flexbox
-    this[element].minWidth = this[element].maxWidth = s
-  }
-  Rule.prototype.height = function (s) {
-    // TODO necessary due to flexbox
-    this[element].minHeight = this[element].maxHeight = s
-  }
-  // TODO maybe remove these two
-  Rule.prototype.maxWidth = function (s) {
-    this[element].maxWidth = s
-  }
-  Rule.prototype.maxHeight = function (s) {
-    this[element].maxHeight = s
-  }
-  Rule.prototype.scrollbars = function () {
-    this[element].overflow = "auto"
-  }
-  Rule.prototype.order = function (s) {
-    this[element].order = s
-  }
-  Rule.prototype.opacity = function (s) {
-    this[element].opacity = s
-  }
-  Rule.prototype.cursor = function (s) {
-    this[element].cursor = s
-  }
-  Rule.prototype.stretch = function () {
-    this[element].flexGrow = "1"
-    this[element].flexShrink = "1"
-    this[element].flexBasis = "0%"
-  }
-  Rule.prototype.filter = function (s) {
-    // TODO
-    this[element].webkitFilter = s
-  }
-  Rule.prototype.rule = function (s) {
-    this[actions].push(function (x) {
-      x.classList.add(s[id])
-    })
-  }
-
-  Rule.prototype.autofocus = function () {
-    this[actions].push(function (x) {
-      x.autofocus = true
-    })
-  }
-  Rule.prototype.stopDragging = function () {
-    this[actions].push(function (x) {
-      console.log(x)
-      x.addEventListener("mousedown", function (e) {
-        if (e.target.localName !== "input"/* && !e.target.draggable*/) {
-          e.preventDefault()
-        }
-      }, true)
-    })
-  }
-
   // TODO closure
-  function makeBorderSide(style, name) {
+  function makeBorderSide(name) {
     return function (f) {
+      var style = this[element].style
       f({
         size: function (s) {
           style[name + "Width"] = s
@@ -117,8 +57,9 @@ define(["./name", "./cell"], function (name, cell) {
   }
 
   // TODO closure
-  function makeBorderCorner(style, name) {
+  function makeBorderCorner(name) {
     return function (f) {
+      var style = this[element].style
       f({
         rounded: function (s) {
           style[name + "Radius"] = s
@@ -127,284 +68,384 @@ define(["./name", "./cell"], function (name, cell) {
     }
   }
 
-  // TODO closure
-  Rule.prototype.border = function (f) {
-    var style = this[element]
-    f({
-      top: makeBorderSide(style, "borderTop"),
-      right: makeBorderSide(style, "borderRight"),
-      bottom: makeBorderSide(style, "borderBottom"),
-      left: makeBorderSide(style, "borderLeft"),
-      topRight: makeBorderCorner(style, "borderTopRight"),
-      topLeft: makeBorderCorner(style, "borderTopLeft"),
-      bottomRight: makeBorderCorner(style, "borderBottomRight"),
-      bottomLeft: makeBorderCorner(style, "borderBottomLeft"),
-      rounded: function (s) {
-        style.borderRadius = s
-      },
-      size: function (s) {
-        style.borderWidth = s
-      },
-      color: function (s) {
-        style.borderColor = s
-      },
-      remove: function () {
-        style.border = "none"
-      }
-    })
-  }
-
-  // TODO closure
-  Rule.prototype.move = function (f) {
-    var style = this[element]
-    style.position = "relative"
-    f({
-      left: function (s) {
-        style.left = s
-      },
-      top: function (s) {
-        style.top = s
-      },
-      right: function (s) {
-        style.right = s
-      },
-      bottom: function (s) {
-        style.bottom = s
-      }
-    })
-  }
-
-  // TODO closure
-  Rule.prototype.padding = function (f) {
-    var style = this[element]
-    f({
-      left: function (s) {
-        style.paddingLeft = s
-      },
-      top: function (s) {
-        style.paddingTop = s
-      },
-      right: function (s) {
-        style.paddingRight = s
-      },
-      bottom: function (s) {
-        style.paddingBottom = s
-      },
-      vertical: function (s) {
-        style.paddingTop = style.paddingBottom = s
-      },
-      horizontal: function (s) {
-        style.paddingLeft = style.paddingRight = s
-      }
-    })
-  }
-
-  // TODO closure
-  Rule.prototype.panel = function (f) {
-    var style = this[element]
-    style.position = "fixed"
-    style.zIndex = highestZIndex
-    f({
-      left: function (s) {
-        style.left = s
-      },
-      top: function (s) {
-        style.top = s
-      },
-      right: function (s) {
-        style.right = s
-      },
-      bottom: function (s) {
-        style.bottom = s
-      }
-    })
-  }
-
-  // TODO closure
-  Rule.prototype.text = function (f) {
-    var style = this[element]
-    f({
-      font: function () {
-        style.fontFamily = join(arguments, 0, ",")
-      },
-      size: function (s) {
-        if (arguments.length > 1) {
-          throw new Error() // TODO
-        }
-        style.fontSize = s
-      },
-      ellipsis: function () {
-        style.textOverflow = "ellipsis"
-        style.overflow = "hidden"
-      },
-      weight: function (s) {
-        style.fontWeight = s
-      },
-      color: function (s) {
-        style.color = s
-      },
-      shadow: function (f) {
-        var left  = []
-          , top   = []
-          , blur  = []
-          , color = []
-          , r     = []
-        f({
-          left: function () {
-            left = [].slice.call(arguments)
-          },
-          top: function () {
-            top = [].slice.call(arguments)
-          },
-          blur: function () {
-            blur = [].slice.call(arguments)
-          },
-          color: function () {
-            color = [].slice.call(arguments)
-          },
-          remove: function () {
-            left  = []
-            top   = []
-            blur  = []
-            color = []
-            r     = ["none"]
-          }
-        })
-        while (left.length || top.length || blur.length || color.length) {
-          r.push((left.pop() || "0px") + " " +
-                 (top.pop()  || "0px") + " " +
-                 (blur.pop() || "0px") + " " +
-                 color.pop())
-        }
-        style.textShadow = r.join(",")
-      }
-    })
-  }
-
-  // TODO closure
-  Rule.prototype.background = function (f) {
-    var style = this[element]
-    f({
-      color: function (s) {
-        if (arguments.length > 1) {
-          throw new Error() // TODO
-        }
-        style.backgroundColor = s
-      },
-      position: function (f) {
-        var left = []
-          , top  = []
-        f({
-          left: function () {
-            left = [].slice.call(arguments)
-          },
-          top: function () {
-            top = [].slice.call(arguments)
-          }
-        })
-        var r = []
-        while (left.length || top.length) {
-          r.push((left.pop() || "0px") + " " +
-                 (top.pop()  || "0px"))
-        }
-        style.backgroundPosition = r.join(",")
-      },
-      image: function () {
-        style.backgroundImage = join(arguments, 0, ",")
-      },
-      gradient: function (x) {
-        var r = [x]
-        ;[].slice.call(arguments, 1).forEach(function (a) {
-          r.push(a[1] + " " + a[0])
-        })
-        // TODO
-        return "-webkit-linear-gradient(" + r.join(",") + ")"
-      },
-      repeatingGradient: function (x) {
-        var r = [x]
-        ;[].slice.call(arguments, 1).forEach(function (a) {
-          r.push(a[1] + " " + a[0])
-        })
-        // TODO
-        return "-webkit-repeating-linear-gradient(" + r.join(",") + ")"
-      }
-    })
-  }
-
-  // TODO size
-  // TODO closure
-  Rule.prototype.shadow = function (f) {
-    var style = this[element]
-      , inset = []
-      , left  = []
-      , top   = []
-      , blur  = []
-      , color = []
-      , r     = []
-    f({
-      inset: function () {
-        inset = [].slice.call(arguments)
-      },
-      left: function () {
-        left = [].slice.call(arguments)
-      },
-      top: function () {
-        top = [].slice.call(arguments)
-      },
-      blur: function () {
-        blur = [].slice.call(arguments)
-      },
-      color: function () {
-        color = [].slice.call(arguments)
-      },
-      remove: function () {
-        inset = []
-        left  = []
-        top   = []
-        blur  = []
-        color = []
-        r     = ["none"]
-      }
-    })
-    while (inset.length || left.length || top.length || blur.length || color.length) {
-      r.push((inset.pop() ? "inset " : "") +
-             (left.pop() || "0px") + " " +
-             (top.pop()  || "0px") + " " +
-             (blur.pop() || "0px") + " " +
-             color.pop())
+  var styleBorder = {
+    top: makeBorderSide("borderTop"),
+    right: makeBorderSide("borderRight"),
+    bottom: makeBorderSide("borderBottom"),
+    left: makeBorderSide("borderLeft"),
+    topRight: makeBorderCorner("borderTopRight"),
+    topLeft: makeBorderCorner("borderTopLeft"),
+    bottomRight: makeBorderCorner("borderBottomRight"),
+    bottomLeft: makeBorderCorner("borderBottomLeft"),
+    rounded: function (s) {
+      this[element].style.borderRadius = s
+    },
+    size: function (s) {
+      this[element].style.borderWidth = s
+    },
+    color: function (s) {
+      this[element].style.borderColor = s
+    },
+    remove: function () {
+      this[element].style.border = "none"
     }
-    style.boxShadow = r.join(",")
   }
 
-  // TODO closure
-  Rule.prototype.transition = function (f) {
-    var style = this[element]
-    f({
-      duration: function () {
-        style.transitionDuration = join(arguments, 0, ",")
-      },
-      property: function () {
-        style.transitionProperty = join(arguments, 0, ",")
-      },
-      timingFunction: function () {
-        style.transitionTimingFunction = join(arguments, 0, ",")
-      }
-    })
+  var styleMove = {
+    left: function (s) {
+      this[element].style.left = s
+    },
+    top: function (s) {
+      this[element].style.top = s
+    },
+    right: function (s) {
+      this[element].style.right = s
+    },
+    bottom: function (s) {
+      this[element].style.bottom = s
+    }
   }
 
-  // TODO closure
-  function Block(o) {
-    this[element]  = o
-    this[bindings] = []
+  var stylePadding = {
+    left: function (s) {
+      this[element].style.paddingLeft = s
+    },
+    top: function (s) {
+      this[element].style.paddingTop = s
+    },
+    right: function (s) {
+      this[element].style.paddingRight = s
+    },
+    bottom: function (s) {
+      this[element].style.paddingBottom = s
+    },
+    vertical: function (s) {
+      this[element].style.paddingTop = this[element].style.paddingBottom = s
+    },
+    horizontal: function (s) {
+      this[element].style.paddingLeft = this[element].style.paddingRight = s
+    }
+  }
 
-    /*this.mouseclick = cell.value(undefined, {
-      bind: function (self) {
-        o.addEventListener("click", function (e) {
-          self.set()
-        }, true)
+  /*var stylePanel = {
+    left: function (s) {
+      this[element].style.left = s
+    },
+    top: function (s) {
+      this[element].style.top = s
+    },
+    right: function (s) {
+      this[element].style.right = s
+    },
+    bottom: function (s) {
+      this[element].style.bottom = s
+    }
+  }*/
+
+  var styleFont = {
+    font: function () {
+      this[element].style.fontFamily = join(arguments, 0, ",")
+    },
+    size: function (s) {
+      if (arguments.length > 1) {
+        throw new Error() // TODO
       }
-    })*/
-    this.mouseclick = cell.value(undefined, {
+      this[element].style.fontSize = s
+    },
+    weight: function (s) {
+      this[element].style.fontWeight = s
+    },
+    color: function (s) {
+      this[element].style.color = s
+    },
+    // TODO closure
+    shadow: function (f) {
+      var left  = []
+        , top   = []
+        , blur  = []
+        , color = []
+        , r     = []
+      f({
+        left: function () {
+          left = [].slice.call(arguments)
+        },
+        top: function () {
+          top = [].slice.call(arguments)
+        },
+        blur: function () {
+          blur = [].slice.call(arguments)
+        },
+        color: function () {
+          color = [].slice.call(arguments)
+        },
+        remove: function () {
+          left  = []
+          top   = []
+          blur  = []
+          color = []
+          r     = ["none"]
+        }
+      })
+      while (left.length || top.length || blur.length || color.length) {
+        r.push((left.pop() || "0px") + " " +
+               (top.pop()  || "0px") + " " +
+               (blur.pop() || "0px") + " " +
+               color.pop())
+      }
+      this[element].style.textShadow = r.join(",")
+    }
+  }
+
+  var styleBackground = {
+    color: function (s) {
+      if (arguments.length > 1) {
+        throw new Error() // TODO
+      }
+      this[element].style.backgroundColor = s
+    },
+    // TODO closure
+    position: function (f) {
+      var left = []
+        , top  = []
+      f({
+        left: function () {
+          left = [].slice.call(arguments)
+        },
+        top: function () {
+          top = [].slice.call(arguments)
+        }
+      })
+      var r = []
+      while (left.length || top.length) {
+        r.push((left.pop() || "0px") + " " +
+               (top.pop()  || "0px"))
+      }
+      this[element].style.backgroundPosition = r.join(",")
+    },
+    image: function () {
+      this[element].style.backgroundImage = join(arguments, 0, ",")
+    }
+  }
+
+  var styleTransition = {
+    duration: function () {
+      this[element].style.transitionDuration = join(arguments, 0, ",")
+    },
+    property: function () {
+      this[element].style.transitionProperty = join(arguments, 0, ",")
+    },
+    timingFunction: function () {
+      this[element].style.transitionTimingFunction = join(arguments, 0, ",")
+    }
+  }
+
+  var Box = {
+    stretch: function () {
+      this[element].style.flexGrow = "1"
+      this[element].style.flexShrink = "1"
+      this[element].style.flexBasis = "0%"
+    },
+    width: function (s) {
+      //this[element].style.width = s
+      // TODO necessary due to tables
+      this[element].style.width/* = this[element].style.minWidth = this[element].style.maxWidth */= s
+    },
+    height: function (s) {
+      //this[element].style.height = s
+      // TODO necessary due to tables
+      this[element].style.height/* = this[element].style.minHeight = this[element].style.maxHeight */= s
+    },
+    // TODO maybe remove these two
+    maxWidth: function (s) {
+      this[element].style.maxWidth = s
+    },
+    maxHeight: function (s) {
+      this[element].style.maxHeight = s
+    },
+    scrollbars: function () {
+      this[element].style.overflow = "auto"
+    },
+    opacity: function (s) {
+      this[element].style.opacity = s
+    },
+    cursor: function (s) {
+      this[element].style.cursor = s
+    },
+    filter: function (s) {
+      // TODO
+      this[element].style.webkitFilter = s
+    },
+    autofocus: function () {
+      this[element].autofocus = true
+    },
+    stopDragging: function () {
+      this[element].addEventListener("mousedown", function (e) {
+        if (e.target.localName !== "input"/* && !e.target.draggable*/) {
+          e.preventDefault()
+        }
+      }, true)
+    },
+    move: function (e) {
+      this[element].appendChild(e[element])
+    },
+
+    border: function (f) {
+      var o = Object.create(styleBorder)
+      o[element] = this[element]
+      f(o)
+    },
+    position: function (f) {
+      var o = Object.create(styleMove)
+      o[element] = this[element]
+      this[element].style.position = "relative"
+      f(o)
+    },
+    padding: function (f) {
+      var o = Object.create(stylePadding)
+      o[element] = this[element]
+      f(o)
+    },
+    /*panel: function (f) {
+      var o = Object.create(stylePanel)
+      o[element] = this[element]
+      this[element].style.position = "fixed"
+      this[element].style.zIndex = highestZIndex
+      f(o)
+    },*/
+    font: function (f) {
+      var o = Object.create(styleFont)
+      o[element] = this[element]
+      f(o)
+    },
+    background: function (f) {
+      var o = Object.create(styleBackground)
+      o[element] = this[element]
+      f(o)
+    },
+    transition: function (f) {
+      var o = Object.create(styleTransition)
+      o[element] = this[element]
+      f(o)
+    },
+
+    // TODO size
+    // TODO closure
+    shadow: function (f) {
+      var inset = []
+        , left  = []
+        , top   = []
+        , blur  = []
+        , color = []
+        , r     = []
+      f({
+        inset: function () {
+          inset = [].slice.call(arguments)
+        },
+        left: function () {
+          left = [].slice.call(arguments)
+        },
+        top: function () {
+          top = [].slice.call(arguments)
+        },
+        blur: function () {
+          blur = [].slice.call(arguments)
+        },
+        color: function () {
+          color = [].slice.call(arguments)
+        },
+        remove: function () {
+          inset = []
+          left  = []
+          top   = []
+          blur  = []
+          color = []
+          r     = ["none"]
+        }
+      })
+      while (inset.length || left.length || top.length || blur.length || color.length) {
+        r.push((inset.pop() ? "inset " : "") +
+               (left.pop() || "0px") + " " +
+               (top.pop()  || "0px") + " " +
+               (blur.pop() || "0px") + " " +
+               color.pop())
+      }
+      this[element].style.boxShadow = r.join(",")
+    },
+
+    text: function (s) {
+      this[element].textContent = s || ""
+    },
+    remove: function () {
+      this.removed = true
+      var self = this[element]
+      if (self.parentNode) {
+        self.parentNode.removeChild(self)
+      }
+    },
+    bind: function (a, f) {
+      this[bindings].push(cell.bind(a, f))
+    },
+    event: function (a, f) {
+      this[bindings].push(cell.event(a, f))
+    },
+    title: function (s) {
+      this[element].title = s
+    },
+    hide: function () {
+      this[element].hidden = true
+    },
+    show: function () {
+      this[element].hidden = false
+    },
+    getPosition: function () {
+      return this[element].getBoundingClientRect()
+    }
+  }
+
+  var Image = Object.create(Box)
+  Image.src = function (s) {
+    this[element].src = s
+  }
+
+  var Panel = Object.create(Box)
+  Panel.left = function (s) {
+    this[element].style.left = s
+  }
+  Panel.right = function (s) {
+    this[element].style.right = s
+  }
+  Panel.top = function (s) {
+    this[element].style.top = s
+  }
+  Panel.bottom = function (s) {
+    this[element].style.bottom = s
+  }
+
+  function remove(x) {
+    var e = x[element]
+    if (e.removed) {
+      x[element] = null
+
+      e[bindings].forEach(function (x) {
+        x.unbind()
+      })
+      e[element] = null
+      e[bindings] = null
+      e.mouseclick = null
+      e.mousedown = null
+      e.mouseover = null
+      e.value = null
+    }
+  }
+
+  function make(constructor, o) {
+    var e = Object.create(constructor)
+    o[element]  = e
+    e[element]  = o
+    e[bindings] = []
+
+    // TODO closures
+    e.mouseclick = cell.value(undefined, {
       bind: function (self) {
         function click(e) {
           e.preventDefault()
@@ -440,7 +481,7 @@ define(["./name", "./cell"], function (name, cell) {
 
     var seen = { left: false, middle: false, right: false }
     seen[element] = o // TODO is this correct?
-    this.mousedown = cell.value(seen, {
+    e.mousedown = cell.value(seen, {
       bind: function (self) {
         function contextmenu(e) {
           e.preventDefault()
@@ -488,7 +529,7 @@ define(["./name", "./cell"], function (name, cell) {
       }
     })
 
-    this.mouseover = cell.value(false, {
+    e.mouseover = cell.value(false, {
       bind: function (self) {
         function mouseover(e) {
           if (isOver(o, e)) {
@@ -518,102 +559,191 @@ define(["./name", "./cell"], function (name, cell) {
         o.removeEventListener("mouseout", e.mouseout, true)
       }
     })
-  }
-  /*makeSet(Block, "cursor", "cursor")
-  makeSet(Block, "backgroundColor", "backgroundColor")
-  makeSet(Block, "textColor", "color")
-  makeSet(Block, "opacity", "opacity")
-  makeSet(Block, "fontWeight", "fontWeight")
-  makeSet(Block, "transitionDuration", "transitionDuration")
-  makeSet(Block, "transitionProperty", "transitionProperty")
-  makeSet(Block, "transitionTimingFunction", "transitionTimingFunction")
-  makeSet(Block, "order", "order")
-  makeSet(Block, "top", "top")
-  makeSet(Block, "bottom", "bottom")
-  makeSet(Block, "left", "left")
-  makeSet(Block, "right", "right")
 
-  makeJoin(Block, "stretch", "flex")
-  makeJoin(Block, "borderRadius", "borderRadius")
-  makeJoin(Block, "backgroundPosition", "backgroundPosition")
-  makeJoin(Block, "filter", "webkitFilter")
-  makeJoin(Block, "borderColor", "borderColor")
-  makeJoin(Block, "backgroundSize", "backgroundSize") // TODO automatically do this for certain properties
-
-  makeJoin(Block, "boxShadow", "boxShadow", ", ")
-  makeJoin(Block, "backgroundImage", "backgroundImage", ", ")
-  makeJoin(Block, "textShadow", "textShadow", ", ")*/
-
-
-  Block.prototype.text = function (s) {
-    this[element].textContent = s || ""
+    return e
   }
 
-  Block.prototype.remove = function () {
-    if (this[element].parentNode) {
-      this[element].parentNode.removeChild(this[element])
+  function call(f, e) {
+    if (f != null) {
+      f(e)
     }
+    return e
   }
 
-  Block.prototype.bind = function (a, f) {
-    this[bindings].push(cell.lift(a, f))
-  }
-  Block.prototype.on = function (a, f) {
-    this[bindings].push(cell.event(a, f))
+  function normalize(document, f) {
+    document.body.className = "vert box"
+
+    addRule(document, "html, body", function (o) {
+      //o.margin = "0px"
+      o.width = "100%"
+      o.height = "100%"
+    })
+
+    addRule(document, "[hidden]", function (o) {
+      o.setProperty("display", "none", "important")
+    })
+
+    addRule(document, "*", function (o) {
+
+    })
+
+    addRule(document, "input[type=search]", function (o) {
+      o.border = "none"
+      o.outline = "none"
+      //o.margin = "0px"
+    })
+
+    addRule(document, ".box", function (o) {
+      o.margin = "0px"
+      o.padding = "0px"
+
+      o.whiteSpace = "pre" // TODO
+
+      o.MozBoxSizing = "border-box" // TODO
+      o.boxSizing = "border-box"
+
+      // TODO I wish there was a way to get rid of these two
+      o.borderWidth = "0px"
+      o.borderColor = "transparent"
+      o.borderStyle = "solid"
+
+      o.backgroundSize = "100% 100%"
+      o.textOverflow = "ellipsis"
+      o.overflow = "hidden"
+
+      o.flexGrow = "0"
+      o.flexShrink = "0"
+      o.flexBasis = "auto"
+
+      //o.verticalAlign = "top" // TODO needed in Firefox
+      //o.tableLayout = "fixed"
+      //o.backgroundClip = "padding-box" // TODO content-box
+    })
+
+    addRule(document, ".horiz", function (o) {
+      o.display = "flex"
+      o.flexDirection = "row"
+      //o.display = "inline-block"
+      //o.cssFloat = "left"
+      //o.display = "table"
+      //o.display = "flex"
+      //o.flexDirection = "row"
+    })
+
+    /*addRule(document, ".horiz > *", function (o) {
+      o.display = "inline-block"
+      //o.cssFloat = "left"
+      //o.padding = "0px"
+      o.height = "100%"
+      //o.whiteSpace = "normal"
+      //o.width = "100%"
+    })*/
+
+    /*addRule(document, ".vert", function (o) {
+      o.display = "flex"
+      o.flexDirection = "column"
+      //o.display = "table"
+      //o.display = "flex"
+      //o.flexDirection = "column"
+    })*/
+
+    /*addRule(document, ".vert > *", function (o) {
+
+      //o.width = "100%"
+    })*/
+
+    addRule(document, ".panel", function (o) {
+      o.position = "fixed"
+      o.zIndex = highestZIndex
+    })
+
+    var observer = new MutationObserver(function (a) {
+      a.forEach(function (x) {
+        if (x.type === "childList") {
+          ;[].forEach.call(x.removedNodes, function (x) {
+            if (element in x) {
+              remove(x)
+            }
+          })
+        }
+      })
+    }).observe(document.body, {
+      childList: true,
+      subtree: true,
+    })
+
+    //var o = document.createElement("div")
+    //o.className = "vert"
+    //o.style.width = o.style.height = "100%"
+    //document.body.appendChild(o)
+    return call(f, make(Box, document.body))
   }
 
-  Block.prototype.title = function (s) {
-    this[element].title = s
-  }
-  Block.prototype.hide = function () {
-    this[element].hidden = true
-  }
-  Block.prototype.show = function () {
-    this[element].hidden = false
-  }
+  /*function calculate(x) {
+    var s, s2
+    if (x[element].className === "vert") {
+      s  = "height"
+      s2 = "offsetHeight"
+    } else if (x[element].className === "horiz") {
+      s  = "width"
+      s2 = "offsetWidth"
+    } else {
+      throw new Error("can only add elements to horiz or vert elements")
+    }
 
-  /*
-  Block.prototype.roundedCorners = function (info) {
-    if (info.topLeft != null) {
-      this[element].style.borderTopLeftRadius = info.topLeft
-    }
-    if (info.topRight != null) {
-      this[element].style.borderTopRightRadius = info.topRight
-    }
-    if (info.bottomLeft != null) {
-      this[element].style.borderBottomLeftRadius = info.bottomLeft
-    }
-    if (info.bottomRight != null) {
-      this[element].style.borderBottomRightRadius = info.bottomRight
-    }
+    var size  = 0
+      , elems = []
+    ;[].forEach.call(x[element].children, function (x) {
+      if (x.style[s] === "") {
+        elems.push(x)
+      } else {
+        size += x[s2]
+      }
+    })
+
+    var len = calc((100 / elems.length) + "%", "-", size + "px")
+    console.log(len)
+    elems.forEach(function (x) {
+      x.style[s] = len
+    })
   }*/
 
-  Block.prototype.getPosition = function () {
-    return this[element].getBoundingClientRect()
+  function box(x, f) {
+    var o = document.createElement("div")
+    x[element].appendChild(o)
+    //calculate(x)
+    return call(f, make(Box, o))
   }
 
-  Block.prototype.rule = function () {
-    var self = this[element]
-    self.className = [].map.call(arguments, function (x) {
-      x[actions].forEach(function (f) {
-        f(self)
-      })
-      return x[id]
-    }).join(" ")
+  function horiz(x, f) {
+    var o = document.createElement("div")
+    o.className = "horiz"
+    x[element].appendChild(o)
+    //calculate(x)
+    return call(f, make(Box, o))
   }
 
-  Block.prototype.ruleIf = function (b, s) {
-    if (b) {
-      this[element].classList.add(s[id])
-    } else {
-      this[element].classList.remove(s[id])
-    }
+  function vert(x, f) {
+    var o = document.createElement("div")
+    o.className = "vert"
+    x[element].appendChild(o)
+    //calculate(x)
+    return call(f, make(Box, o))
   }
 
-  // TODO closure
-  function Search(o) {
-    Block.call(this, o)
-    this.value = cell.value(o.value, {
+  function search(x, f) {
+    var o = document.createElement("input")
+    o.type = "search"
+    o.incremental = true
+    o.autocomplete = "off"
+    o.setAttribute("results", "")
+    x[element].appendChild(o)
+    //calculate(x)
+
+    var e = make(Box, o)
+
+    // TODO closure
+    e.value = cell.value(o.value, {
       bind: function (self) {
         console.log("HIYA")
 
@@ -634,164 +764,45 @@ define(["./name", "./cell"], function (name, cell) {
         o.value = x
       }
     })
-  }
-  Search.prototype = new Block()
 
-  function Image(o) {
-    Block.call(this, o)
-  }
-  Image.prototype = new Block()
-  Image.prototype.src = function (s) {
-    this[element].src = s
-  }
-
-  function call(constructor, o, f) {
-    var e = new constructor(o)
-    if (f != null) {
-      f(e)
-    }
-    return e
-  }
-
-  function append(constructor, parent, o, f) {
-    var e = new constructor(o)
-    o[element] = e
-    if (f != null) {
-      f(e)
-    }
-    parent[element].appendChild(o)
-    return e
-  }
-
-  function addRule(document, s, f) {
-    var e = document.createElement("style")
-    e.type = "text/css"
-    document.head.appendChild(e)
-
-    var sheet = document.styleSheets[document.styleSheets.length - 1]
-    sheet.addRule(s)
-
-    return f(sheet.cssRules[sheet.cssRules.length - 1].style)
-  }
-
-  function normalize(document, f) {
-    document.body.dataset.direction = "vert"
-
-    addRule(document, "html, body", function (o) {
-      o.margin = "0px"
-      o.height = "100%"
-    })
-
-    addRule(document, "[hidden]", function (o) {
-      o.setProperty("display", "none", "important")
-    })
-
-    addRule(document, "*", function (o) {
-      //o.boxSizing = "border-box"
-      // TODO I wish there was a way to get rid of these two
-      o.borderWidth = "0px"
-      o.borderColor = "transparent"
-      o.borderStyle = "solid"
-      o.whiteSpace = "pre"
-      o.backgroundSize = "100% 100%"
-      //o.flexGrow = "0"
-      //o.flexShrink = "0"
-      //o.flexBasis = "auto"
-      o.tableLayout = "fixed"
-    })
-
-    addRule(document, "input[type=search]", function (o) {
-      o.border = "none"
-      o.outline = "none"
-      o.margin = "0px"
-    })
-
-    addRule(document, "[data-direction='horiz']", function (o) {
-      o.display = "table"
-      //o.display = "flex"
-      //o.flexDirection = "row"
-    })
-
-    addRule(document, "[data-direction='horiz'] > *", function (o) {
-      o.display = "table-cell"
-    })
-
-    addRule(document, "[data-direction='vert']", function (o) {
-      o.display = "flex"
-      o.flexDirection = "column"
-    })
-
-    new MutationObserver(function (a) {
-      a.forEach(function (x) {
-        if (x.type === "childList") {
-          ;[].forEach.call(x.removedNodes, function (x) {
-            if (element in x) {
-              var y = x[element]
-              y[bindings].forEach(function (x) {
-                x.unbind()
-              })
-              //delete this.mouseclick
-              //delete this.mousedown
-              //delete this.mouseover
-              delete x[element]
-              delete y[element]
-              delete y[bindings]
-            }/* else {
-              console.log(x)
-              console.dir(x)
-            }*/
-          })
-        }
-      })
-    }).observe(document, {
-      childList: true,
-      subtree: true,
-    })
-
-    return call(Block, document.body, f)
-  }
-
-  function horiz(x, f) {
-    var o = document.createElement("div")
-    //o.style.minWidth = o.style.minHeight = "auto"
-    o.dataset.direction = "horiz"
-    return append(Block, x, o, f)
-  }
-
-  function vert(x, f) {
-    var o = document.createElement("div")
-    //o.style.minWidth = o.style.minHeight = "auto"
-    o.dataset.direction = "vert"
-    return append(Block, x, o, f)
-  }
-
-  function search(x, f) {
-    var o = document.createElement("input")
-    o.type = "search"
-    o.incremental = true
-    o.autocomplete = "off"
-    o.setAttribute("results", "")
-    return append(Search, x, o, f)
+    return call(f, e)
   }
 
   function image(x, f) {
     var o = document.createElement("img")
-    return append(Image, x, o, f)
+    x[element].appendChild(o)
+    //calculate(x)
+    return call(f, make(Image, o))
   }
 
-  function div(x, f) {
+  function panel(f) {
     var o = document.createElement("div")
-    return append(Block, x, o, f)
-  }
-
-  function span(x, f) {
-    var o = document.createElement("span")
-    return append(Block, x, o, f)
+    o.className = "panel"
+    document.body.appendChild(o)
+    return call(f, make(Panel, o))
   }
 
   function calc() {
     // TODO
-    return "-webkit-calc(" + join(arguments, 0) + ")"
+    return "calc(" + join(arguments, 0) + ")"
+  }
+
+  function gradient(x) {
+    var r = [x]
+    ;[].slice.call(arguments, 1).forEach(function (a) {
+      r.push(a[1] + " " + a[0])
+    })
+    // TODO
+    return "-moz-linear-gradient(" + r.join(",") + ")"
+  }
+
+  function repeatingGradient(x) {
+    var r = [x]
+    ;[].slice.call(arguments, 1).forEach(function (a) {
+      r.push(a[1] + " " + a[0])
+    })
+    // TODO
+    return "-moz-repeating-linear-gradient(" + r.join(",") + ")"
   }
 
   // TODO not completely ideal, but it's the best I've come up with so far...
@@ -801,23 +812,19 @@ define(["./name", "./cell"], function (name, cell) {
     })
   }
 
-  function rule(f) {
-    var o = new Rule()
-    f(o)
-    return o
-  }
-
   return Object.create({
+    gradient: gradient,
+    repeatingGradient: repeatingGradient,
+    calc: calc,
+    exclude: exclude,
+    //highestZIndex: highestZIndex,
+
     normalize: normalize,
+    box: box,
     horiz: horiz,
     vert: vert,
     search: search,
     image: image,
-    div: div,
-    span: span,
-    highestZIndex: highestZIndex,
-    calc: calc,
-    exclude: exclude,
-    rule: rule,
+    panel: panel,
   })
 })
