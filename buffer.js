@@ -16,6 +16,14 @@ define(["./iter"], function (iter) {
     return r
   }
 
+  function loc(x, y) {
+    return {
+      source: x.source,
+      start: x.start,
+      end: y.end
+    }
+  }
+
   // Buffers a string by line and keeps track of line and column information
   // This is useful for error messages
   // Can also be used as an iterator that moves through the string one character at a time
@@ -144,5 +152,6 @@ define(["./iter"], function (iter) {
   return Object.freeze({
     Buffer: Buffer,
     Error: BufferError,
+    loc: loc,
   })
 })
