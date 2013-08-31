@@ -93,7 +93,7 @@ define(["./name", "./object"], function (name, object) {
 
   function forin(x, f) {
     each(items(x), function (a) {
-      return f(a[0], a[1])
+      f(a[0], a[1])
     })
   }
 
@@ -293,6 +293,7 @@ define(["./name", "./object"], function (name, object) {
 
     // Non-standard
     //peek: peek,
+    toIterator: toIterator,
     each: each, // TODO maybe rename to forOf or forof ?
     some: some,
     every: every,

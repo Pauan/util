@@ -8,6 +8,8 @@ define(["./name", "./object"], function (name, object) {
     , info   = new name.Name()
     , saved  = new name.Name()
     , get    = new name.Name()
+    , array  = new name.Name()
+    , func   = new name.Name()
 
   //var skip = {}
 
@@ -33,17 +35,22 @@ define(["./name", "./object"], function (name, object) {
       }
     }
   }
+  
+  function unbind() {
+    var a = this[array]
+      , f = this[func]
+    for (var i = 0, iLen = a.length; i < iLen; ++i) {
+      unbind1(a[i], f)
+    }
+  }
 
-  // TODO closure
   function binder(o, a, f) {
     for (var i = 0, iLen = a.length; i < iLen; ++i) {
       bind1(a[i], f)
     }
-    o.unbind = function () {
-     for (var i = 0, iLen = a.length; i < iLen; ++i) {
-        unbind1(a[i], f)
-      }
-    }
+    o[array] = a
+    o[func]  = f
+    o.unbind = unbind
   }
 
   function Value(x, obj) {

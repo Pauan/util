@@ -1,4 +1,3 @@
-// TODO search for uses of "webkit" and remove when I can
 define(["./name", "./cell"], function (name, cell) {
   "use strict";
 
@@ -25,6 +24,51 @@ define(["./name", "./cell"], function (name, cell) {
 
     return f(sheet.cssRules[sheet.cssRules.length - 1].style)
   }
+  
+  /*function testStyle(prop, a, s) {
+    var e = document.createElement("div")
+    for (var i = 0, iLen = a.length; i < iLen; ++i) {
+      e.style[prop] = a[i] + s
+      if (e.style[prop] === a[i] + s) {
+        return a[i]
+      }
+    }
+  }
+  
+  var calcStyle = testStyle("width",
+                            ["calc",
+                             "-webkit-calc"],
+                            "(100%)")
+  
+  var linearGradientStyle = testStyle("backgroundImage",
+                                      ["linear-gradient",
+                                       "-webkit-linear-gradient"],
+                                      "(blue, red)")
+
+  var repeatingLinearGradientStyle = testStyle("backgroundImage",
+                                               ["repeating-linear-gradient",
+                                                "-webkit-repeating-linear-gradient"],
+                                               "(blue, red)")
+  
+  var reverse = {
+    "top": "bottom",
+    "bottom": "top",
+    "left": "right",
+    "right": "left"
+  }
+  
+  function reverseGradient(s, prop) {
+    var a = s.split(/ +/)
+    if (a[0] === "to" && /^\-webkit\-/.test(prop)) {
+      return a.slice(1).map(function (x) {
+        return reverse[x]
+      }).join(" ")
+    } else {
+      return s
+    }
+  }
+  
+  console.log(calcStyle, linearGradientStyle, repeatingLinearGradientStyle)*/
 
   /*function makeSet(Block, name, s) {
     Block.prototype[name] = function (s2) {
@@ -240,6 +284,9 @@ define(["./name", "./cell"], function (name, cell) {
   }
 
   var Box = {
+    nextElement: function () {
+      return this[element].nextElementChild[element]
+    },
     stretch: function () {
       this[element].style.flexGrow = "1"
       this[element].style.flexShrink = "1"
@@ -571,45 +618,47 @@ define(["./name", "./cell"], function (name, cell) {
   }
 
   function normalize(document, f) {
-    document.body.className = "vert box"
+    document.body.className = "vert"
 
     addRule(document, "html, body", function (o) {
       //o.margin = "0px"
       o.width = "100%"
       o.height = "100%"
     })
+    
+    addRule(document, "*", function (o) {
+      o.margin = "0px"
+      o.padding = "0px"
+      
+      o.MozBoxSizing = "border-box" // TODO
+      o.boxSizing = "border-box"
+      
+      o.backgroundSize = "100% 100%"
+      o.textOverflow = "ellipsis"
+      o.overflow = "hidden"
+      
+      o.cursor = "default"
+    })
 
     addRule(document, "[hidden]", function (o) {
       o.setProperty("display", "none", "important")
-    })
-
-    addRule(document, "*", function (o) {
-
     })
 
     addRule(document, "input[type=search]", function (o) {
       o.border = "none"
       o.outline = "none"
       //o.margin = "0px"
+      
+      o.cursor = "auto"
     })
 
     addRule(document, ".box", function (o) {
-      o.margin = "0px"
-      o.padding = "0px"
-
       o.whiteSpace = "pre" // TODO
-
-      o.MozBoxSizing = "border-box" // TODO
-      o.boxSizing = "border-box"
 
       // TODO I wish there was a way to get rid of these two
       o.borderWidth = "0px"
       o.borderColor = "transparent"
       o.borderStyle = "solid"
-
-      o.backgroundSize = "100% 100%"
-      o.textOverflow = "ellipsis"
-      o.overflow = "hidden"
 
       o.flexGrow = "0"
       o.flexShrink = "0"
@@ -657,7 +706,7 @@ define(["./name", "./cell"], function (name, cell) {
       o.zIndex = highestZIndex
     })
 
-    var observer = new MutationObserver(function (a) {
+    new MutationObserver(function (a) {
       a.forEach(function (x) {
         if (x.type === "childList") {
           ;[].forEach.call(x.removedNodes, function (x) {
@@ -710,6 +759,7 @@ define(["./name", "./cell"], function (name, cell) {
 
   function box(x, f) {
     var o = document.createElement("div")
+    o.className = "box"
     x[element].appendChild(o)
     //calculate(x)
     return call(f, make(Box, o))
@@ -717,7 +767,7 @@ define(["./name", "./cell"], function (name, cell) {
 
   function horiz(x, f) {
     var o = document.createElement("div")
-    o.className = "horiz"
+    o.className = "box horiz"
     x[element].appendChild(o)
     //calculate(x)
     return call(f, make(Box, o))
@@ -725,7 +775,7 @@ define(["./name", "./cell"], function (name, cell) {
 
   function vert(x, f) {
     var o = document.createElement("div")
-    o.className = "vert"
+    o.className = "box vert"
     x[element].appendChild(o)
     //calculate(x)
     return call(f, make(Box, o))
@@ -733,6 +783,7 @@ define(["./name", "./cell"], function (name, cell) {
 
   function search(x, f) {
     var o = document.createElement("input")
+    o.className = "box"
     o.type = "search"
     o.incremental = true
     o.autocomplete = "off"
@@ -770,6 +821,7 @@ define(["./name", "./cell"], function (name, cell) {
 
   function image(x, f) {
     var o = document.createElement("img")
+    o.className = "box"
     x[element].appendChild(o)
     //calculate(x)
     return call(f, make(Image, o))
@@ -777,13 +829,12 @@ define(["./name", "./cell"], function (name, cell) {
 
   function panel(f) {
     var o = document.createElement("div")
-    o.className = "panel"
+    o.className = "box panel"
     document.body.appendChild(o)
     return call(f, make(Panel, o))
   }
 
   function calc() {
-    // TODO
     return "calc(" + join(arguments, 0) + ")"
   }
 
@@ -792,8 +843,7 @@ define(["./name", "./cell"], function (name, cell) {
     ;[].slice.call(arguments, 1).forEach(function (a) {
       r.push(a[1] + " " + a[0])
     })
-    // TODO
-    return "-moz-linear-gradient(" + r.join(",") + ")"
+    return "linear-gradient(" + r.join(",") + ")"
   }
 
   function repeatingGradient(x) {
@@ -801,8 +851,7 @@ define(["./name", "./cell"], function (name, cell) {
     ;[].slice.call(arguments, 1).forEach(function (a) {
       r.push(a[1] + " " + a[0])
     })
-    // TODO
-    return "-moz-repeating-linear-gradient(" + r.join(",") + ")"
+    return "repeating-linear-gradient(" + r.join(",") + ")"
   }
 
   // TODO not completely ideal, but it's the best I've come up with so far...
