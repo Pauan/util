@@ -1,4 +1,4 @@
-define("url", function () {
+define(function () {
   "use strict";
 
   // TODO: doesn't handle ALL URL syntax, only the most common
