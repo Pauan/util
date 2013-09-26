@@ -25,8 +25,8 @@ define(function () {
   function simplify(x) {
     var y = {}
     
-    if (x.protocol === "https://") {
-      y.protocol = "http://"
+    if (x.protocol === "http://" || x.protocol === "https://") {
+      y.protocol = ""
     } else {
       y.protocol = x.protocol
     }
