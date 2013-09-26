@@ -23,6 +23,21 @@ define(["./iter"], function (iter) {
       end: y.end
     }
   }
+  
+  // Takes any array-like object and returns a Reader, which has a `has`, `peek`, and `read` methods.
+  function Reader(a) {
+    this.input = a
+    this.index = 0
+  }
+  Reader.prototype.has = function () {
+    return this.index < this.input.length
+  }
+  Reader.prototype.peek = function () {
+    return this.input[this.index]
+  }
+  Reader.prototype.read = function () {
+    return this.input[this.index++]
+  }
 
   // Buffers a string by line and keeps track of line and column information
   // This is useful for error messages
@@ -150,6 +165,7 @@ define(["./iter"], function (iter) {
   BufferError.prototype.name = "buffer.Error"
 
   return Object.freeze({
+    Reader: Reader,
     Buffer: Buffer,
     Error: BufferError,
     loc: loc,

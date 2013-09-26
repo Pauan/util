@@ -151,6 +151,9 @@ define(["./name", "./cell"], function (name, cell) {
   }
 
   var stylePadding = {
+    all: function (s) {
+      this[element].style.padding = s
+    },
     left: function (s) {
       this[element].style.paddingLeft = s
     },
@@ -168,6 +171,30 @@ define(["./name", "./cell"], function (name, cell) {
     },
     horizontal: function (s) {
       this[element].style.paddingLeft = this[element].style.paddingRight = s
+    }
+  }
+  
+  var styleMargin = {
+    all: function (s) {
+      this[element].style.margin = s
+    },
+    left: function (s) {
+      this[element].style.marginLeft = s
+    },
+    top: function (s) {
+      this[element].style.marginTop = s
+    },
+    right: function (s) {
+      this[element].style.marginRight = s
+    },
+    bottom: function (s) {
+      this[element].style.marginBottom = s
+    },
+    vertical: function (s) {
+      this[element].style.marginTop = this[element].style.marginBottom = s
+    },
+    horizontal: function (s) {
+      this[element].style.marginLeft = this[element].style.marginRight = s
     }
   }
 
@@ -282,10 +309,46 @@ define(["./name", "./cell"], function (name, cell) {
       this[element].style.transitionTimingFunction = join(arguments, 0, ",")
     }
   }
+  
+  //var animations = []
 
   var Box = {
-    nextElement: function () {
+    previous: function () {
+      var e = this[element].previousSibling
+      while (true) {
+        if (e) {
+          if (element in e) {
+            return e[element]
+          } else {
+            e = e.previousSibling
+          }
+        } else {
+          return e
+        }
+      }
+    },
+    next: function () {
+      var e = this[element].nextSibling
+      while (true) {
+        if (e) {
+          if (element in e) {
+            return e[element]
+          } else {
+            e = e.nextSibling
+          }
+        } else {
+          return e
+        }
+      }
+    },
+    dom: function () {
+      return this[element]
+    },
+    /*nextElement: function () {
       return this[element].nextElementChild[element]
+    },*/
+    transform: function (s) {
+      this[element].style.transform = s
     },
     stretch: function () {
       this[element].style.flexGrow = "1"
@@ -333,8 +396,26 @@ define(["./name", "./cell"], function (name, cell) {
       }, true)
     },
     move: function (e) {
-      this[element].appendChild(e[element])
+      e[element].appendChild(this[element])
     },
+    moveBefore: function (e, x) {
+      if (x) {
+        e[element].insertBefore(this[element], x[element])
+      } else {
+        e[element].appendChild(this[element])
+      }
+    },
+    replace: function (e) {
+      e[element].parentNode.replaceChild(this[element], e[element])
+    },
+    /*getChildren: function () {
+      // TODO inefficient
+      return [].filter.call(this[element].children, function (x) {
+        return element in x
+      }).map(function (x) {
+        return x[element]
+      })
+    },*/
 
     border: function (f) {
       var o = Object.create(styleBorder)
@@ -349,6 +430,11 @@ define(["./name", "./cell"], function (name, cell) {
     },
     padding: function (f) {
       var o = Object.create(stylePadding)
+      o[element] = this[element]
+      f(o)
+    },
+    margin: function (f) {
+      var o = Object.create(styleMargin)
       o[element] = this[element]
       f(o)
     },
@@ -430,13 +516,20 @@ define(["./name", "./cell"], function (name, cell) {
       }
     },
     bind: function (a, f) {
-      this[bindings].push(cell.bind(a, f))
+      var o = cell.bind(a, f)
+      this[bindings].push(o)
+      return o
     },
     event: function (a, f) {
-      this[bindings].push(cell.event(a, f))
+      var o = cell.event(a, f)
+      this[bindings].push(o)
+      return o
     },
     title: function (s) {
       this[element].title = s
+    },
+    isHidden: function () {
+      return this[element].hidden
     },
     hide: function () {
       this[element].hidden = true
@@ -624,6 +717,8 @@ define(["./name", "./cell"], function (name, cell) {
       //o.margin = "0px"
       o.width = "100%"
       o.height = "100%"
+      
+      o.cursor = "default"
     })
     
     addRule(document, "*", function (o) {
@@ -636,8 +731,6 @@ define(["./name", "./cell"], function (name, cell) {
       o.backgroundSize = "100% 100%"
       o.textOverflow = "ellipsis"
       o.overflow = "hidden"
-      
-      o.cursor = "default"
     })
 
     addRule(document, "[hidden]", function (o) {
@@ -650,6 +743,10 @@ define(["./name", "./cell"], function (name, cell) {
       //o.margin = "0px"
       
       o.cursor = "auto"
+      
+      // TODO
+      o.backgroundColor = "white"
+      o.color = "black"
     })
 
     addRule(document, ".box", function (o) {
@@ -672,6 +769,7 @@ define(["./name", "./cell"], function (name, cell) {
     addRule(document, ".horiz", function (o) {
       o.display = "flex"
       o.flexDirection = "row"
+      //o.alignItems = "center"
       //o.display = "inline-block"
       //o.cssFloat = "left"
       //o.display = "table"
@@ -757,38 +855,34 @@ define(["./name", "./cell"], function (name, cell) {
     })
   }*/
 
-  function box(x, f) {
+  function box(f) {
     var o = document.createElement("div")
     o.className = "box"
-    x[element].appendChild(o)
     //calculate(x)
     return call(f, make(Box, o))
   }
 
-  function horiz(x, f) {
+  function horiz(f) {
     var o = document.createElement("div")
     o.className = "box horiz"
-    x[element].appendChild(o)
     //calculate(x)
     return call(f, make(Box, o))
   }
 
-  function vert(x, f) {
+  function vert(f) {
     var o = document.createElement("div")
     o.className = "box vert"
-    x[element].appendChild(o)
     //calculate(x)
     return call(f, make(Box, o))
   }
 
-  function search(x, f) {
+  function search(f) {
     var o = document.createElement("input")
     o.className = "box"
     o.type = "search"
     o.incremental = true
     o.autocomplete = "off"
     o.setAttribute("results", "")
-    x[element].appendChild(o)
     //calculate(x)
 
     var e = make(Box, o)
@@ -802,14 +896,15 @@ define(["./name", "./cell"], function (name, cell) {
           self.set(o.value)
         }
 
-        o.addEventListener("search", search, true)
+        // TODO should use "search" event
+        o.addEventListener("keyup", search, true)
 
         return {
           search: search
         }
       },
       unbind: function (e) {
-        o.removeEventListener("search", e.search, true)
+        o.removeEventListener("keyup", e.search, true)
       },
       set: function (self, x) {
         o.value = x
@@ -819,10 +914,9 @@ define(["./name", "./cell"], function (name, cell) {
     return call(f, e)
   }
 
-  function image(x, f) {
+  function image(f) {
     var o = document.createElement("img")
     o.className = "box"
-    x[element].appendChild(o)
     //calculate(x)
     return call(f, make(Image, o))
   }
@@ -860,6 +954,14 @@ define(["./name", "./cell"], function (name, cell) {
       return !x || !e[element].contains(x[element])
     })
   }
+  
+  function width() {
+    return document.documentElement.offsetWidth
+  }
+  
+  function height() {
+    return document.documentElement.offsetHeight
+  }
 
   return Object.create({
     gradient: gradient,
@@ -875,5 +977,8 @@ define(["./name", "./cell"], function (name, cell) {
     search: search,
     image: image,
     panel: panel,
+    
+    width: width,
+    height: height,
   })
 })

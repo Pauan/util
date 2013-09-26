@@ -201,17 +201,25 @@ define(["./name", "./object"], function (name, object) {
   }
 
   function range(min, max) {
-    if (min > max) {
-      var temp = min
-      min = max
-      max = min
-    }
     return makeIterator(function () {
       if (min < max) {
         return min++
+      } else if (min > max) {
+        return min--
       } else {
         throw new StopIteration()
       }
+    })
+  }
+  
+  function zip() {
+    var a = [].map.call(arguments, function (x) {
+      return toIterator(x)
+    })
+    return makeIterator(function () {
+      return a.map(function (x) {
+        return x.next()
+      })
     })
   }
 
@@ -305,5 +313,6 @@ define(["./name", "./object"], function (name, object) {
     pair: pair,
     dedupe: dedupe,
     range: range,
+    zip: zip,
   }
 })

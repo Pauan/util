@@ -11,6 +11,9 @@ define(["./name", "./object", "./iter"], function (name, object, iter) {
     this[sort]  = f
     this[array] = []
   }
+  SortedArray.prototype.has = function (x) {
+    return this[array].indexOf(x) !== -1
+  }
   SortedArray.prototype.indexOf = function (x) {
     return this[array].indexOf(x)
   }
@@ -30,15 +33,21 @@ define(["./name", "./object", "./iter"], function (name, object, iter) {
     }
     return a.push(x) - 1
   }
+  SortedArray.prototype.remove = function (x) {
+    var i = this[array].indexOf(x)
+    if (i !== -1) {
+      this[array].splice(i, 1)
+    }
+  }
   SortedArray.prototype.sort = function (f) {
     this[sort] = f
     this[array].sort(function (x, y) {
       if (object.is(x, y)) {
         return 0
       } else if (f(x, y)) {
-        return 1
-      } else {
         return -1
+      } else {
+        return 1
       }
     })
   }
@@ -46,7 +55,5 @@ define(["./name", "./object", "./iter"], function (name, object, iter) {
     return iter.toIterator(this[array])
   }
   
-  return Object.freeze({
-    SortedArray: SortedArray,
-  })
+  return SortedArray
 })

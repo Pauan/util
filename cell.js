@@ -183,24 +183,23 @@ define(["./name", "./object"], function (name, object) {
     return o
   }
 
-  // Takes an array of signals and a function
-  // When all of the signals have a truthy value,
-  // the function is called with the values of the signals
-  function when(a, f) {
-    bind(a, function () {
-      for (var i = 0, iLen = arguments.length; i < iLen; ++i) {
-        if (!arguments[i]) {
-          return
+  // Takes a signal and a function
+  // When the signal has a truthy value,
+  // the function is called with the value of the signal
+  function when(x, f) {
+    var y = x.get()
+    if (y) {
+      f(y)
+    } else {
+      var o = {}
+      binder(o, [x], function (x) {
+        if (x) {
+          o.unbind() // TODO a little hacky
+          f(x)
         }
-      }
-      //try {
-        f.apply(null, arguments)
-      /*} catch (e) {
-        if (e !== skip) {
-          throw e
-        }
-      }*/
-    })
+      })
+    }
+    //return o
   }
 
   // Takes one or more signals; returns a signal
@@ -255,6 +254,30 @@ define(["./name", "./object"], function (name, object) {
       return y.get()
     })
   }
+  
+  // Takes 1 or more signals, returns the logical OR of the values
+  function or() {
+    return bind([].slice.call(arguments), function () {
+      for (var i = 0, iLen = arguments.length; i < iLen; ++i) {
+        if (arguments[i]) {
+          return true
+        }
+      }
+      return false
+    })
+  }
+  
+  // Takes 1 or more signals, returns the logical AND of the values
+  function and() {
+    return bind([].slice.call(arguments), function () {
+      for (var i = 0, iLen = arguments.length; i < iLen; ++i) {
+        if (!arguments[i]) {
+          return false
+        }
+      }
+      return true
+    })
+  }
 
   return Object.freeze({
     value: value,
@@ -269,5 +292,7 @@ define(["./name", "./object"], function (name, object) {
     dedupe: dedupe,
     map: map,
     sample: sample,
+    or: or,
+    and: and,
   })
 })
