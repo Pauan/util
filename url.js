@@ -17,9 +17,33 @@ define(function () {
       return r
     }
   }
+  
+  function toString(x) {
+    return x.protocol + x.authority + x.domain + x.port + x.path + x.file + x.query + x.hash
+  }
+  
+  function simplify(x) {
+    var y = {}
+    
+    y.protocol = x.protocol
+    y.authority = x.authority
+    
+    // http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
+    y.domain = x.domain.replace(/^www\.|\.\w\w$/g, "") // .co.uk
+                       .replace(/\.(?:aero|asia|biz|cat|com|co|coop|info|int|jobs|mobi|museum|name|net|org|pro|tel|travel|xxx|edu|gov|mil)$/, "")
+                       // TODO: is this needed?
+                       .replace(/\.\w\w$/, "") // .ac.edu
+    
+    y.port = x.port
+    y.path = x.path
+    y.file = x.file
+    y.query = x.query
+    y.hash = x.hash
+    return y
+  }
 
   function minify(x) {
-    var y = {}
+    var y = simplify(x)
 
     if (x.protocol === "http://" || x.protocol === "https://") {
       y.protocol = ""
@@ -27,38 +51,17 @@ define(function () {
       y.protocol = x.protocol
     }
 
-    y.authority = x.authority
-
-    // TODO: code duplication with reallyMinifyURL
-    // http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
-    y.domain = x.domain.replace(/^www\.|\.\w\w$/g, "") // .co.uk
-                       .replace(/\.(?:aero|asia|biz|cat|com|co|coop|info|int|jobs|mobi|museum|name|net|org|pro|tel|travel|xxx|edu|gov|mil)$/, "")
-                       // TODO: is this needed?
-                       .replace(/\.\w\w$/, "") // .ac.edu
-
-    y.port = x.port
-
     return y
   }
 
   function superMinify(x) {
-    var y = {}
+    var y = simplify(x)
 
     if (x.protocol === "http://" || x.protocol === "https://") {
       y.protocol = ""
     } else if (x.protocol) {
       y.protocol = x.protocol.replace(/:\/\/$/, "") + " "
     }
-
-    y.authority = x.authority
-
-    // http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
-    y.domain = x.domain.replace(/^www\.|\.\w\w$/g, "") // .co.uk
-                       .replace(/\.(?:aero|asia|biz|cat|com|co|coop|info|int|jobs|mobi|museum|name|net|org|pro|tel|travel|xxx|edu|gov|mil)$/, "")
-                       // TODO: is this needed?
-                       .replace(/\.\w\w$/, "") // .ac.edu
-
-    y.port = x.port
 
     if (x.path === "/") {
       y.path = ""
@@ -87,6 +90,8 @@ define(function () {
   }
 
   return Object.freeze({
+    toString: toString,
+    simplify: simplify,
     parse: parse,
     minify: minify,
     superMinify: superMinify,
