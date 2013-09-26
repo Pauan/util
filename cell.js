@@ -182,6 +182,16 @@ define(["./name", "./object"], function (name, object) {
     })
     return o
   }
+  
+  function mapfilter(init, x, filter, map) {
+    var o = value(init)
+    binder(o, [x], function (x) {
+      if (filter(x)) {
+        o.set(map(x))
+      }
+    })
+    return o
+  }
 
   // Takes a signal and a function
   // When the signal has a truthy value,
@@ -286,6 +296,7 @@ define(["./name", "./object"], function (name, object) {
     bind: bind,
     fold: fold,
     filter: filter,
+    mapfilter: mapfilter,
     when: when,
     merge: merge,
     delay: delay,
