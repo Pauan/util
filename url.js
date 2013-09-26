@@ -25,7 +25,12 @@ define(function () {
   function simplify(x) {
     var y = {}
     
-    y.protocol = x.protocol
+    if (x.protocol === "https://") {
+      y.protocol = "http://"
+    } else {
+      y.protocol = x.protocol
+    }
+
     y.authority = x.authority
     
     // http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
@@ -39,18 +44,6 @@ define(function () {
     y.file = x.file
     y.query = x.query
     y.hash = x.hash
-    return y
-  }
-
-  function minify(x) {
-    var y = simplify(x)
-
-    if (x.protocol === "http://" || x.protocol === "https://") {
-      y.protocol = ""
-    } else {
-      y.protocol = x.protocol
-    }
-
     return y
   }
 
@@ -93,7 +86,6 @@ define(function () {
     toString: toString,
     simplify: simplify,
     parse: parse,
-    minify: minify,
     superMinify: superMinify,
   })
 })
