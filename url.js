@@ -47,7 +47,7 @@ define(function () {
     return y
   }
 
-  function superMinify(x) {
+  function minify(x) {
     var y = simplify(x)
 
     if (x.protocol === "http://" || x.protocol === "https://") {
@@ -86,6 +86,6 @@ define(function () {
     toString: toString,
     simplify: simplify,
     parse: parse,
-    superMinify: superMinify,
+    minify: minify,
   })
 })
