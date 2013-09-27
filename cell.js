@@ -66,7 +66,7 @@ define(["./name", "./object"], function (name, object) {
     if (this[info].set != null) {
       this[info].set(this, v)
     }
-    var a = this[events]
+    var a = this[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
     for (var i = 0, iLen = a.length; i < iLen; ++i) {
       a[i](v)
     }
