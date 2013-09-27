@@ -405,9 +405,9 @@ define(["./name", "./cell"], function (name, cell) {
         e[element].appendChild(this[element])
       }
     },
-    replace: function (e) {
+    /*replace: function (e) {
       e[element].parentNode.replaceChild(this[element], e[element])
-    },
+    },*/
     /*getChildren: function () {
       // TODO inefficient
       return [].filter.call(this[element].children, function (x) {
