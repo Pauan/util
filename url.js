@@ -55,24 +55,21 @@ define(function () {
     } else if (x.protocol) {
       y.protocol = x.protocol.replace(/:\/\/$/, "") + " "
     }
-
-    if (x.path === "/") {
-      y.path = ""
-    // TODO: should this be run even if `x` is "" ?
-    } else if (x.path && !x.file && !x.query) {
-      y.path = " " + decodeURIComponent(x.path)
-    }
-
-    if (x.file && !x.query) {
-      y.file = " " + decodeURIComponent(x.file).replace(/\.(?:html?|php|asp)$/, "")
-                                               .replace(/_|\-/g, " ")
-    }
+    
+    y.path = ""
+    y.file = ""
+    y.query = ""
 
     if (x.query) {
       y.query = " " + decodeURIComponent(x.query).replace(/^\?/, "")
                                                  .replace(/\+/g, " ")
                                                  .replace(/=/g, ": ")
                                                  .replace(/&/g, " | ")
+    } else if (x.file) {
+      y.file = " " + decodeURIComponent(x.file).replace(/\.(?:html?|php|asp)$/, "")
+                                               .replace(/_|\-/g, " ")
+    } else if (x.path && x.path !== "/") {
+      y.path = " " + decodeURIComponent(x.path)
     }
 
     if (x.hash) {
