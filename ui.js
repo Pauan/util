@@ -588,6 +588,7 @@ define(["./name", "./cell"], function (name, cell) {
     e.mouseclick = cell.value(undefined, {
       bind: function (self) {
         function click(e) {
+          console.log(e)
           e.preventDefault()
           var oEvent = { left:   (e.button === 0)
                        , middle: (e.button === 1)
@@ -597,6 +598,7 @@ define(["./name", "./cell"], function (name, cell) {
         }
 
         function contextmenu(e) {
+          console.log(e)
           e.preventDefault()
           var oEvent = { left:   false
                        , middle: false
