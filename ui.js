@@ -7,7 +7,7 @@ define(["./name", "./cell"], function (name, cell) {
 
   var highestZIndex = "2147483647" /* 32-bit signed int */
 
-  var element  = new name.Name()
+  var _e       = new name.Name()
     , bindings = new name.Name()
 
   function isOver(self, e) {
@@ -72,20 +72,20 @@ define(["./name", "./cell"], function (name, cell) {
 
   /*function makeSet(Block, name, s) {
     Block.prototype[name] = function (s2) {
-      this[element].style[s] = s2
+      this[_e].style[s] = s2
     }
   }
 
   function makeJoin(Block, name, s, s2) {
     Block.prototype[name] = function () {
-      this[element].style[s] = join(arguments, 0, s2)
+      this[_e].style[s] = join(arguments, 0, s2)
     }
   }*/
 
   // TODO closure
   function makeBorderSide(name) {
     return function (f) {
-      var style = this[element].style
+      var style = this[_e].style
       f({
         size: function (s) {
           style[name + "Width"] = s
@@ -103,7 +103,7 @@ define(["./name", "./cell"], function (name, cell) {
   // TODO closure
   function makeBorderCorner(name) {
     return function (f) {
-      var style = this[element].style
+      var style = this[_e].style
       f({
         rounded: function (s) {
           style[name + "Radius"] = s
@@ -122,115 +122,115 @@ define(["./name", "./cell"], function (name, cell) {
     bottomRight: makeBorderCorner("borderBottomRight"),
     bottomLeft: makeBorderCorner("borderBottomLeft"),
     rounded: function (s) {
-      this[element].style.borderRadius = s
+      this[_e].style.borderRadius = s
     },
     style: function (s) {
-      this[element].style.borderStyle = s
+      this[_e].style.borderStyle = s
     },
     size: function (s) {
-      this[element].style.borderWidth = s
+      this[_e].style.borderWidth = s
     },
     color: function (s) {
-      this[element].style.borderColor = s
+      this[_e].style.borderColor = s
     },
     remove: function () {
-      this[element].style.border = "none"
+      this[_e].style.border = "none"
     }
   }
 
   var styleMove = {
     left: function (s) {
-      this[element].style.left = s
+      this[_e].style.left = s
     },
     top: function (s) {
-      this[element].style.top = s
+      this[_e].style.top = s
     },
     right: function (s) {
-      this[element].style.right = s
+      this[_e].style.right = s
     },
     bottom: function (s) {
-      this[element].style.bottom = s
+      this[_e].style.bottom = s
     }
   }
 
   var stylePadding = {
     all: function (s) {
-      this[element].style.padding = s
+      this[_e].style.padding = s
     },
     left: function (s) {
-      this[element].style.paddingLeft = s
+      this[_e].style.paddingLeft = s
     },
     top: function (s) {
-      this[element].style.paddingTop = s
+      this[_e].style.paddingTop = s
     },
     right: function (s) {
-      this[element].style.paddingRight = s
+      this[_e].style.paddingRight = s
     },
     bottom: function (s) {
-      this[element].style.paddingBottom = s
+      this[_e].style.paddingBottom = s
     },
     vertical: function (s) {
-      this[element].style.paddingTop = this[element].style.paddingBottom = s
+      this[_e].style.paddingTop = this[_e].style.paddingBottom = s
     },
     horizontal: function (s) {
-      this[element].style.paddingLeft = this[element].style.paddingRight = s
+      this[_e].style.paddingLeft = this[_e].style.paddingRight = s
     }
   }
   
   var styleMargin = {
     all: function (s) {
-      this[element].style.margin = s
+      this[_e].style.margin = s
     },
     left: function (s) {
-      this[element].style.marginLeft = s
+      this[_e].style.marginLeft = s
     },
     top: function (s) {
-      this[element].style.marginTop = s
+      this[_e].style.marginTop = s
     },
     right: function (s) {
-      this[element].style.marginRight = s
+      this[_e].style.marginRight = s
     },
     bottom: function (s) {
-      this[element].style.marginBottom = s
+      this[_e].style.marginBottom = s
     },
     vertical: function (s) {
-      this[element].style.marginTop = this[element].style.marginBottom = s
+      this[_e].style.marginTop = this[_e].style.marginBottom = s
     },
     horizontal: function (s) {
-      this[element].style.marginLeft = this[element].style.marginRight = s
+      this[_e].style.marginLeft = this[_e].style.marginRight = s
     }
   }
 
   /*var stylePanel = {
     left: function (s) {
-      this[element].style.left = s
+      this[_e].style.left = s
     },
     top: function (s) {
-      this[element].style.top = s
+      this[_e].style.top = s
     },
     right: function (s) {
-      this[element].style.right = s
+      this[_e].style.right = s
     },
     bottom: function (s) {
-      this[element].style.bottom = s
+      this[_e].style.bottom = s
     }
   }*/
 
   var styleFont = {
     font: function () {
-      this[element].style.fontFamily = join(arguments, 0, ",")
+      this[_e].style.fontFamily = join(arguments, 0, ",")
     },
     size: function (s) {
       if (arguments.length > 1) {
         throw new Error() // TODO
       }
-      this[element].style.fontSize = s
+      this[_e].style.fontSize = s
     },
     weight: function (s) {
-      this[element].style.fontWeight = s
+      this[_e].style.fontWeight = s
     },
     color: function (s) {
-      this[element].style.color = s
+      this[_e].style.color = s
     },
     // TODO closure
     shadow: function (f) {
@@ -266,19 +266,19 @@ define(["./name", "./cell"], function (name, cell) {
                (blur.pop() || "0px") + " " +
                color.pop())
       }
-      this[element].style.textShadow = r.join(",")
+      this[_e].style.textShadow = r.join(",")
     }
   }
 
   var styleBackground = {
     repeat: function (s) {
-      this[element].style.backgroundRepeat = s
+      this[_e].style.backgroundRepeat = s
     },
     color: function (s) {
       if (arguments.length > 1) {
         throw new Error() // TODO
       }
-      this[element].style.backgroundColor = s
+      this[_e].style.backgroundColor = s
     },
     // TODO closure
     position: function (f) {
@@ -297,22 +297,22 @@ define(["./name", "./cell"], function (name, cell) {
         r.push((left.pop() || "0px") + " " +
                (top.pop()  || "0px"))
       }
-      this[element].style.backgroundPosition = r.join(",")
+      this[_e].style.backgroundPosition = r.join(",")
     },
     image: function () {
-      this[element].style.backgroundImage = join(arguments, 0, ",")
+      this[_e].style.backgroundImage = join(arguments, 0, ",")
     }
   }
 
   var styleTransition = {
     duration: function () {
-      this[element].style.transitionDuration = join(arguments, 0, ",")
+      this[_e].style.transitionDuration = join(arguments, 0, ",")
     },
     property: function () {
-      this[element].style.transitionProperty = join(arguments, 0, ",")
+      this[_e].style.transitionProperty = join(arguments, 0, ",")
     },
     timingFunction: function () {
-      this[element].style.transitionTimingFunction = join(arguments, 0, ",")
+      this[_e].style.transitionTimingFunction = join(arguments, 0, ",")
     }
   }
   
@@ -320,11 +320,11 @@ define(["./name", "./cell"], function (name, cell) {
 
   var Box = {
     previous: function () {
-      var e = this[element].previousSibling
+      var e = this[_e].previousSibling
       while (true) {
         if (e) {
-          if (element in e) {
-            return e[element]
+          if (_e in e) {
+            return e[_e]
           } else {
             e = e.previousSibling
           }
@@ -334,11 +334,11 @@ define(["./name", "./cell"], function (name, cell) {
       }
     },
     next: function () {
-      var e = this[element].nextSibling
+      var e = this[_e].nextSibling
       while (true) {
         if (e) {
-          if (element in e) {
-            return e[element]
+          if (_e in e) {
+            return e[_e]
           } else {
             e = e.nextSibling
           }
@@ -348,122 +348,122 @@ define(["./name", "./cell"], function (name, cell) {
       }
     },
     dom: function () {
-      return this[element]
+      return this[_e]
     },
     /*nextElement: function () {
-      return this[element].nextElementChild[element]
+      return this[_e].nextElementChild[_e]
     },*/
     transform: function (s) {
-      this[element].style.transform = s
+      this[_e].style.transform = s
     },
     stretch: function () {
-      this[element].style.flexGrow = "1"
-      this[element].style.flexShrink = "1"
-      this[element].style.flexBasis = "0%"
+      this[_e].style.flexGrow = "1"
+      this[_e].style.flexShrink = "1"
+      this[_e].style.flexBasis = "0%"
     },
     width: function (s) {
-      //this[element].style.width = s
+      //this[_e].style.width = s
       // TODO necessary due to tables
-      this[element].style.width/* = this[element].style.minWidth = this[element].style.maxWidth */= s
+      this[_e].style.width/* = this[_e].style.minWidth = this[_e].style.maxWidth */= s
     },
     height: function (s) {
-      //this[element].style.height = s
+      //this[_e].style.height = s
       // TODO necessary due to tables
-      this[element].style.height/* = this[element].style.minHeight = this[element].style.maxHeight */= s
+      this[_e].style.height/* = this[_e].style.minHeight = this[_e].style.maxHeight */= s
     },
     // TODO maybe remove these two
     maxWidth: function (s) {
-      this[element].style.maxWidth = s
+      this[_e].style.maxWidth = s
     },
     maxHeight: function (s) {
-      this[element].style.maxHeight = s
+      this[_e].style.maxHeight = s
     },
     scrollbars: function () {
-      this[element].style.overflow = "auto"
+      this[_e].style.overflow = "auto"
     },
     opacity: function (s) {
-      this[element].style.opacity = s
+      this[_e].style.opacity = s
     },
     cursor: function (s) {
-      this[element].style.cursor = s
+      this[_e].style.cursor = s
     },
     filter: function (s) {
       // TODO
-      this[element].style.webkitFilter = s
+      this[_e].style.webkitFilter = s
     },
     autofocus: function () {
-      this[element].autofocus = true
+      this[_e].autofocus = true
     },
     stopDragging: function () {
-      this[element].addEventListener("mousedown", function (e) {
+      this[_e].addEventListener("mousedown", function (e) {
         if (e.target.localName !== "input"/* && !e.target.draggable*/) {
           e.preventDefault()
         }
       }, true)
     },
     move: function (e) {
-      e[element].appendChild(this[element])
+      e[_e].appendChild(this[_e])
     },
     moveBefore: function (e, x) {
       if (x) {
-        e[element].insertBefore(this[element], x[element])
+        e[_e].insertBefore(this[_e], x[_e])
       } else {
-        e[element].appendChild(this[element])
+        e[_e].appendChild(this[_e])
       }
     },
     /*replace: function (e) {
-      e[element].parentNode.replaceChild(this[element], e[element])
+      e[_e].parentNode.replaceChild(this[_e], e[_e])
     },*/
     /*getChildren: function () {
       // TODO inefficient
-      return [].filter.call(this[element].children, function (x) {
-        return element in x
+      return [].filter.call(this[_e].children, function (x) {
+        return _e in x
       }).map(function (x) {
-        return x[element]
+        return x[_e]
       })
     },*/
 
     border: function (f) {
       var o = Object.create(styleBorder)
-      o[element] = this[element]
+      o[_e] = this[_e]
       f(o)
     },
     position: function (f) {
       var o = Object.create(styleMove)
-      o[element] = this[element]
-      this[element].style.position = "relative"
+      o[_e] = this[_e]
+      this[_e].style.position = "relative"
       f(o)
     },
     padding: function (f) {
       var o = Object.create(stylePadding)
-      o[element] = this[element]
+      o[_e] = this[_e]
       f(o)
     },
     margin: function (f) {
       var o = Object.create(styleMargin)
-      o[element] = this[element]
+      o[_e] = this[_e]
       f(o)
     },
     /*panel: function (f) {
       var o = Object.create(stylePanel)
-      o[element] = this[element]
-      this[element].style.position = "fixed"
-      this[element].style.zIndex = highestZIndex
+      o[_e] = this[_e]
+      this[_e].style.position = "fixed"
+      this[_e].style.zIndex = highestZIndex
       f(o)
     },*/
     font: function (f) {
       var o = Object.create(styleFont)
-      o[element] = this[element]
+      o[_e] = this[_e]
       f(o)
     },
     background: function (f) {
       var o = Object.create(styleBackground)
-      o[element] = this[element]
+      o[_e] = this[_e]
       f(o)
     },
     transition: function (f) {
       var o = Object.create(styleTransition)
-      o[element] = this[element]
+      o[_e] = this[_e]
       f(o)
     },
 
@@ -514,15 +514,15 @@ define(["./name", "./cell"], function (name, cell) {
                color.pop())
       }
       console.log(r)
-      this[element].style.boxShadow = r.join(",")
+      this[_e].style.boxShadow = r.join(",")
     },
 
     text: function (s) {
-      this[element].textContent = s || ""
+      this[_e].textContent = s || ""
     },
     remove: function () {
       this.removed = true
-      var self = this[element]
+      var self = this[_e]
       if (self.parentNode) {
         self.parentNode.removeChild(self)
       }
@@ -538,50 +538,50 @@ define(["./name", "./cell"], function (name, cell) {
       return o
     },
     title: function (s) {
-      this[element].title = s
+      this[_e].title = s
     },
     isHidden: function () {
-      return this[element].hidden
+      return this[_e].hidden
     },
     hide: function () {
-      this[element].hidden = true
+      this[_e].hidden = true
     },
     show: function () {
-      this[element].hidden = false
+      this[_e].hidden = false
     },
     getPosition: function () {
-      return this[element].getBoundingClientRect()
+      return this[_e].getBoundingClientRect()
     }
   }
 
   var Image = Object.create(Box)
   Image.src = function (s) {
-    this[element].src = s
+    this[_e].src = s
   }
 
   var Panel = Object.create(Box)
   Panel.left = function (s) {
-    this[element].style.left = s
+    this[_e].style.left = s
   }
   Panel.right = function (s) {
-    this[element].style.right = s
+    this[_e].style.right = s
   }
   Panel.top = function (s) {
-    this[element].style.top = s
+    this[_e].style.top = s
   }
   Panel.bottom = function (s) {
-    this[element].style.bottom = s
+    this[_e].style.bottom = s
   }
 
   function remove(x) {
-    var e = x[element]
+    var e = x[_e]
     if (e.removed) {
-      x[element] = null
+      x[_e] = null
 
       e[bindings].forEach(function (x) {
         x.unbind()
       })
-      e[element] = null
+      e[_e] = null
       e[bindings] = null
       e.mouseclick = null
       e.mousedown = null
@@ -592,8 +592,8 @@ define(["./name", "./cell"], function (name, cell) {
 
   function make(constructor, o) {
     var e = Object.create(constructor)
-    o[element]  = e
-    e[element]  = o
+    o[_e]       = e
+    e[_e]       = o
     e[bindings] = []
 
     // TODO closures
@@ -606,7 +606,7 @@ define(["./name", "./cell"], function (name, cell) {
                        , right:  false
                        , x:      e.clientX
                        , y:      e.clientY }
-          oEvent[element] = e.target
+          oEvent[_e] = e.target
           self.set(oEvent)
         }
 
@@ -617,7 +617,7 @@ define(["./name", "./cell"], function (name, cell) {
                        , right:  true
                        , x:      e.clientX
                        , y:      e.clientY }
-          oEvent[element] = e.target
+          oEvent[_e] = e.target
           self.set(oEvent)
         }
 
@@ -636,7 +636,7 @@ define(["./name", "./cell"], function (name, cell) {
     })
 
     var seen = { left: false, middle: false, right: false }
-    seen[element] = o // TODO is this correct?
+    seen[_e] = o // TODO is this correct?
     e.mousedown = cell.value(seen, {
       bind: function (self) {
         function contextmenu(e) {
@@ -651,7 +651,7 @@ define(["./name", "./cell"], function (name, cell) {
           } else if (e.button === 2) {
             seen.right = true
           }
-          seen[element] = e.target
+          seen[_e] = e.target
           self.set(seen)
 
           addEventListener("mouseup", function anon(f) {
@@ -664,7 +664,7 @@ define(["./name", "./cell"], function (name, cell) {
               } else if (e.button === 2) {
                 seen.right = false
               }
-              seen[element] = e.target
+              seen[_e] = e.target
               self.set(seen)
             }
           }, true)
@@ -690,7 +690,7 @@ define(["./name", "./cell"], function (name, cell) {
         function mouseover(e) {
           if (isOver(o, e)) {
             var oEvent = { mouseX: e.clientX, mouseY: e.clientY }
-            oEvent[element] = e.target
+            oEvent[_e] = e.target
             self.set(oEvent)
           }
         }
@@ -824,7 +824,7 @@ define(["./name", "./cell"], function (name, cell) {
       a.forEach(function (x) {
         if (x.type === "childList") {
           ;[].forEach.call(x.removedNodes, function (x) {
-            if (element in x) {
+            if (_e in x) {
               remove(x)
             }
           })
@@ -844,10 +844,10 @@ define(["./name", "./cell"], function (name, cell) {
 
   /*function calculate(x) {
     var s, s2
-    if (x[element].className === "vert") {
+    if (x[_e].className === "vert") {
       s  = "height"
       s2 = "offsetHeight"
-    } else if (x[element].className === "horiz") {
+    } else if (x[_e].className === "horiz") {
       s  = "width"
       s2 = "offsetWidth"
     } else {
@@ -856,7 +856,7 @@ define(["./name", "./cell"], function (name, cell) {
 
     var size  = 0
       , elems = []
-    ;[].forEach.call(x[element].children, function (x) {
+    ;[].forEach.call(x[_e].children, function (x) {
       if (x.style[s] === "") {
         elems.push(x)
       } else {
@@ -889,6 +889,12 @@ define(["./name", "./cell"], function (name, cell) {
     var o = document.createElement("div")
     o.className = "box vert"
     //calculate(x)
+    return call(f, make(Box, o))
+  }
+  
+  function element(s, f) {
+    var o = document.createElement(s)
+    o.className = "box"
     return call(f, make(Box, o))
   }
 
@@ -967,7 +973,7 @@ define(["./name", "./cell"], function (name, cell) {
   // TODO not completely ideal, but it's the best I've come up with so far...
   function exclude(x, e) {
     return cell.filter(x.get(), x, function (x) {
-      return !x || !e[element].contains(x[element])
+      return !x || !e[_e].contains(x[_e])
     })
   }
   
@@ -993,6 +999,7 @@ define(["./name", "./cell"], function (name, cell) {
     search: search,
     image: image,
     panel: panel,
+    element: element,
     
     width: width,
     height: height,
