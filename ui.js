@@ -559,6 +559,12 @@ define(["./name", "./cell"], function (name, cell) {
       return this[_e].getBoundingClientRect()
     }
   }
+  
+  var Checkbox = Object.create(Box)
+  // TODO hacky and broken
+  Checkbox.text = function (s) {
+    this[_e].appendChild(document.createTextNode(s || ""))
+  }
 
   var Image = Object.create(Box)
   Image.src = function (s) {
@@ -914,7 +920,7 @@ define(["./name", "./cell"], function (name, cell) {
     
     o1.appendChild(o2)
     
-    var e = make(Box, o1)
+    var e = make(Checkbox, o1)
     
     // TODO closure
     e.checked = cell.value(o2.checked, {
