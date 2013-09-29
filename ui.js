@@ -268,6 +268,9 @@ define(["./name", "./cell"], function (name, cell) {
   }
 
   var styleBackground = {
+    repeat: function (s) {
+      this[element].style.backgroundRepeat = s
+    },
     color: function (s) {
       if (arguments.length > 1) {
         throw new Error() // TODO
