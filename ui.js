@@ -217,6 +217,12 @@ define(["./name", "./cell"], function (name, cell) {
   }*/
 
   var styleFont = {
+    letterSpacing: function (s) {
+      this[_e].style.letterSpacing = s
+    },
+    variant: function (s) {
+      this[_e].style.fontVariant = s
+    },
     font: function () {
       this[_e].style.fontFamily = join(arguments, 0, ",")
     },
