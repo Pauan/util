@@ -903,6 +903,42 @@ define(["./name", "./cell"], function (name, cell) {
     o.className = "box"
     return call(f, make(Box, o))
   }
+  
+  function checkbox(f) {
+    var o1 = document.createElement("label")
+    o1.className = "box"
+
+    var o2 = document.createElement("input")
+    o2.className = "box"
+    o2.type = "checkbox"
+    
+    o1.appendChild(o2)
+    
+    var e = make(Box, o1)
+    
+    // TODO closure
+    e.checked = cell.value(o2.checked, {
+      bind: function (self) {
+        function change() {
+          self.set(o2.checked)
+        }
+        
+        o2.addEventListener("change", change, true)
+        
+        return {
+          change: change
+        }
+      },
+      unbind: function (e) {
+        o2.removeEventListener("change", e.change, true)
+      },
+      set: function (self, x) {
+        o2.checked = x
+      }
+    })
+
+    return call(f, e)
+  }
 
   function search(f) {
     var o = document.createElement("input")
@@ -1003,6 +1039,7 @@ define(["./name", "./cell"], function (name, cell) {
     horiz: horiz,
     vert: vert,
     search: search,
+    checkbox: checkbox,
     image: image,
     panel: panel,
     element: element,
