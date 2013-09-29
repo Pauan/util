@@ -124,6 +124,9 @@ define(["./name", "./cell"], function (name, cell) {
     rounded: function (s) {
       this[element].style.borderRadius = s
     },
+    style: function (s) {
+      this[element].style.borderStyle = s
+    },
     size: function (s) {
       this[element].style.borderWidth = s
     },
@@ -471,6 +474,7 @@ define(["./name", "./cell"], function (name, cell) {
         , left  = []
         , top   = []
         , blur  = []
+        , size  = []
         , color = []
         , r     = []
       f({
@@ -486,6 +490,9 @@ define(["./name", "./cell"], function (name, cell) {
         blur: function () {
           blur = [].slice.call(arguments)
         },
+        size: function () {
+          size = [].slice.call(arguments)
+        },
         color: function () {
           color = [].slice.call(arguments)
         },
@@ -498,13 +505,15 @@ define(["./name", "./cell"], function (name, cell) {
           r     = ["none"]
         }
       })
-      while (inset.length || left.length || top.length || blur.length || color.length) {
+      while (inset.length || left.length || top.length || blur.length || size.length || color.length) {
         r.push((inset.pop() ? "inset " : "") +
                (left.pop() || "0px") + " " +
                (top.pop()  || "0px") + " " +
                (blur.pop() || "0px") + " " +
+               (size.pop() || "0px") + " " +
                color.pop())
       }
+      console.log(r)
       this[element].style.boxShadow = r.join(",")
     },
 
