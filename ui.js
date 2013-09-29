@@ -519,7 +519,6 @@ define(["./name", "./cell"], function (name, cell) {
                (size.pop() || "0px") + " " +
                color.pop())
       }
-      console.log(r)
       this[_e].style.boxShadow = r.join(",")
     },
 
@@ -775,6 +774,13 @@ define(["./name", "./cell"], function (name, cell) {
       // TODO
       o.backgroundColor = "white"
       o.color = "black"
+    })
+    
+    addRule(document, "input[type=checkbox]", function (o) {
+      o.position = "relative"
+      o.top = "-1px"
+      o.margin = "0px 4px"
+      o.verticalAlign = "middle"
     })
 
     addRule(document, ".box", function (o) {
