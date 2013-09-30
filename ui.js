@@ -559,6 +559,14 @@ define(["./name", "./cell"], function (name, cell) {
     }
   }
   
+  var ListItem = Object.create(Box)
+  ListItem.select = function () {
+    this[_e].selected = true
+  }
+  ListItem.value = function (s) {
+    this[_e].value = s
+  }
+  
   var Checkbox = Object.create(Box)
   // TODO hacky and broken
   Checkbox.text = function (s) {
@@ -957,6 +965,44 @@ define(["./name", "./cell"], function (name, cell) {
 
     return call(f, e)
   }
+  
+  function list(f) {
+    var o = document.createElement("select")
+    o.className = "box"
+    
+    var e = make(Box, o)
+    
+    // TODO closure
+    e.changed = cell.value(undefined, {
+      include: function () {
+        return true
+      },
+      bind: function (self) {
+        function change() {
+          var x = o.options[o.selectedIndex]
+          console.log(o.value, x.value)
+          self.set(o.value)
+        }
+        
+        o.addEventListener("change", change, true)
+        
+        return {
+          change: change
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("change", e.change, true)
+      }
+    })
+    
+    return call(f, e)
+  }
+  
+  function listItem(f) {
+    var o = document.creatElement("option")
+    o.className = "box"
+    return call(f, make(ListItem, o))
+  }
 
   function search(f) {
     var o = document.createElement("input")
@@ -1061,6 +1107,8 @@ define(["./name", "./cell"], function (name, cell) {
     image: image,
     panel: panel,
     element: element,
+    list: list,
+    listItem: listItem,
     
     width: width,
     height: height,
