@@ -815,7 +815,7 @@ define(["./name", "./cell"], function (name, cell) {
     })
 
     addRule(document, ".horiz", function (o) {
-      //o.display = "flex"
+      o.display = "flex"
       o.flexDirection = "row"
       //o.alignItems = "center"
       //o.display = "inline-block"
