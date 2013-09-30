@@ -999,7 +999,7 @@ define(["./name", "./cell"], function (name, cell) {
   }
   
   function listItem(f) {
-    var o = document.creatElement("option")
+    var o = document.createElement("option")
     o.className = "box"
     return call(f, make(ListItem, o))
   }
