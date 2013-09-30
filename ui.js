@@ -815,7 +815,7 @@ define(["./name", "./cell"], function (name, cell) {
     })
 
     addRule(document, ".horiz", function (o) {
-      o.display = "flex"
+      //o.display = "flex"
       o.flexDirection = "row"
       //o.alignItems = "center"
       //o.display = "inline-block"
@@ -974,13 +974,13 @@ define(["./name", "./cell"], function (name, cell) {
     
     // TODO closure
     e.changed = cell.value(undefined, {
+      // TODO maybe this can ignore duplicates
       include: function () {
         return true
       },
       bind: function (self) {
         function change() {
-          var x = o.options[o.selectedIndex]
-          console.log(o.value, x.value)
+          //var x = o.options[o.selectedIndex]
           self.set(o.value)
         }
         
