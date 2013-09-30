@@ -52,6 +52,17 @@ define(["./name", "./object"], function (name, object) {
     o[func]  = f
     o.unbind = unbind
   }
+  
+  function set(self, v) {
+    self[get] = v
+    if (self[info].set != null) {
+      self[info].set(self, v)
+    }
+    var a = self[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
+    for (var i = 0, iLen = a.length; i < iLen; ++i) {
+      a[i](v)
+    }
+  }
 
   function Value(x, obj) {
     this[get]    = x
@@ -62,13 +73,12 @@ define(["./name", "./object"], function (name, object) {
     return this[get]
   }
   Value.prototype.set = function (v) {
-    this[get] = v
-    if (this[info].set != null) {
-      this[info].set(this, v)
-    }
-    var a = this[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
-    for (var i = 0, iLen = a.length; i < iLen; ++i) {
-      a[i](v)
+    if (this[info].ignore == null) {
+      if (object.isnt(this[get], v)) {
+        set(this, v)
+      }
+    } else if (!this[info].ignore(this, this[get], v)) {
+      set(this, v)
     }
   }
 
@@ -241,7 +251,7 @@ define(["./name", "./object"], function (name, object) {
   // e.g. (1 -> 1 -> 2 -> 1 -> 1 -> 3 -> 3) is treated as
   //      (1 -> 2 -> 1 -> 3)
   // TODO is there a better way to implement this?
-  function dedupe(x) {
+  /*function dedupe(x) {
     var old = x.get()
     return filter(old, x, function (x) {
       if (object.isnt(old, x)) {
@@ -249,7 +259,7 @@ define(["./name", "./object"], function (name, object) {
         return true
       }
     })
-  }
+  }*/
 
   // Takes a signal and function; returns a signal
   // Maps the function over the input signal
@@ -296,11 +306,10 @@ define(["./name", "./object"], function (name, object) {
     bind: bind,
     fold: fold,
     filter: filter,
-    mapfilter: mapfilter,
+    mapfilter: mapfilter, // TODO remove this
     when: when,
     merge: merge,
     delay: delay,
-    dedupe: dedupe,
     map: map,
     sample: sample,
     or: or,
