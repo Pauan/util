@@ -53,15 +53,8 @@ define(["./name", "./object"], function (name, object) {
     o.unbind = unbind
   }
   
-  function set(self, v) {
-    self[get] = v
-    if (self[info].set != null) {
-      self[info].set(self, v)
-    }
-    var a = self[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
-    for (var i = 0, iLen = a.length; i < iLen; ++i) {
-      a[i](v)
-    }
+  function include(self, x, y) {
+    return object.isnt(x, y)
   }
 
   function Value(x, obj) {
@@ -73,12 +66,15 @@ define(["./name", "./object"], function (name, object) {
     return this[get]
   }
   Value.prototype.set = function (v) {
-    if (this[info].ignore == null) {
-      if (object.isnt(this[get], v)) {
-        set(this, v)
+    if (this[info].include(this, this[get], v)) {
+      this[get] = v
+      if (this[info].set != null) {
+        this[info].set(this, v)
       }
-    } else if (!this[info].ignore(this, this[get], v)) {
-      set(this, v)
+      var a = this[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
+      for (var i = 0, iLen = a.length; i < iLen; ++i) {
+        a[i](v)
+      }
     }
   }
 
@@ -88,6 +84,9 @@ define(["./name", "./object"], function (name, object) {
   function value(x, obj) {
     if (obj == null) {
       obj = {}
+    }
+    if (obj.include == null) {
+      obj.include = include
     }
     return new Value(x, obj)
   }
@@ -102,7 +101,11 @@ define(["./name", "./object"], function (name, object) {
       fps: 1000 / i,
       start: Date.now(),
       count: 0,
-      cell: value(0),
+      cell: value(0, {
+        include: function () {
+          return true
+        }
+      }),
       step: function anon() {
         ++this.count
 
