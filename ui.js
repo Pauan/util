@@ -609,14 +609,17 @@ define(["./name", "./cell"], function (name, cell) {
 
     // TODO closures
     e.mouseclick = cell.value(undefined, {
+      include: function () {
+        return true
+      },
       bind: function (self) {
         function click(e) {
           e.preventDefault()
           var oEvent = { left:   (e.button === 0)
                        , middle: (e.button === 1)
                        , right:  false
-                       , x:      e.clientX
-                       , y:      e.clientY }
+                       , mouseX: e.clientX
+                       , mouseY: e.clientY }
           oEvent[_e] = e.target
           self.set(oEvent)
         }
@@ -626,8 +629,8 @@ define(["./name", "./cell"], function (name, cell) {
           var oEvent = { left:   false
                        , middle: false
                        , right:  true
-                       , x:      e.clientX
-                       , y:      e.clientY }
+                       , mouseX: e.clientX
+                       , mouseY: e.clientY }
           oEvent[_e] = e.target
           self.set(oEvent)
         }
@@ -649,6 +652,9 @@ define(["./name", "./cell"], function (name, cell) {
     var seen = { left: false, middle: false, right: false }
     seen[_e] = o // TODO is this correct?
     e.mousedown = cell.value(seen, {
+      include: function () {
+        return true
+      },
       bind: function (self) {
         function contextmenu(e) {
           e.preventDefault()
@@ -701,7 +707,7 @@ define(["./name", "./cell"], function (name, cell) {
         function mouseover(e) {
           if (isOver(o, e)) {
             var oEvent = { mouseX: e.clientX, mouseY: e.clientY }
-            oEvent[_e] = e.target
+            oEvent[_e] = e.target // TODO why is this here?
             self.set(oEvent)
           }
         }
