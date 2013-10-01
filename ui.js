@@ -805,6 +805,11 @@ define(["./name", "./cell"], function (name, cell) {
       o.top = "-2px"
       o.verticalAlign = "middle"
     })
+    
+    addRule(document, "button", function (o) {
+      o.verticalAlign = "middle"
+      o.cursor = "pointer"
+    })
 
     addRule(document, ".box", function (o) {
       o.whiteSpace = "pre" // TODO
@@ -1064,6 +1069,12 @@ define(["./name", "./cell"], function (name, cell) {
     document.body.appendChild(o)
     return call(f, make(Panel, o))
   }
+  
+  function button(f) {
+    var o = document.creatElement("button")
+    o.className = "box"
+    return call(f, make(Box, o))
+  }
 
   function calc() {
     return "calc(" + join(arguments, 0) + ")"
@@ -1118,6 +1129,7 @@ define(["./name", "./cell"], function (name, cell) {
     element: element,
     list: list,
     listItem: listItem,
+    button: button,
     
     width: width,
     height: height,
