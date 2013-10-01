@@ -217,6 +217,9 @@ define(["./name", "./cell"], function (name, oCell) {
   }*/
 
   var styleFont = {
+    align: function (s) {
+      this[_e].style.textAlign = s
+    },
     letterSpacing: function (s) {
       this[_e].style.letterSpacing = s
     },
