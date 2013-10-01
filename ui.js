@@ -804,6 +804,7 @@ define(["./name", "./cell"], function (name, oCell) {
     })
     
     addRule(document, "select", function (o) {
+      o.outline = "none"
       o.display = "block"
       /*o.position = "relative"
       o.top = "-2px"*/
@@ -811,6 +812,7 @@ define(["./name", "./cell"], function (name, oCell) {
     })
     
     addRule(document, "button", function (o) {
+      o.outline = "none"
       o.verticalAlign = "middle"
       o.cursor = "pointer"
     })
