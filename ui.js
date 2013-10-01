@@ -1056,6 +1056,38 @@ define(["./name", "./cell"], function (name, oCell) {
 
     return call(f, e)
   }
+  
+  function textbox(f) {
+    var o = document.createElement("input")
+    o.className = "box"
+    o.type = "text"
+    
+    var e = make(Box, o)
+    
+    // TODO closure
+    // TODO code duplication
+    e.value = oCell.value(o.value, {
+      bind: function (self) {
+        function input() {
+          self.set(o.value)
+        }
+        
+        o.addEventListener("change", input, true)
+        
+        return {
+          input: input
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("change", input, true)
+      },
+      set: function (self, x) {
+        o.value = x
+      }
+    })
+    
+    return call(f, e)
+  }
 
   function image(f) {
     var o = document.createElement("img")
@@ -1142,6 +1174,7 @@ define(["./name", "./cell"], function (name, oCell) {
     horiz: horiz,
     vert: vert,
     search: search,
+    textbox: textbox,
     checkbox: checkbox,
     image: image,
     panel: panel,
