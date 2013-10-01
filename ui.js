@@ -796,6 +796,10 @@ define(["./name", "./cell"], function (name, cell) {
       o.marginRight = "2px"
       o.verticalAlign = "middle"
     })
+    
+    addRule(document, "select", function (o) {
+      o.verticalAlign = "middle"
+    })
 
     addRule(document, ".box", function (o) {
       o.whiteSpace = "pre" // TODO
