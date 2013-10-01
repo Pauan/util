@@ -799,7 +799,7 @@ define(["./name", "./cell"], function (name, oCell) {
     addRule(document, "input[type=checkbox]", function (o) {
       o.position = "relative"
       o.top = "-1px"
-      o.marginRight = "2px"
+      o.marginRight = "3px"
       o.verticalAlign = "middle"
     })
     
