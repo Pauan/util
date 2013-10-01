@@ -1071,7 +1071,7 @@ define(["./name", "./cell"], function (name, cell) {
   }
   
   function button(f) {
-    var o = document.creatElement("button")
+    var o = document.createElement("button")
     o.className = "box"
     return call(f, make(Box, o))
   }
