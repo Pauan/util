@@ -1076,6 +1076,24 @@ define(["./name", "./cell"], function (name, cell) {
     o.className = "box"
     return call(f, make(Box, o))
   }
+  
+  function table(f) {
+    var o = document.createElement("table")
+    o.className = "box"
+    return call(f, make(Box, o))
+  }
+  
+  function row(f) {
+    var o = document.createElement("tr")
+    o.className = "box"
+    return call(f, make(Box, o))
+  }
+  
+  function cell(f) {
+    var o = document.createElement("td")
+    o.className = "box"
+    return call(f, make(Box, o))
+  }
 
   function calc() {
     return "calc(" + join(arguments, 0) + ")"
@@ -1131,6 +1149,10 @@ define(["./name", "./cell"], function (name, cell) {
     list: list,
     listItem: listItem,
     button: button,
+    
+    table: table,
+    row: row,
+    cell: cell,
     
     width: width,
     height: height,
