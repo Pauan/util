@@ -798,6 +798,8 @@ define(["./name", "./cell"], function (name, cell) {
     })
     
     addRule(document, "select", function (o) {
+      o.position = "relative"
+      o.top = "-1px"
       o.verticalAlign = "middle"
     })
 
