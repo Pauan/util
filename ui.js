@@ -1,4 +1,4 @@
-define(["./name", "./cell"], function (name, cell) {
+define(["./name", "./cell"], function (name, oCell) {
   "use strict";
 
   function join(a, i, s) {
@@ -536,12 +536,12 @@ define(["./name", "./cell"], function (name, cell) {
       }
     },
     bind: function (a, f) {
-      var o = cell.bind(a, f)
+      var o = oCell.bind(a, f)
       this[bindings].push(o)
       return o
     },
     event: function (a, f) {
-      var o = cell.event(a, f)
+      var o = oCell.event(a, f)
       this[bindings].push(o)
       return o
     },
@@ -619,7 +619,7 @@ define(["./name", "./cell"], function (name, cell) {
     e[bindings] = []
 
     // TODO closures
-    e.mouseclick = cell.value(undefined, {
+    e.mouseclick = oCell.value(undefined, {
       include: function () {
         return true
       },
@@ -662,7 +662,7 @@ define(["./name", "./cell"], function (name, cell) {
 
     var seen = { left: false, middle: false, right: false }
     seen[_e] = o // TODO is this correct?
-    e.mousedown = cell.value(seen, {
+    e.mousedown = oCell.value(seen, {
       include: function () {
         return true
       },
@@ -713,7 +713,7 @@ define(["./name", "./cell"], function (name, cell) {
       }
     })
 
-    e.mouseover = cell.value(false, {
+    e.mouseover = oCell.value(false, {
       bind: function (self) {
         function mouseover(e) {
           if (isOver(o, e)) {
@@ -958,7 +958,7 @@ define(["./name", "./cell"], function (name, cell) {
     var e = make(Checkbox, o1)
     
     // TODO closure
-    e.checked = cell.value(o2.checked, {
+    e.checked = oCell.value(o2.checked, {
       bind: function (self) {
         function change() {
           self.set(o2.checked)
@@ -988,7 +988,7 @@ define(["./name", "./cell"], function (name, cell) {
     var e = make(Box, o)
     
     // TODO closure
-    e.changed = cell.value(undefined, {
+    e.changed = oCell.value(undefined, {
       // TODO maybe this can ignore duplicates
       include: function () {
         return true
@@ -1031,7 +1031,7 @@ define(["./name", "./cell"], function (name, cell) {
     var e = make(Box, o)
 
     // TODO closure
-    e.value = cell.value(o.value, {
+    e.value = oCell.value(o.value, {
       bind: function (self) {
         console.log("HIYA")
 
@@ -1117,7 +1117,7 @@ define(["./name", "./cell"], function (name, cell) {
 
   // TODO not completely ideal, but it's the best I've come up with so far...
   function exclude(x, e) {
-    return cell.filter(x.get(), x, function (x) {
+    return oCell.filter(x.get(), x, function (x) {
       return !x || !e[_e].contains(x[_e])
     })
   }
