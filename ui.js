@@ -802,8 +802,8 @@ define(["./name", "./cell"], function (name, oCell) {
     
     addRule(document, "select", function (o) {
       o.display = "block"
-      o.position = "relative"
-      o.top = "-2px"
+      /*o.position = "relative"
+      o.top = "-2px"*/
       o.verticalAlign = "middle"
     })
     
