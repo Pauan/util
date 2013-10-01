@@ -440,6 +440,9 @@ define(["./name", "./cell"], function (name, cell) {
       this[_e].style.position = "relative"
       f(o)
     },
+    overflow: function (s) {
+      this[_e].style.overflow = s
+    },
     padding: function (f) {
       var o = Object.create(stylePadding)
       o[_e] = this[_e]
@@ -799,7 +802,7 @@ define(["./name", "./cell"], function (name, cell) {
     
     addRule(document, "select", function (o) {
       o.position = "relative"
-      o.top = "-1px"
+      o.top = "-2px"
       o.verticalAlign = "middle"
     })
 
