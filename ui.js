@@ -573,6 +573,11 @@ define(["./name", "./cell"], function (name, oCell) {
     this[_e].value = s
   }
   
+  var Table = Object.create(Box)
+  Table.align = function (s) {
+    this[_e].style.verticalAlign = s
+  }
+  
   var Checkbox = Object.create(Box)
   // TODO hacky and broken
   Checkbox.text = function (s) {
@@ -1138,7 +1143,7 @@ define(["./name", "./cell"], function (name, oCell) {
   function cell(f) {
     var o = document.createElement("td")
     o.className = "box"
-    return call(f, make(Box, o))
+    return call(f, make(Table, o))
   }
 
   function calc() {
