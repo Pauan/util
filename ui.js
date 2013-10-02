@@ -138,7 +138,7 @@ define(["./name", "./cell"], function (name, oCell) {
     }
   }
 
-  var styleMove = {
+  /*var styleMove = {
     left: function (s) {
       this[_e].style.left = s
     },
@@ -151,7 +151,7 @@ define(["./name", "./cell"], function (name, oCell) {
     bottom: function (s) {
       this[_e].style.bottom = s
     }
-  }
+  }*/
 
   var stylePadding = {
     all: function (s) {
@@ -437,12 +437,12 @@ define(["./name", "./cell"], function (name, oCell) {
       o[_e] = this[_e]
       f(o)
     },
-    position: function (f) {
+    /*position: function (f) {
       var o = Object.create(styleMove)
       o[_e] = this[_e]
       this[_e].style.position = "relative"
       f(o)
-    },
+    },*/
     overflow: function (s) {
       this[_e].style.overflow = s
     },
