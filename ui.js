@@ -769,6 +769,8 @@ define(["./name", "./cell"], function (name, oCell) {
     })
     
     addRule(document, "*", function (o) {
+      o.position = "relative"
+
       o.margin = "0px"
       o.padding = "0px"
       
