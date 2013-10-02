@@ -437,12 +437,11 @@ define(["./name", "./cell"], function (name, oCell) {
       o[_e] = this[_e]
       f(o)
     },
-    /*position: function (f) {
+    position: function (f) {
       var o = Object.create(styleMove)
       o[_e] = this[_e]
-      this[_e].style.position = "relative"
       f(o)
-    },*/
+    },
     overflow: function (s) {
       this[_e].style.overflow = s
     },
