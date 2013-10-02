@@ -1108,6 +1108,13 @@ define(["./name", "./cell"], function (name, oCell) {
     return call(f, make(Panel, o))
   }
   
+  function inlinePanel(f) {
+    var o = document.createElement("div")
+    o.className = "box"
+    o.style.position = "absolute"
+    return call(f, make(Panel, o))
+  }
+  
   function button(f) {
     var o = document.createElement("button")
     o.className = "box"
@@ -1183,6 +1190,7 @@ define(["./name", "./cell"], function (name, oCell) {
     checkbox: checkbox,
     image: image,
     panel: panel,
+    inlinePanel: inlinePanel,
     element: element,
     list: list,
     listItem: listItem,
