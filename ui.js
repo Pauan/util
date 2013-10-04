@@ -280,6 +280,9 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   var styleBackground = {
+    attachment: function (s) {
+      this[_e].style.backgroundAttachment = s
+    },
     repeat: function (s) {
       this[_e].style.backgroundRepeat = s
     },
