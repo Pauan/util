@@ -783,7 +783,7 @@ define(["./name", "./cell"], function (name, oCell) {
       
       o.backgroundSize = "100% 100%"
       o.textOverflow = "ellipsis"
-      o.overflow = "hidden"
+      //o.overflow = "hidden"
     })
 
     addRule(document, "[hidden]", function (o) {
