@@ -817,6 +817,10 @@ define(["./name", "./cell"], function (name, oCell) {
       o.verticalAlign = "middle"
     })
     
+    addRule(document, "table", function (o) {
+      o.borderSpacing = "0px"
+    })
+    
     addRule(document, "button", function (o) {
       o.outline = "none"
       o.verticalAlign = "middle"
