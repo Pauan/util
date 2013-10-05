@@ -590,6 +590,25 @@ define(["./name", "./cell"], function (name, oCell) {
   Image.src = function (s) {
     this[_e].src = s
   }
+  
+  var Link = Object.create(Box)
+  Link.src = function (s) {
+    this[_e].href = s
+  }
+  Link.download = function (s) {
+    this[_e].download = s
+  }
+  Link.click = function () {
+    this[_e].click()
+  }
+  
+  var File = Object.create(Box)
+  File.accept = function (s) {
+    this[_e].accept = s
+  }
+  File.click = function () {
+    this[_e].click()
+  }
 
   var Panel = Object.create(Box)
   Panel.left = function (s) {
@@ -1106,6 +1125,56 @@ define(["./name", "./cell"], function (name, oCell) {
     
     return call(f, e)
   }
+  
+  function link(f) {
+    var o = document.createElement("a")
+    o.className = "box"
+    return call(f, make(Link, o))
+  }
+  
+  function file(f) {
+    var o = document.createElement("input")
+    o.className = "box"
+    o.type = "file"
+    
+    o.addEventListener("error", function (e) {
+      console.log(e)
+      alert("Error: " + JSON.stringify(e))
+    }, true)
+    
+    var e = make(File, o)
+    
+    // TODO closure
+    e.changed = oCell.value(undefined, {
+      include: function () {
+        return true
+      },
+      bind: function (self) {
+        function change(e) {
+          var x = new FileReader()
+          x.onerror = x.onabort = function (e) {
+            console.log(e)
+            alert("Error: " + JSON.stringify(e))
+          }
+          x.onload = function (e) {
+            self.set(e.target.result)
+          }
+          x.readAsText(e.target.files[0])
+        }
+        
+        o.addEventListener("change", change, true)
+        
+        return {
+          change: change
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("change", e.change, true)
+      }
+    })
+
+    return call(f, e)
+  }
 
   function image(f) {
     var o = document.createElement("img")
@@ -1208,6 +1277,8 @@ define(["./name", "./cell"], function (name, oCell) {
     list: list,
     listItem: listItem,
     button: button,
+    link: link,
+    file: file,
     
     table: table,
     row: row,
