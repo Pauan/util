@@ -61,6 +61,22 @@ define(function () {
     }
     return x
   }
+  
+  function deepMerge(x, y) {
+    if (isObject(y)) {
+      if (!isObject(x)) {
+        x = {}
+      }
+      for (var s in y) {
+        if ({}.hasOwnProperty.call(y, s)) {
+          x[s] = deepMerge(x[s], y[s])
+        }
+      }
+      return x
+    } else {
+      return y
+    }
+  }
 
   function clone(x) {
     var y = {}
@@ -103,6 +119,7 @@ define(function () {
     isObject: isObject,
     iso: iso,
     merge: merge,
+    deepMerge: deepMerge,
     clone: clone,
     deepClone: deepClone,
     set: set,
