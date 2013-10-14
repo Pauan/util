@@ -307,14 +307,14 @@ define(["./name", "./object"], function (name, object) {
     fps: fps,
     event: event,
     bind: bind,
-    fold: fold,
+    fold: fold, // TODO remove this ?
     filter: filter,
     mapfilter: mapfilter, // TODO remove this
     when: when,
-    merge: merge,
-    delay: delay,
+    merge: merge, // TODO remove this
+    delay: delay, // TODO remove this
     map: map,
-    sample: sample,
+    sample: sample, // TODO remove this
     or: or,
     and: and,
   })
