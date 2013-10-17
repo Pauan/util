@@ -1076,15 +1076,14 @@ define(["./name", "./cell"], function (name, oCell) {
           self.set(o.value)
         }
 
-        // TODO should use "search" event
-        o.addEventListener("keyup", search, true)
+        o.addEventListener("search", search, true)
 
         return {
           search: search
         }
       },
       unbind: function (e) {
-        o.removeEventListener("keyup", e.search, true)
+        o.removeEventListener("search", e.search, true)
       },
       set: function (self, x) {
         o.value = x
