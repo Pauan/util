@@ -87,6 +87,9 @@ define(["./name", "./cell"], function (name, oCell) {
     return function (f) {
       var style = this[_e].style
       f({
+        style: function (s) {
+          style[name + "Style"] = s
+        },
         size: function (s) {
           style[name + "Width"] = s
         },
