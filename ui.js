@@ -1260,6 +1260,11 @@ define(["./name", "./cell"], function (name, oCell) {
   function height() {
     return document.documentElement.offsetHeight
   }
+  
+  // TODO rename addRule to stylesheet then get rid of this
+  function stylesheet(s, f) {
+    return addRule(document, s, f)
+  }
 
   return Object.create({
     gradient: gradient,
@@ -1267,6 +1272,8 @@ define(["./name", "./cell"], function (name, oCell) {
     calc: calc,
     exclude: exclude,
     //highestZIndex: highestZIndex,
+    
+    stylesheet: stylesheet,
 
     normalize: normalize,
     box: box,
