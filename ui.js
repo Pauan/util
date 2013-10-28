@@ -659,7 +659,10 @@ define(["./name", "./cell"], function (name, oCell) {
                        , middle: (e.button === 1)
                        , right:  false
                        , mouseX: e.clientX
-                       , mouseY: e.clientY }
+                       , mouseY: e.clientY
+                       , shift:  e.shiftKey
+                       , ctrl:   (e.ctrlKey || e.metaKey)
+                       , alt:    e.altKey }
           oEvent[_e] = e.target
           self.set(oEvent)
         }
@@ -670,7 +673,10 @@ define(["./name", "./cell"], function (name, oCell) {
                        , middle: false
                        , right:  true
                        , mouseX: e.clientX
-                       , mouseY: e.clientY }
+                       , mouseY: e.clientY
+                       , shift:  e.shiftKey
+                       , ctrl:   (e.ctrlKey || e.metaKey)
+                       , alt:    e.altKey }
           oEvent[_e] = e.target
           self.set(oEvent)
         }
