@@ -1003,10 +1003,12 @@ define(["./name", "./cell"], function (name, oCell) {
     
     var e = make(Checkbox, o1)
     
+    // TODO does checked or indeterminate have priority ?
     // TODO closure
-    e.checked = oCell.value(o2.checked, {
+    e.checked = oCell.value(o2.indeterminate ? null : o2.checked, {
       bind: function (self) {
         function change() {
+          // TODO o2.indeterminate ? null : 
           self.set(o2.checked)
         }
         
@@ -1020,7 +1022,14 @@ define(["./name", "./cell"], function (name, oCell) {
         o2.removeEventListener("change", e.change, true)
       },
       set: function (self, x) {
-        o2.checked = x
+        // TODO
+        if (x === null) {
+          o2.checked = false
+          o2.indeterminate = true
+        } else {
+          o2.checked = x
+          o2.indeterminate = false
+        }
       }
     })
 
