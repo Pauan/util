@@ -334,6 +334,9 @@ define(["./name", "./cell"], function (name, oCell) {
   //var animations = []
 
   var Box = {
+    addText: function (s) {
+      this[_e].appendChild(document.createTextNode(s || ""))
+    },
     previous: function () {
       var e = this[_e].previousSibling
       while (true) {
@@ -581,12 +584,6 @@ define(["./name", "./cell"], function (name, oCell) {
   var Table = Object.create(Box)
   Table.align = function (s) {
     this[_e].style.verticalAlign = s
-  }
-  
-  var Checkbox = Object.create(Box)
-  // TODO hacky and broken
-  Checkbox.text = function (s) {
-    this[_e].appendChild(document.createTextNode(s || ""))
   }
 
   var Image = Object.create(Box)
@@ -836,7 +833,7 @@ define(["./name", "./cell"], function (name, oCell) {
     addRule(document, "input[type=checkbox]", function (o) {
       o.position = "relative"
       o.top = "-1px"
-      o.marginRight = "3px"
+      //o.marginRight = "3px"
       o.verticalAlign = "middle"
     })
     
@@ -991,44 +988,60 @@ define(["./name", "./cell"], function (name, oCell) {
     return call(f, make(Box, o))
   }
   
+  function label(f) {
+    var o = document.createElement("label")
+    o.className = "box"
+    return call(f, make(Box, o))
+  }
+  
   function checkbox(f) {
-    var o1 = document.createElement("label")
-    o1.className = "box"
-
-    var o2 = document.createElement("input")
-    o2.className = "box"
-    o2.type = "checkbox"
+    var o = document.createElement("input")
+    o.className = "box"
+    o.type = "checkbox"
     
-    o1.appendChild(o2)
+    var e = make(Box, o)
     
-    var e = make(Checkbox, o1)
-    
-    // TODO does checked or indeterminate have priority ?
     // TODO closure
-    e.checked = oCell.value(o2.indeterminate ? null : o2.checked, {
+    e.changed = oCell.value(undefined, {
+      include: function () {
+        return true
+      },
       bind: function (self) {
         function change() {
-          // TODO o2.indeterminate ? null : 
-          self.set(o2.checked)
+          self.set(o.checked)
         }
-        
-        o2.addEventListener("change", change, true)
-        
+
+        o.addEventListener("change", change, true)
+
         return {
           change: change
         }
       },
       unbind: function (e) {
-        o2.removeEventListener("change", e.change, true)
+        o.removeEventListener("change", e.change, true)
+      }
+    })
+    
+    // indeterminate has priority
+    // TODO closure
+    // TODO should <cell>.get() trigger <cell>bind() ?
+    e.checked = oCell.value(o.indeterminate ? null : o.checked, {
+      bind: function (self) {
+        // TODO is this correct; does it leak; is it inefficient ?
+        return e.event([e.changed], function (b) {
+          self.set(o.indeterminate ? null : b)
+        })
+      },
+      unbind: function (e) {
+        e.unbind()
       },
       set: function (self, x) {
-        // TODO
         if (x === null) {
-          o2.checked = false
-          o2.indeterminate = true
+          o.checked = false
+          o.indeterminate = true
         } else {
-          o2.checked = x
-          o2.indeterminate = false
+          o.checked = x
+          o.indeterminate = false
         }
       }
     })
@@ -1293,6 +1306,7 @@ define(["./name", "./cell"], function (name, oCell) {
     vert: vert,
     search: search,
     textbox: textbox,
+    label: label,
     checkbox: checkbox,
     image: image,
     panel: panel,
