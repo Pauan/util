@@ -649,9 +649,6 @@ define(["./name", "./cell"], function (name, oCell) {
 
     // TODO closures
     e.mouseclick = oCell.value(undefined, {
-      include: function () {
-        return true
-      },
       bind: function (self) {
         function click(e) {
           e.preventDefault()
@@ -752,7 +749,7 @@ define(["./name", "./cell"], function (name, oCell) {
       }
     })
 
-    e.mouseover = oCell.value(false, {
+    e.mouseover = oCell.dedupe(false, {
       bind: function (self) {
         function mouseover(e) {
           if (isOver(o, e)) {
@@ -1007,9 +1004,6 @@ define(["./name", "./cell"], function (name, oCell) {
     
     // TODO closure
     e.changed = oCell.value(undefined, {
-      include: function () {
-        return true
-      },
       bind: function (self) {
         function change() {
           self.set(o.checked)
@@ -1029,6 +1023,7 @@ define(["./name", "./cell"], function (name, oCell) {
     // indeterminate has priority
     // TODO closure
     // TODO should <cell>.get() trigger <cell>bind() ?
+    // TODO maybe this can ignore duplicates ?
     e.checked = oCell.value(o.indeterminate ? null : o.checked, {
       bind: function (self) {
         // TODO is this correct; does it leak; is it inefficient ?
@@ -1060,11 +1055,8 @@ define(["./name", "./cell"], function (name, oCell) {
     var e = make(Box, o)
     
     // TODO closure
+    // TODO maybe this can ignore duplicates
     e.changed = oCell.value(undefined, {
-      // TODO maybe this can ignore duplicates
-      include: function () {
-        return true
-      },
       bind: function (self) {
         function change() {
           //var x = o.options[o.selectedIndex]
@@ -1103,7 +1095,7 @@ define(["./name", "./cell"], function (name, oCell) {
     var e = make(Box, o)
 
     // TODO closure
-    e.value = oCell.value(o.value, {
+    e.value = oCell.dedupe(o.value, {
       bind: function (self) {
         console.log("HIYA")
 
@@ -1137,7 +1129,7 @@ define(["./name", "./cell"], function (name, oCell) {
     
     // TODO closure
     // TODO code duplication
-    e.value = oCell.value(o.value, {
+    e.value = oCell.dedupe(o.value, {
       bind: function (self) {
         function input() {
           self.set(o.value)
@@ -1180,9 +1172,6 @@ define(["./name", "./cell"], function (name, oCell) {
     
     // TODO closure
     e.changed = oCell.value(undefined, {
-      include: function () {
-        return true
-      },
       bind: function (self) {
         function change(e) {
           var x = new FileReader()

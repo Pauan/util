@@ -53,11 +53,21 @@ define(["./name", "./object"], function (name, object) {
     o.unbind = unbind
   }
   
-  function include(self, x, y) {
-    return object.isnt(x, y)
+  function set(v) {
+    this[get] = v
+    if (this[info].set != null) {
+      this[info].set(this, v)
+    }
+    var a = this[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
+    for (var i = 0, iLen = a.length; i < iLen; ++i) {
+      a[i](v)
+    }
   }
 
   function Value(x, obj) {
+    if (obj == null) {
+      obj = {}
+    }
     this[get]    = x
     this[info]   = obj
     this[events] = []
@@ -65,16 +75,21 @@ define(["./name", "./object"], function (name, object) {
   Value.prototype.get = function () {
     return this[get]
   }
-  Value.prototype.set = function (v) {
-    if (this[info].include(this, this[get], v)) {
-      this[get] = v
-      if (this[info].set != null) {
-        this[info].set(this, v)
-      }
-      var a = this[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
-      for (var i = 0, iLen = a.length; i < iLen; ++i) {
-        a[i](v)
-      }
+  Value.prototype.set = set
+  
+  // TODO code duplication
+  function Dedupe(x, obj) {
+    if (obj == null) {
+      obj = {}
+    }
+    this[get]    = x
+    this[info]   = obj
+    this[events] = []
+  }
+  Dedupe.prototype.get = Value.prototype.get
+  Dedupe.prototype.set = function (v) {
+    if (object.isnt(this[get], v)) {
+      set.call(this, v)
     }
   }
 
@@ -82,13 +97,12 @@ define(["./name", "./object"], function (name, object) {
   // use the get method to get the current value
   // use the set method to set the current value
   function value(x, obj) {
-    if (obj == null) {
-      obj = {}
-    }
-    if (obj.include == null) {
-      obj.include = include
-    }
     return new Value(x, obj)
+  }
+  
+  // Same as value, except it ignores duplicates
+  function dedupe(x, obj) {
+    return new Dedupe(x, obj)
   }
 
   // Takes an integer; returns a signal
@@ -101,11 +115,7 @@ define(["./name", "./object"], function (name, object) {
       fps: 1000 / i,
       start: Date.now(),
       count: 0,
-      cell: value(0, {
-        include: function () {
-          return true
-        }
-      }),
+      cell: value(0),
       step: function anon() {
         ++this.count
 
@@ -304,6 +314,7 @@ define(["./name", "./object"], function (name, object) {
 
   return Object.freeze({
     value: value,
+    dedupe: dedupe,
     fps: fps,
     event: event,
     bind: bind,
