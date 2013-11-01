@@ -694,13 +694,19 @@ define(["./name", "./cell"], function (name, oCell) {
         o.removeEventListener("contextmenu", e.contextmenu, true)
       }
     })
+    
+    function makeSeen(seen, e) {
+      var o    = {}
+      o.left   = seen.left
+      o.middle = seen.middle
+      o.right  = seen.right
+      o[_e]    = e
+      return o
+    }
 
     var seen = { left: false, middle: false, right: false }
-    seen[_e] = o // TODO is this correct?
-    e.mousedown = oCell.value(seen, {
-      include: function () {
-        return true
-      },
+                              // TODO is this correct?
+    e.mousedown = oCell.value(makeSeen(seen, o), {
       bind: function (self) {
         function contextmenu(e) {
           e.preventDefault()
@@ -714,8 +720,7 @@ define(["./name", "./cell"], function (name, oCell) {
           } else if (e.button === 2) {
             seen.right = true
           }
-          seen[_e] = e.target
-          self.set(seen)
+          self.set(makeSeen(seen, e.target))
 
           addEventListener("mouseup", function anon(f) {
             if (f.button === e.button) {
@@ -727,8 +732,7 @@ define(["./name", "./cell"], function (name, oCell) {
               } else if (e.button === 2) {
                 seen.right = false
               }
-              seen[_e] = e.target
-              self.set(seen)
+              self.set(makeSeen(seen, e.target))
             }
           }, true)
         }
