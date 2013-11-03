@@ -89,60 +89,58 @@ define(["./iter"], function (iter) {
   function BufferError(o, s) {
     var a = [s]
     // tests that `o` is an object
-    if (Object(o) === o) {
-      this.fileName = o.source
-      if (o.loc != null) {
-        o = o.loc
-        this.lineNumber = o.start.line
-
-        var b1 = (o.start.text != null)
-          , b2 = (o.start.line != null)
-          , b3 = (o.start.column != null)
-          , b4 = (o.source != null)
-        if (b1 || b2 || b3 || b4) {
-          var iOffset = (function () {
-            if (b1) {
-              var a = /^ +/.exec(o.start.text)
-              if (a) {
-                return a[0].length
-              }
-            }
-            return 0
-          })()
-          a.push("\n")
-          if (b1) {
-            a.push("  ", /^ *([^\n]*)/.exec(o.start.text)[1])
-          }
-          if (b2 || b3 || b4) {
-            a.push("  (")
-            if (b4) {
-              a.push(o.source)
-            }
-            if (b2) {
-              if (b4) {
-                a.push(":")
-              }
-              a.push(o.start.line)
-            }
-            if (b3) {
-              if (b2 || b4) {
-                a.push(":")
-              }
-              a.push(o.start.column + 1)
-            }
-            a.push(")")
-          }
-          if (b1 && b3) {
-            var end = (o.end.line > o.start.line
-                        ? o.start.text.length - 1
-                        : o.end.column)
-            a.push("\n ", new Array((o.start.column + 1) - iOffset + 1).join(" "),
-                          new Array((end - o.start.column) + 1).join("^"))
-          }
-        }
-      }
+    if (Object(o) === o && o.loc != null) {
+      o = o.loc
+      this.fileName   = o.source
+      this.lineNumber = o.start.line
       //this.start      = o.start
       //this.end        = o.end
+
+      var b1 = (o.start.text != null)
+        , b2 = (o.start.line != null)
+        , b3 = (o.start.column != null)
+        , b4 = (o.source != null)
+      if (b1 || b2 || b3 || b4) {
+        var iOffset = (function () {
+          if (b1) {
+            var a = /^ +/.exec(o.start.text)
+            if (a) {
+              return a[0].length
+            }
+          }
+          return 0
+        })()
+        a.push("\n")
+        if (b1) {
+          a.push("  ", /^ *([^\n]*)/.exec(o.start.text)[1])
+        }
+        if (b2 || b3 || b4) {
+          a.push("  (")
+          if (b4) {
+            a.push(o.source)
+          }
+          if (b2) {
+            if (b4) {
+              a.push(":")
+            }
+            a.push(o.start.line)
+          }
+          if (b3) {
+            if (b2 || b4) {
+              a.push(":")
+            }
+            a.push(o.start.column + 1)
+          }
+          a.push(")")
+        }
+        if (b1 && b3) {
+          var end = (o.end.line > o.start.line
+                      ? o.start.text.length - 1
+                      : o.end.column)
+          a.push("\n ", new Array((o.start.column + 1) - iOffset + 1).join(" "),
+                        new Array((end - o.start.column) + 1).join("^"))
+        }
+      }
     }
     // http://stackoverflow.com/a/8460753/449477
     if (typeof Error.captureStackTrace === "function") {
