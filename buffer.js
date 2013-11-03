@@ -15,14 +15,6 @@ define(["./iter"], function (iter) {
     }
     return r
   }
-
-  function loc(x, y) {
-    return {
-      source: x.source,
-      start: x.start,
-      end: y.end
-    }
-  }
   
   // Takes any array-like object and returns a Reader, which has a `has`, `peek`, and `read` methods.
   function Reader(a) {

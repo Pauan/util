@@ -648,7 +648,7 @@ define(["./name", "./cell"], function (name, oCell) {
     e[bindings] = []
 
     // TODO closures
-    e.mouseclick = oCell.value(undefined, {
+    e.mouseclick = oCell.dedupe(undefined, {
       bind: function (self) {
         function click(e) {
           e.preventDefault()
@@ -703,7 +703,7 @@ define(["./name", "./cell"], function (name, oCell) {
 
     var seen = { left: false, middle: false, right: false }
                               // TODO is this correct?
-    e.mousedown = oCell.value(makeSeen(seen, o), {
+    e.mousedown = oCell.dedupe(makeSeen(seen, o), {
       bind: function (self) {
         function contextmenu(e) {
           e.preventDefault()
@@ -1026,7 +1026,7 @@ define(["./name", "./cell"], function (name, oCell) {
     // TODO maybe this can ignore duplicates ?
     e.checked = oCell.value(o.indeterminate ? null : o.checked, {
       bind: function (self) {
-        // TODO is this correct; does it leak; is it inefficient ?
+        // TODO is this correct; does it leak; is it inefficient; can it be replaced with cell.map ?
         return e.event([e.changed], function (b) {
           self.set(o.indeterminate ? null : b)
         })
