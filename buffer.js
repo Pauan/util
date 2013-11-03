@@ -90,7 +90,11 @@ define(["./iter"], function (iter) {
     var a = [s]
     // tests that `o` is an object
     if (Object(o) === o) {
-      if (o.start != null) {
+      this.fileName = o.source
+      if (o.loc != null) {
+        o = o.loc
+        this.lineNumber = o.start.line
+
         var b1 = (o.start.text != null)
           , b2 = (o.start.line != null)
           , b3 = (o.start.column != null)
@@ -137,10 +141,8 @@ define(["./iter"], function (iter) {
           }
         }
       }
-      this.start      = o.start
-      this.end        = o.end
-      this.fileName   = o.source
-      this.lineNumber = o.start.line
+      //this.start      = o.start
+      //this.end        = o.end
     }
     // http://stackoverflow.com/a/8460753/449477
     if (typeof Error.captureStackTrace === "function") {
@@ -160,6 +162,5 @@ define(["./iter"], function (iter) {
     Reader: Reader,
     Buffer: Buffer,
     Error: BufferError,
-    loc: loc,
   })
 })
