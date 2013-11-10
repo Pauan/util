@@ -334,6 +334,9 @@ define(["./name", "./cell"], function (name, oCell) {
   //var animations = []
 
   var Box = {
+    name: function (s) {
+      this[_e].name = s
+    },
     addText: function (s) {
       this[_e].appendChild(document.createTextNode(s || ""))
     },
@@ -570,15 +573,15 @@ define(["./name", "./cell"], function (name, oCell) {
     },
     getPosition: function () {
       return this[_e].getBoundingClientRect()
+    },
+    value: function (s) {
+      this[_e].value = s
     }
   }
   
   var ListItem = Object.create(Box)
   ListItem.select = function () {
     this[_e].selected = true
-  }
-  ListItem.value = function (s) {
-    this[_e].value = s
   }
   
   var Table = Object.create(Box)
@@ -587,6 +590,9 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   var Image = Object.create(Box)
+  Image.alt = function (s) {
+    this[_e].alt = s
+  }
   Image.src = function (s) {
     this[_e].src = s
   }
@@ -838,6 +844,14 @@ define(["./name", "./cell"], function (name, oCell) {
       o.verticalAlign = "middle"
     })
     
+    // TODO code duplication with input[type=checkbox]
+    addRule(document, "input[type=radio]", function (o) {
+      o.position = "relative"
+      o.top = "-1px"
+      //o.marginRight = "3px"
+      o.verticalAlign = "middle"
+    })
+    
     addRule(document, "select", function (o) {
       o.outline = "none"
       o.display = "block"
@@ -857,7 +871,7 @@ define(["./name", "./cell"], function (name, oCell) {
     })
 
     addRule(document, ".box", function (o) {
-      o.whiteSpace = "pre" // TODO
+      o.whiteSpace = "pre-wrap" // TODO
 
       // TODO I wish there was a way to get rid of these two
       o.borderWidth = "0px"
@@ -1045,6 +1059,60 @@ define(["./name", "./cell"], function (name, oCell) {
       }
     })
 
+    return call(f, e)
+  }
+  
+  function radio(f) {
+    var o = document.createElement("input")
+    o.type = "radio"
+    o.className = "box"
+    
+    var e = make(Box, o)
+    
+    // TODO closure
+    e.changed = oCell.value(undefined, {
+      bind: function (self) {
+        function change() {
+          self.set(o.checked)
+        }
+        
+        o.addEventListener("change", change, true)
+        
+        return {
+          change: change
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("change", e.change, true)
+      }
+    })
+    
+    // indeterminate has priority
+    // TODO code duplication with checkbox
+    // TODO closure
+    // TODO should <cell>.get() trigger <cell>bind() ?
+    // TODO maybe this can ignore duplicates ?
+    e.checked = oCell.value(o.indeterminate ? null : o.checked, {
+      bind: function (self) {
+        // TODO is this correct; does it leak; is it inefficient; can it be replaced with cell.map ?
+        return e.event([e.changed], function (b) {
+          self.set(o.indeterminate ? null : b)
+        })
+      },
+      unbind: function (e) {
+        e.unbind()
+      },
+      set: function (self, x) {
+        if (x === null) {
+          o.checked = false
+          o.indeterminate = true
+        } else {
+          o.checked = x
+          o.indeterminate = false
+        }
+      }
+    })
+    
     return call(f, e)
   }
   
@@ -1310,6 +1378,7 @@ define(["./name", "./cell"], function (name, oCell) {
     button: button,
     link: link,
     file: file,
+    radio: radio,
     
     table: table,
     row: row,
