@@ -590,6 +590,9 @@ define(["./name", "./cell"], function (name, oCell) {
   Table.align = function (s) {
     this[_e].style.verticalAlign = s
   }
+  Table.rowspan = function (s) {
+    this[_e].rowspan = s
+  }
 
   var Image = Object.create(Box)
   Image.alt = function (s) {
