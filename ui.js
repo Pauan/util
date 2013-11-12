@@ -833,10 +833,9 @@ define(["./name", "./cell"], function (name, oCell) {
       //o.margin = "0px"
       
       o.cursor = "auto"
-      
-      // TODO
-      o.backgroundColor = "white"
-      o.color = "black"
+
+      //o.backgroundColor = "white"
+      //o.color = "black"
     })
     
     addRule(document, "input[type=checkbox]", function (o) {
