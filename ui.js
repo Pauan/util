@@ -591,7 +591,7 @@ define(["./name", "./cell"], function (name, oCell) {
     this[_e].style.verticalAlign = s
   }
   Table.rowspan = function (s) {
-    this[_e].rowspan = s
+    this[_e].rowSpan = s
   }
 
   var Image = Object.create(Box)
