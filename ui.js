@@ -446,11 +446,11 @@ define(["./name", "./cell"], function (name, oCell) {
       o[_e] = this[_e]
       f(o)
     },
-    /*outline: function (f) {
+    outline: function (f) {
       var o = Object.create(styleOutline)
       o[_e] = this[_e]
       f(o)
-    },*/
+    },
     position: function (f) {
       var o = Object.create(styleMove)
       o[_e] = this[_e]
