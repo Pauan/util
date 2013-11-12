@@ -140,6 +140,21 @@ define(["./name", "./cell"], function (name, oCell) {
       this[_e].style.border = "none"
     }
   }
+  
+  var styleOutline = {
+    style: function (s) {
+      this[_e].style.outlineStyle = s
+    },
+    size: function (s) {
+      this[_e].style.outlineWidth = s
+    },
+    color: function (s) {
+      this[_e].style.outlineColor = s
+    },
+    remove: function () {
+      this[_e].style.outline = "none"
+    }
+  }
 
   var styleMove = {
     left: function (s) {
@@ -155,54 +170,36 @@ define(["./name", "./cell"], function (name, oCell) {
       this[_e].style.bottom = s
     }
   }
-
-  var stylePadding = {
-    all: function (s) {
-      this[_e].style.padding = s
-    },
-    left: function (s) {
-      this[_e].style.paddingLeft = s
-    },
-    top: function (s) {
-      this[_e].style.paddingTop = s
-    },
-    right: function (s) {
-      this[_e].style.paddingRight = s
-    },
-    bottom: function (s) {
-      this[_e].style.paddingBottom = s
-    },
-    vertical: function (s) {
-      this[_e].style.paddingTop = this[_e].style.paddingBottom = s
-    },
-    horizontal: function (s) {
-      this[_e].style.paddingLeft = this[_e].style.paddingRight = s
-    }
-  }
   
-  var styleMargin = {
-    all: function (s) {
-      this[_e].style.margin = s
-    },
-    left: function (s) {
-      this[_e].style.marginLeft = s
-    },
-    top: function (s) {
-      this[_e].style.marginTop = s
-    },
-    right: function (s) {
-      this[_e].style.marginRight = s
-    },
-    bottom: function (s) {
-      this[_e].style.marginBottom = s
-    },
-    vertical: function (s) {
-      this[_e].style.marginTop = this[_e].style.marginBottom = s
-    },
-    horizontal: function (s) {
-      this[_e].style.marginLeft = this[_e].style.marginRight = s
+  // TODO closure
+  function styleSides(s) {
+    return {
+      all: function (x) {
+        this[_e].style[s] = x
+      },
+      left: function (x) {
+        this[_e].style[s + "Left"] = x
+      },
+      top: function (x) {
+        this[_e].style[s + "Top"] = x
+      },
+      right: function (x) {
+        this[_e].style[s + "Right"] = x
+      },
+      bottom: function (x) {
+        this[_e].style[s + "Bottom"] = x
+      },
+      vertical: function (x) {
+        this[_e].style[s + "Top"] = this[_e].style[s + "Bottom"] = x
+      },
+      horizontal: function (x) {
+        this[_e].style[s + "Left"] = this[_e].style[s + "Right"] = x
+      }
     }
   }
+
+  var stylePadding = styleSides("padding")
+  var styleMargin  = styleSides("margin")
 
   /*var stylePanel = {
     left: function (s) {
@@ -449,6 +446,11 @@ define(["./name", "./cell"], function (name, oCell) {
       o[_e] = this[_e]
       f(o)
     },
+    /*outline: function (f) {
+      var o = Object.create(styleOutline)
+      o[_e] = this[_e]
+      f(o)
+    },*/
     position: function (f) {
       var o = Object.create(styleMove)
       o[_e] = this[_e]
