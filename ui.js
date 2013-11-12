@@ -873,6 +873,8 @@ define(["./name", "./cell"], function (name, oCell) {
 
     addRule(document, ".box", function (o) {
       o.whiteSpace = "pre-wrap" // TODO
+      
+      o.backgroundColor = "transparent"
 
       // TODO I wish there was a way to get rid of these two
       o.borderWidth = "0px"
