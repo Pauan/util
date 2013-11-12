@@ -1160,6 +1160,7 @@ define(["./name", "./cell"], function (name, oCell) {
     o.type = "search"
     o.incremental = true
     o.autocomplete = "off"
+    o.placeholder = "Search"
     o.setAttribute("results", "")
     //calculate(x)
 
