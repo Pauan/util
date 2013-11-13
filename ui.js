@@ -578,6 +578,9 @@ define(["./name", "./cell"], function (name, oCell) {
     },
     value: function (s) {
       this[_e].value = s
+    },
+    display: function (s) {
+      this[_e].style.display = s
     }
   }
   
