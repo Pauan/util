@@ -63,7 +63,7 @@ define(function () {
     if (x.query) {
       y.query = " " + decodeURIComponent(x.query).replace(/^\?/, "")
                                                  .replace(/\+/g, " ")
-                                                 .replace(/=/g, ": ")
+                                                 .replace(/=/g, ":")
                                                  .replace(/&/g, " ")
     } else if (x.file) {
       y.file = " " + decodeURIComponent(x.file).replace(/\.(?:html?|php|asp)$/, "")
