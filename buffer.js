@@ -137,7 +137,7 @@ define(["./iter"], function (iter) {
           var end = (o.end.line > o.start.line
                       ? o.start.text.length - 1
                       : o.end.column)
-          a.push("\n ", new Array((o.start.column + 1) - iOffset + 1).join(" "),
+          a.push("\n ", new Array((o.start.column - iOffset) + 1).join(" "),
                         new Array((end - o.start.column) + 1).join("^"))
         }
       }
