@@ -100,6 +100,8 @@ define(["./iter"], function (iter) {
         , b2 = (o.start.line != null)
         , b3 = (o.start.column != null)
         , b4 = (o.source != null)
+        , b5 = (o.end.line != null)
+        , b6 = (o.end.column != null)
       if (b1 || b2 || b3 || b4) {
         var iOffset = (function () {
           if (b1) {
@@ -133,11 +135,11 @@ define(["./iter"], function (iter) {
           }
           a.push(")")
         }
-        if (b1 && b3) {
+        if (b1 && b3 && b5 && b6) {
           var end = (o.end.line > o.start.line
                       ? o.start.text.length - 1
                       : o.end.column)
-          a.push("\n ", new Array((o.start.column - iOffset) + 1).join(" "),
+          a.push("\n ", new Array((o.start.column + 1 - iOffset) + 1).join(" "),
                         new Array((end - o.start.column) + 1).join("^"))
         }
       }
