@@ -69,6 +69,7 @@ define(["./iter"], function (iter) {
   Buffer.prototype.read = function () {
     var old = this.peek()
     ++this.column
+        // TODO not entirely sure if this is correct or not
     if (this.index < this.input.length && this.column >= this.text.length) {
       this.text = line(this)
       this.column = 0
