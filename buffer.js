@@ -68,11 +68,13 @@ define(["./iter"], function (iter) {
   }
   Buffer.prototype.read = function () {
     var old = this.peek()
-    ++this.column
-    if (this.column >= this.text.length) {
-      this.text = line(this)
-      this.column = 0
-      ++this.line
+    if (this.index < this.input.length) {
+      ++this.column
+      if (this.column >= this.text.length) {
+        this.text = line(this)
+        this.column = 0
+        ++this.line
+      }
     }
     return old
   }
