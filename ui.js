@@ -1251,7 +1251,7 @@ define(["./name", "./cell"], function (name, oCell) {
         }
       },
       unbind: function (e) {
-        o.removeEventListener("input", e.input, true
+        o.removeEventListener("input", e.input, true)
       },
       set: function (self, x) {
         o.value = x
