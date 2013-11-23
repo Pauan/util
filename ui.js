@@ -1220,7 +1220,38 @@ define(["./name", "./cell"], function (name, oCell) {
         }
       },
       unbind: function (e) {
-        o.removeEventListener("change", input, true)
+        o.removeEventListener("change", e.input, true)
+      },
+      set: function (self, x) {
+        o.value = x
+      }
+    })
+    
+    return call(f, e)
+  }
+  
+  function textarea(f) {
+    var o = document.createElement("textarea")
+    o.className = "box"
+    
+    var e = make(Box, o)
+    
+    // TODO closure
+    // TODO code duplication
+    e.value = oCell.dedupe(o.value, {
+      bind: function (self) {
+        function input() {
+          self.set(o.value)
+        }
+        
+        o.addEventListener("input", input, true)
+        
+        return {
+          input: input
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("input", e.input, true
       },
       set: function (self, x) {
         o.value = x
@@ -1377,6 +1408,7 @@ define(["./name", "./cell"], function (name, oCell) {
     vert: vert,
     search: search,
     textbox: textbox,
+    textarea: textarea,
     label: label,
     checkbox: checkbox,
     image: image,
