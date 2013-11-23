@@ -115,7 +115,7 @@ define(["./iter"], function (iter) {
         })()
         a.push("\n")
         if (b1) {
-          a.push("  ", o.start.text.replace(/(?:^ +)|(?: +$)/g, ""))
+          a.push("  ", o.start.text.replace(/(?:^ +)|(?: +$)|(?:\n+$)/g, ""))
         }
         if (b2 || b3 || b4) {
           a.push("  (")
