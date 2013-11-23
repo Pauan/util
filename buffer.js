@@ -115,7 +115,7 @@ define(["./iter"], function (iter) {
         })()
         a.push("\n")
         if (b1) {
-          a.push("  ", /^ *([^\n]*)/.exec(o.start.text)[1])
+          a.push("  ", /^ *([^\n]*) *$/.exec(o.start.text)[1])
         }
         if (b2 || b3 || b4) {
           a.push("  (")
