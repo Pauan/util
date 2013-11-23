@@ -226,7 +226,7 @@ define(["./name", "./cell"], function (name, oCell) {
     variant: function (s) {
       this[_e].style.fontVariant = s
     },
-    font: function () {
+    family: function () {
       this[_e].style.fontFamily = join(arguments, 0, ",")
     },
     size: function (s) {
