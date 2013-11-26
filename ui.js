@@ -331,6 +331,10 @@ define(["./name", "./cell"], function (name, oCell) {
   //var animations = []
 
   var Box = {
+    // TODO
+    whitespace: function (s) {
+      this[_e].style.whiteSpace = s
+    },
     name: function (s) {
       this[_e].name = s
     },
