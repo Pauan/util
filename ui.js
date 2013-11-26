@@ -610,9 +610,10 @@ define(["./name", "./cell"], function (name, oCell) {
     this[_e].src = s
   }
   IFrame.sandbox = function (s) {
-    this[_e].sandbox = s
+    this[_e].sandbox = s || ""
   }
   IFrame.seamless = function () {
+    this[_e].setAttribute("seamless", "") // TODO remove this later
     this[_e].seamless = true
   }
   IFrame.getEval = function () {
