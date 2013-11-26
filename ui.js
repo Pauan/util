@@ -805,7 +805,7 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   function normalize(document, f) {
-    document.body.className = "vert"
+    //document.body.className = "vert"
 
     addRule(document, "html, body", function (o) {
       //o.margin = "0px"
@@ -916,13 +916,13 @@ define(["./name", "./cell"], function (name, oCell) {
       //o.width = "100%"
     })*/
 
-    /*addRule(document, ".vert", function (o) {
+    addRule(document, ".vert", function (o) {
       o.display = "flex"
       o.flexDirection = "column"
       //o.display = "table"
       //o.display = "flex"
       //o.flexDirection = "column"
-    })*/
+    })
 
     /*addRule(document, ".vert > *", function (o) {
 
