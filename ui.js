@@ -331,6 +331,10 @@ define(["./name", "./cell"], function (name, oCell) {
   //var animations = []
 
   var Box = {
+    clip: function (s) {
+      this[_e].style.overflow = "hidden"
+      this[_e].style.textOverflow = "ellipsis"
+    },
     // TODO
     whitespace: function (s) {
       this[_e].style.whiteSpace = s
@@ -844,7 +848,7 @@ define(["./name", "./cell"], function (name, oCell) {
       o.boxSizing = "border-box"
       
       o.backgroundSize = "100% 100%"
-      o.textOverflow = "ellipsis"
+      //o.textOverflow = "ellipsis"
       //o.overflow = "hidden"
     })
 
