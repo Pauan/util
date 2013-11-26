@@ -609,6 +609,9 @@ define(["./name", "./cell"], function (name, oCell) {
   IFrame.src = function (s) {
     this[_e].src = s
   }
+  IFrame.seamless = function () {
+    this[_e].seamless = true
+  }
   IFrame.getEval = function () {
     return this[_e].contentWindow.eval
   }
