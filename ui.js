@@ -609,8 +609,8 @@ define(["./name", "./cell"], function (name, oCell) {
   IFrame.src = function (s) {
     this[_e].src = s
   }
-  IFrame.eval = function (s) {
-    return this[_e].contentWindow.eval(s)
+  IFrame.getEval = function () {
+    return this[_e].contentWindow.eval
   }
   
   var Link = Object.create(Box)
