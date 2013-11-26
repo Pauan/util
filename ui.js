@@ -616,8 +616,8 @@ define(["./name", "./cell"], function (name, oCell) {
     this[_e].setAttribute("seamless", "") // TODO remove this later
     this[_e].seamless = true
   }
-  IFrame.getEval = function () {
-    return this[_e].contentWindow.eval
+  IFrame.getWindow = function () {
+    return this[_e].contentWindow
   }
   
   var Link = Object.create(Box)
