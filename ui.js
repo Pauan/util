@@ -605,6 +605,14 @@ define(["./name", "./cell"], function (name, oCell) {
     this[_e].src = s
   }
   
+  var IFrame = Object.create(Box)
+  IFrame.src = function (s) {
+    this[_e].src = s
+  }
+  IFrame.eval = function (s) {
+    return this[_e].contentWindow.eval(s)
+  }
+  
   var Link = Object.create(Box)
   Link.src = function (s) {
     this[_e].href = s
@@ -1267,6 +1275,12 @@ define(["./name", "./cell"], function (name, oCell) {
     return call(f, make(Link, o))
   }
   
+  function iframe(f) {
+    var o = document.createElement("iframe")
+    o.className = "box"
+    return call(f, make(IFrame, o))
+  }
+  
   function file(f) {
     var o = document.createElement("input")
     o.className = "box"
@@ -1421,6 +1435,7 @@ define(["./name", "./cell"], function (name, oCell) {
     link: link,
     file: file,
     radio: radio,
+    iframe: iframe,
     
     table: table,
     row: row,
