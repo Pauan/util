@@ -844,20 +844,15 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   function normalize(document, f) {
-    //document.body.className = "vert"
+    document.body.className = "box"
 
     addRule(document, "html, body", function (o) {
       //o.margin = "0px"
       o.width = "100%"
       o.height = "100%"
-      
-      o.cursor = "default"
     })
     
-    addRule(document, "*", function (o) {
-      o.margin = "0px"
-      o.padding = "0px"
-
+    /*addRule(document, "*", function (o) {
       //o.textOverflow = "ellipsis"
 
       //o.overflow = "hidden"
@@ -865,7 +860,7 @@ define(["./name", "./cell"], function (name, oCell) {
       //o.minWidth = "0px"
       //o.minHeight = "0px"
       //o.whiteSpace = "pre"
-    })
+    })*/
 
     addRule(document, "[hidden]", function (o) {
       o.setProperty("display", "none", "important")
@@ -879,6 +874,9 @@ define(["./name", "./cell"], function (name, oCell) {
     addRule(document, ".box", function (o) {
       o.MozBoxSizing = "border-box" // TODO
       o.boxSizing = "border-box"
+      
+      o.margin = "0px"
+      o.padding = "0px"
 
       //o.whiteSpace = "pre-wrap" // TODO
       
@@ -947,6 +945,16 @@ define(["./name", "./cell"], function (name, oCell) {
       o.position = "fixed"
       o.zIndex = highestZIndex
     })
+
+    addRule(document, "body.box", function (o) {
+      o.cursor = "default"
+    })
+
+    addRule(document, "hr.box", function (o) {
+      o.height = "1px"
+      o.marginTop = o.marginBottom = "0.5em"
+      o.backgroundColor = "rgb(238, 238, 238)"
+    })
     
     addRule(document, "button.box", function (o) {
       o.outline = "none"
@@ -955,7 +963,7 @@ define(["./name", "./cell"], function (name, oCell) {
     
     addRule(document, "select.box", function (o) {
       o.outline = "none"
-      o.display = "block"
+      //o.display = "block"
       /*o.position = "relative"
       o.top = "-2px"*/
     })
@@ -979,15 +987,7 @@ define(["./name", "./cell"], function (name, oCell) {
       //o.color = "black"
     })
     
-    addRule(document, "input[type=checkbox].box", function (o) {
-      o.marginTop = "1px"
-      //o.position = "relative"
-      //o.top = "-1px"
-      //o.marginRight = "3px"
-    })
-    
-    // TODO code duplication with input[type=checkbox]
-    addRule(document, "input[type=radio].box", function (o) {
+    addRule(document, "input[type=checkbox].box, input[type=radio].box", function (o) {
       o.marginTop = "1px"
       //o.position = "relative"
       //o.top = "-1px"
@@ -1082,6 +1082,12 @@ define(["./name", "./cell"], function (name, oCell) {
   function label(f) {
     var o = document.createElement("label")
     o.className = "box horiz"
+    return call(f, make(Box, o))
+  }
+  
+  function separator(f) {
+    var o = document.createElement("hr")
+    o.className = "box"
     return call(f, make(Box, o))
   }
   
@@ -1503,6 +1509,7 @@ define(["./name", "./cell"], function (name, oCell) {
     file: file,
     radio: radio,
     iframe: iframe,
+    separator: separator,
     
     table: table,
     row: row,
