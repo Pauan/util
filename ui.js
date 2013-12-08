@@ -331,10 +331,6 @@ define(["./name", "./cell"], function (name, oCell) {
   //var animations = []
 
   var Box = {
-    clip: function (s) {
-      this[_e].style.overflow = "hidden"
-      this[_e].style.textOverflow = "ellipsis"
-    },
     // TODO
     whitespace: function (s) {
       this[_e].style.whiteSpace = s
@@ -382,10 +378,29 @@ define(["./name", "./cell"], function (name, oCell) {
     transform: function (s) {
       this[_e].style.transform = s
     },
-    stretch: function () {
-      this[_e].style.flexGrow = "1"
-      this[_e].style.flexShrink = "1"
-      this[_e].style.flexBasis = "0%"
+    clip: function (b) {
+      if (b) {
+        //this[_e].classList.add("clip")
+        this[_e].style.overflow = "hidden"
+        this[_e].style.textOverflow = "ellipsis"
+        this[_e].style.flexShrink = "1"
+      // TODO test the false version
+      } else {
+        this[_e].style.overflow = ""
+        this[_e].style.textOverflow = ""
+        this[_e].style.flexShrink = ""
+      }
+    },
+    stretch: function (b) {
+      if (b) {
+        this[_e].style.flexGrow = "1"
+        this[_e].style.flexBasis = "0%"
+      // TODO test the false version
+      } else {
+        this[_e].style.flexGrow = ""
+        this[_e].style.flexBasis = ""
+      }
+      this.clip(b)
     },
     width: function (s) {
       //this[_e].style.width = s
@@ -417,8 +432,9 @@ define(["./name", "./cell"], function (name, oCell) {
       // TODO
       this[_e].style.webkitFilter = s
     },
-    autofocus: function () {
-      this[_e].autofocus = true
+    // TODO test the false version
+    autofocus: function (b) {
+      this[_e].autofocus = b
     },
     stopDragging: function () {
       this[_e].addEventListener("mousedown", function (e) {
@@ -463,9 +479,6 @@ define(["./name", "./cell"], function (name, oCell) {
       var o = Object.create(styleMove)
       o[_e] = this[_e]
       f(o)
-    },
-    overflow: function (s) {
-      this[_e].style.overflow = s
     },
     padding: function (f) {
       var o = Object.create(stylePadding)
@@ -584,17 +597,20 @@ define(["./name", "./cell"], function (name, oCell) {
     getPosition: function () {
       return this[_e].getBoundingClientRect()
     },
+    // TODO this should only apply to certain things, like radio buttons and <option>s
     value: function (s) {
       this[_e].value = s
-    },
-    display: function (s) {
-      this[_e].style.display = s
     }
   }
   
   var ListItem = Object.create(Box)
   ListItem.select = function () {
     this[_e].selected = true
+  }
+  
+  var ListGroup = Object.create(Box)
+  ListGroup.label = function (s) {
+    this[_e].label = s
   }
   
   var Table = Object.create(Box)
@@ -839,69 +855,32 @@ define(["./name", "./cell"], function (name, oCell) {
     })
     
     addRule(document, "*", function (o) {
-      o.position = "relative"
-
       o.margin = "0px"
       o.padding = "0px"
-      
-      o.MozBoxSizing = "border-box" // TODO
-      o.boxSizing = "border-box"
-      
-      o.backgroundSize = "100% 100%"
+
       //o.textOverflow = "ellipsis"
+
       //o.overflow = "hidden"
+      //o.textOverflow = "ellipsis"
+      //o.minWidth = "0px"
+      //o.minHeight = "0px"
+      //o.whiteSpace = "pre"
     })
 
     addRule(document, "[hidden]", function (o) {
       o.setProperty("display", "none", "important")
     })
-
-    addRule(document, "input[type=search]", function (o) {
-      o.border = "none"
-      o.outline = "none"
-      //o.margin = "0px"
-      
-      o.cursor = "auto"
-
-      //o.backgroundColor = "white"
-      //o.color = "black"
-    })
     
-    addRule(document, "input[type=checkbox]", function (o) {
-      o.position = "relative"
-      o.top = "-1px"
-      //o.marginRight = "3px"
-      o.verticalAlign = "middle"
-    })
-    
-    // TODO code duplication with input[type=checkbox]
-    addRule(document, "input[type=radio]", function (o) {
-      o.position = "relative"
-      o.top = "-1px"
-      //o.marginRight = "3px"
-      o.verticalAlign = "middle"
-    })
-    
-    addRule(document, "select", function (o) {
-      o.outline = "none"
-      o.display = "block"
-      /*o.position = "relative"
-      o.top = "-2px"*/
-      o.verticalAlign = "middle"
-    })
-    
-    addRule(document, "table", function (o) {
-      o.borderSpacing = "0px"
-    })
-    
-    addRule(document, "button", function (o) {
-      o.outline = "none"
-      o.verticalAlign = "middle"
-      o.cursor = "pointer"
-    })
+    /*addRule(document, ".clip *", function (o) {
+      o.overflow = "hidden"
+      o.textOverflow = "ellipsis"
+    })*/
 
     addRule(document, ".box", function (o) {
-      o.whiteSpace = "pre-wrap" // TODO
+      o.MozBoxSizing = "border-box" // TODO
+      o.boxSizing = "border-box"
+
+      //o.whiteSpace = "pre-wrap" // TODO
       
       o.backgroundColor = "transparent"
 
@@ -911,12 +890,24 @@ define(["./name", "./cell"], function (name, oCell) {
       o.borderStyle = "solid"
 
       o.flexGrow = "0"
-      o.flexShrink = "0"
-      o.flexBasis = "auto"
+      o.flexShrink = "0" // "1"
+      o.flexBasis = "auto" // TODO try out other stuff like min-content once it becomes available
+      
+      o.position = "relative"
+      
+      o.backgroundSize = "100% 100%"
+      
+      o.cursor = "inherit"
+      
+      o.verticalAlign = "middle"
 
       //o.verticalAlign = "top" // TODO needed in Firefox
       //o.tableLayout = "fixed"
       //o.backgroundClip = "padding-box" // TODO content-box
+    })
+    
+    addRule(document, ".shrink", function (o) {
+      o.display = "inline-block"
     })
 
     addRule(document, ".horiz", function (o) {
@@ -955,6 +946,52 @@ define(["./name", "./cell"], function (name, oCell) {
     addRule(document, ".panel", function (o) {
       o.position = "fixed"
       o.zIndex = highestZIndex
+    })
+    
+    addRule(document, "button.box", function (o) {
+      o.outline = "none"
+      o.cursor = "pointer"
+    })
+    
+    addRule(document, "select.box", function (o) {
+      o.outline = "none"
+      o.display = "block"
+      /*o.position = "relative"
+      o.top = "-2px"*/
+    })
+    
+    addRule(document, "table.box", function (o) {
+      o.borderSpacing = "0px"
+    })
+    
+    addRule(document, "input[type=text].box", function (o) {
+      o.cursor = "auto"
+    })
+    
+    addRule(document, "input[type=search].box", function (o) {
+      o.border = "none"
+      o.outline = "none"
+      //o.margin = "0px"
+      
+      o.cursor = "auto"
+
+      //o.backgroundColor = "white"
+      //o.color = "black"
+    })
+    
+    addRule(document, "input[type=checkbox].box", function (o) {
+      o.marginTop = "1px"
+      //o.position = "relative"
+      //o.top = "-1px"
+      //o.marginRight = "3px"
+    })
+    
+    // TODO code duplication with input[type=checkbox]
+    addRule(document, "input[type=radio].box", function (o) {
+      o.marginTop = "1px"
+      //o.position = "relative"
+      //o.top = "-1px"
+      //o.marginRight = "3px"
     })
 
     new MutationObserver(function (a) {
@@ -1014,6 +1051,13 @@ define(["./name", "./cell"], function (name, oCell) {
     //calculate(x)
     return call(f, make(Box, o))
   }
+  
+  function shrink(f) {
+    var o = document.createElement("div")
+    o.className = "box shrink"
+    //calculate(x)
+    return call(f, make(Box, o))
+  }
 
   function horiz(f) {
     var o = document.createElement("div")
@@ -1037,7 +1081,7 @@ define(["./name", "./cell"], function (name, oCell) {
   
   function label(f) {
     var o = document.createElement("label")
-    o.className = "box"
+    o.className = "box horiz"
     return call(f, make(Box, o))
   }
   
@@ -1181,6 +1225,12 @@ define(["./name", "./cell"], function (name, oCell) {
     var o = document.createElement("option")
     o.className = "box"
     return call(f, make(ListItem, o))
+  }
+  
+  function listGroup(f) {
+    var o = document.createElement("optgroup")
+    o.className = "box"
+    return call(f, make(ListGroup, o))
   }
 
   function search(f) {
@@ -1433,6 +1483,7 @@ define(["./name", "./cell"], function (name, oCell) {
 
     normalize: normalize,
     box: box,
+    shrink: shrink,
     horiz: horiz,
     vert: vert,
     search: search,
@@ -1446,6 +1497,7 @@ define(["./name", "./cell"], function (name, oCell) {
     element: element,
     list: list,
     listItem: listItem,
+    listGroup: listGroup,
     button: button,
     link: link,
     file: file,
