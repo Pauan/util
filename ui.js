@@ -24,6 +24,9 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   var Box = {
+    style: function () {
+      this[_e].className = [].slice.call(arguments).join(" ")
+    },
     name: function (s) {
       this[_e].name = s
     },
