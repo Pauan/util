@@ -31,7 +31,7 @@ define(["./name", "./cell"], function (name, oCell) {
       if (typeof f === "function") {
         f(this[_e].style)
       } else {
-        this[_e].classList.add(f)
+        this[_e].className = f
       }
     },
     styleWhen: function (s, b) {
@@ -409,9 +409,142 @@ define(["./name", "./cell"], function (name, oCell) {
     }
     return e
   }
+  
+  addRule(document, "[hidden]", function (o) {
+    o.setProperty("display", "none", "important")
+  })
+  
+  /*addRule(document, ".clip *", function (o) {
+    o.overflow = "hidden"
+    o.textOverflow = "ellipsis"
+  })*/
 
-  function normalize(document, f) {
-    document.body.className = "box"
+  addRule(document, "[data-box]", function (o) {
+    o.MozBoxSizing = "border-box" // TODO
+    o.boxSizing = "border-box"
+    
+    o.margin = "0px"
+    o.padding = "0px"
+
+    //o.whiteSpace = "pre-wrap" // TODO
+    
+    o.backgroundColor = "transparent"
+
+    // TODO I wish there was a way to get rid of these two
+    o.borderWidth = "0px"
+    o.borderColor = "transparent"
+    o.borderStyle = "solid"
+
+    o.flexGrow = "0"
+    o.flexShrink = "0" // "1"
+    o.flexBasis = "auto" // TODO try out other stuff like min-content once it becomes available
+    
+    o.position = "relative"
+    
+    o.backgroundSize = "100% 100%"
+    
+    o.cursor = "inherit"
+    
+    o.verticalAlign = "middle"
+
+    //o.verticalAlign = "top" // TODO needed in Firefox
+    //o.tableLayout = "fixed"
+    //o.backgroundClip = "padding-box" // TODO content-box
+  })
+  
+  addRule(document, "[data-shrink]", function (o) {
+    o.display = "inline-block"
+  })
+
+  addRule(document, "[data-horiz]", function (o) {
+    o.display = "flex"
+    o.flexDirection = "row"
+    //o.alignItems = "center"
+    //o.display = "inline-block"
+    //o.cssFloat = "left"
+    //o.display = "table"
+    //o.display = "flex"
+    //o.flexDirection = "row"
+  })
+
+  /*addRule(document, ".horiz > *", function (o) {
+    o.display = "inline-block"
+    //o.cssFloat = "left"
+    //o.padding = "0px"
+    o.height = "100%"
+    //o.whiteSpace = "normal"
+    //o.width = "100%"
+  })*/
+
+  addRule(document, "[data-vert]", function (o) {
+    o.display = "flex"
+    o.flexDirection = "column"
+    //o.display = "table"
+    //o.display = "flex"
+    //o.flexDirection = "column"
+  })
+
+  /*addRule(document, ".vert > *", function (o) {
+
+    //o.width = "100%"
+  })*/
+
+  addRule(document, "[data-panel]", function (o) {
+    o.position = "fixed"
+    o.zIndex = highestZIndex
+  })
+
+  addRule(document, "[data-body]", function (o) {
+    o.cursor = "default"
+  })
+
+  addRule(document, "[data-separator]", function (o) {
+    o.height = "1px"
+    o.marginTop = o.marginBottom = "0.5em"
+    o.backgroundColor = "rgb(238, 238, 238)"
+  })
+  
+  addRule(document, "[data-button]", function (o) {
+    o.outline = "none"
+    o.cursor = "pointer"
+  })
+  
+  addRule(document, "[data-list]", function (o) {
+    o.outline = "none"
+    //o.display = "block"
+    /*o.position = "relative"
+    o.top = "-2px"*/
+  })
+  
+  addRule(document, "[data-table]", function (o) {
+    o.borderSpacing = "0px"
+  })
+  
+  addRule(document, "[data-text]", function (o) {
+    o.cursor = "auto"
+  })
+  
+  addRule(document, "[data-search]", function (o) {
+    o.border = "none"
+    o.outline = "none"
+    //o.margin = "0px"
+    
+    o.cursor = "auto"
+
+    //o.backgroundColor = "white"
+    //o.color = "black"
+  })
+  
+  addRule(document, "[data-checkbox]", function (o) {
+    o.marginTop = "1px"
+    //o.position = "relative"
+    //o.top = "-1px"
+    //o.marginRight = "3px"
+  })
+
+  function normalize(f) {
+    document.body.dataset["box"] = ""
+    document.body.dataset["body"] = ""
 
     addRule(document, "html, body", function (o) {
       //o.margin = "0px"
@@ -428,138 +561,6 @@ define(["./name", "./cell"], function (name, oCell) {
       //o.minHeight = "0px"
       //o.whiteSpace = "pre"
     })*/
-
-    addRule(document, "[hidden]", function (o) {
-      o.setProperty("display", "none", "important")
-    })
-    
-    /*addRule(document, ".clip *", function (o) {
-      o.overflow = "hidden"
-      o.textOverflow = "ellipsis"
-    })*/
-
-    addRule(document, ".box", function (o) {
-      o.MozBoxSizing = "border-box" // TODO
-      o.boxSizing = "border-box"
-      
-      o.margin = "0px"
-      o.padding = "0px"
-
-      //o.whiteSpace = "pre-wrap" // TODO
-      
-      o.backgroundColor = "transparent"
-
-      // TODO I wish there was a way to get rid of these two
-      o.borderWidth = "0px"
-      o.borderColor = "transparent"
-      o.borderStyle = "solid"
-
-      o.flexGrow = "0"
-      o.flexShrink = "0" // "1"
-      o.flexBasis = "auto" // TODO try out other stuff like min-content once it becomes available
-      
-      o.position = "relative"
-      
-      o.backgroundSize = "100% 100%"
-      
-      o.cursor = "inherit"
-      
-      o.verticalAlign = "middle"
-
-      //o.verticalAlign = "top" // TODO needed in Firefox
-      //o.tableLayout = "fixed"
-      //o.backgroundClip = "padding-box" // TODO content-box
-    })
-    
-    addRule(document, ".shrink", function (o) {
-      o.display = "inline-block"
-    })
-
-    addRule(document, ".horiz", function (o) {
-      o.display = "flex"
-      o.flexDirection = "row"
-      //o.alignItems = "center"
-      //o.display = "inline-block"
-      //o.cssFloat = "left"
-      //o.display = "table"
-      //o.display = "flex"
-      //o.flexDirection = "row"
-    })
-
-    /*addRule(document, ".horiz > *", function (o) {
-      o.display = "inline-block"
-      //o.cssFloat = "left"
-      //o.padding = "0px"
-      o.height = "100%"
-      //o.whiteSpace = "normal"
-      //o.width = "100%"
-    })*/
-
-    addRule(document, ".vert", function (o) {
-      o.display = "flex"
-      o.flexDirection = "column"
-      //o.display = "table"
-      //o.display = "flex"
-      //o.flexDirection = "column"
-    })
-
-    /*addRule(document, ".vert > *", function (o) {
-
-      //o.width = "100%"
-    })*/
-
-    addRule(document, ".panel", function (o) {
-      o.position = "fixed"
-      o.zIndex = highestZIndex
-    })
-
-    addRule(document, "body.box", function (o) {
-      o.cursor = "default"
-    })
-
-    addRule(document, "hr.box", function (o) {
-      o.height = "1px"
-      o.marginTop = o.marginBottom = "0.5em"
-      o.backgroundColor = "rgb(238, 238, 238)"
-    })
-    
-    addRule(document, "button.box", function (o) {
-      o.outline = "none"
-      o.cursor = "pointer"
-    })
-    
-    addRule(document, "select.box", function (o) {
-      o.outline = "none"
-      //o.display = "block"
-      /*o.position = "relative"
-      o.top = "-2px"*/
-    })
-    
-    addRule(document, "table.box", function (o) {
-      o.borderSpacing = "0px"
-    })
-    
-    addRule(document, "input[type=text].box", function (o) {
-      o.cursor = "auto"
-    })
-    
-    addRule(document, "input[type=search].box", function (o) {
-      o.border = "none"
-      o.outline = "none"
-      //o.margin = "0px"
-      
-      o.cursor = "auto"
-
-      //o.backgroundColor = "white"
-      //o.color = "black"
-    })
-    
-    addRule(document, "input[type=checkbox].box, input[type=radio].box", function (o) {
-      o.marginTop = "1px"
-      //o.position = "relative"
-      //o.top = "-1px"
-      //o.marginRight = "3px"
-    })
 
     new MutationObserver(function (a) {
       a.forEach(function (x) {
@@ -614,53 +615,59 @@ define(["./name", "./cell"], function (name, oCell) {
 
   function box(f) {
     var o = document.createElement("div")
-    o.className = "box"
+    o.dataset["box"] = ""
     //calculate(x)
     return call(f, make(Box, o))
   }
   
   function shrink(f) {
     var o = document.createElement("div")
-    o.className = "box shrink"
+    o.dataset["box"] = ""
+    o.dataset["shrink"] = ""
     //calculate(x)
     return call(f, make(Box, o))
   }
 
   function horiz(f) {
     var o = document.createElement("div")
-    o.className = "box horiz"
+    o.dataset["box"] = ""
+    o.dataset["horiz"] = ""
     //calculate(x)
     return call(f, make(Box, o))
   }
 
   function vert(f) {
     var o = document.createElement("div")
-    o.className = "box vert"
+    o.dataset["box"] = ""
+    o.dataset["vert"] = ""
     //calculate(x)
     return call(f, make(Box, o))
   }
 
   function element(s, f) {
     var o = document.createElement(s)
-    o.className = "box"
+    o.dataset["box"] = ""
     return call(f, make(Box, o))
   }
   
   function label(f) {
     var o = document.createElement("label")
-    o.className = "box horiz"
+    o.dataset["box"] = ""
+    o.dataset["horiz"] = ""
     return call(f, make(Box, o))
   }
   
   function separator(f) {
     var o = document.createElement("hr")
-    o.className = "box"
+    o.dataset["box"] = ""
+    o.dataset["separator"] = ""
     return call(f, make(Box, o))
   }
   
   function checkbox(f) {
     var o = document.createElement("input")
-    o.className = "box"
+    o.dataset["box"] = ""
+    o.dataset["checkbox"] = ""
     o.type = "checkbox"
     
     var e = make(Box, o)
@@ -713,8 +720,9 @@ define(["./name", "./cell"], function (name, oCell) {
   
   function radio(f) {
     var o = document.createElement("input")
+    o.dataset["box"] = ""
+    o.dataset["checkbox"] = ""
     o.type = "radio"
-    o.className = "box"
     
     var e = make(Box, o)
     
@@ -767,7 +775,8 @@ define(["./name", "./cell"], function (name, oCell) {
   
   function list(f) {
     var o = document.createElement("select")
-    o.className = "box"
+    o.dataset["box"] = ""
+    o.dataset["list"] = ""
     
     var e = make(Box, o)
     
@@ -796,19 +805,20 @@ define(["./name", "./cell"], function (name, oCell) {
   
   function listItem(f) {
     var o = document.createElement("option")
-    o.className = "box"
+    o.dataset["box"] = ""
     return call(f, make(ListItem, o))
   }
   
   function listGroup(f) {
     var o = document.createElement("optgroup")
-    o.className = "box"
+    o.dataset["box"] = ""
     return call(f, make(ListGroup, o))
   }
 
   function search(f) {
     var o = document.createElement("input")
-    o.className = "box"
+    o.dataset["box"] = ""
+    o.dataset["search"] = ""
     o.type = "search"
     o.incremental = true
     o.autocomplete = "off"
@@ -846,7 +856,8 @@ define(["./name", "./cell"], function (name, oCell) {
   
   function textbox(f) {
     var o = document.createElement("input")
-    o.className = "box"
+    o.dataset["box"] = ""
+    o.dataset["text"] = ""
     o.type = "text"
     
     var e = make(Box, o)
@@ -878,7 +889,7 @@ define(["./name", "./cell"], function (name, oCell) {
   
   function textarea(f) {
     var o = document.createElement("textarea")
-    o.className = "box"
+    o.dataset["box"] = ""
     
     var e = make(Box, o)
     
@@ -909,19 +920,19 @@ define(["./name", "./cell"], function (name, oCell) {
   
   function link(f) {
     var o = document.createElement("a")
-    o.className = "box"
+    o.dataset["box"] = ""
     return call(f, make(Link, o))
   }
   
   function iframe(f) {
     var o = document.createElement("iframe")
-    o.className = "box"
+    o.dataset["box"] = ""
     return call(f, make(IFrame, o))
   }
   
   function file(f) {
     var o = document.createElement("input")
-    o.className = "box"
+    o.dataset["box"] = ""
     o.type = "file"
     
     o.addEventListener("error", function (e) {
@@ -962,46 +973,49 @@ define(["./name", "./cell"], function (name, oCell) {
 
   function image(f) {
     var o = document.createElement("img")
-    o.className = "box"
+    o.dataset["box"] = ""
     //calculate(x)
     return call(f, make(Image, o))
   }
 
   function panel(f) {
     var o = document.createElement("div")
-    o.className = "box panel"
+    o.dataset["box"] = ""
+    o.dataset["panel"] = ""
     document.body.appendChild(o)
     return call(f, make(Panel, o))
   }
   
   function inlinePanel(f) {
     var o = document.createElement("div")
-    o.className = "box"
+    o.dataset["box"] = ""
     o.style.position = "absolute"
     return call(f, make(Panel, o))
   }
   
   function button(f) {
     var o = document.createElement("button")
-    o.className = "box"
+    o.dataset["box"] = ""
+    o.dataset["button"] = ""
     return call(f, make(Box, o))
   }
   
   function table(f) {
     var o = document.createElement("table")
-    o.className = "box"
+    o.dataset["box"] = ""
+    o.dataset["table"] = ""
     return call(f, make(Box, o))
   }
   
   function row(f) {
     var o = document.createElement("tr")
-    o.className = "box"
+    o.dataset["box"] = ""
     return call(f, make(Box, o))
   }
   
   function cell(f) {
     var o = document.createElement("td")
-    o.className = "box"
+    o.dataset["box"] = ""
     return call(f, make(Table, o))
   }
 
