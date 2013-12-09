@@ -31,7 +31,7 @@ define(["./name", "./cell"], function (name, oCell) {
       if (typeof f === "function") {
         f(this[_e].style)
       } else {
-        this[_e].className = f
+        this[_e].classList.add(f)
       }
     },
     styleWhen: function (s, b) {
