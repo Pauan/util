@@ -1007,6 +1007,17 @@ define(["./name", "./cell"], function (name, oCell) {
     })
     return "repeating-linear-gradient(" + r.join(",") + ")"
   }
+  
+  function hsl(hue, sat, light, alpha) {
+    if (alpha == null) {
+      alpha = 1
+    }
+    if (alpha === 1) {
+      return "hsl(" + hue + ", " + sat + "%, " + light + "%)"
+    } else {
+      return "hsla(" + hue + ", " + sat + "%, " + light + "%, " + alpha + ")"
+    }
+  }
 
   // TODO not completely ideal, but it's the best I've come up with so far...
   function exclude(x, e) {
@@ -1034,6 +1045,7 @@ define(["./name", "./cell"], function (name, oCell) {
     repeatingGradient: repeatingGradient,
     calc: calc,
     exclude: exclude,
+    hsl: hsl,
     //highestZIndex: highestZIndex,
 
     style: style,
