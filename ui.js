@@ -1,9 +1,7 @@
 define(["./name", "./cell"], function (name, oCell) {
   "use strict";
-
-  function join(a, i, s) {
-    return [].slice.call(a, i).join(s == null ? " " : s)
-  }
+  
+  var styleIds = 0
 
   var highestZIndex = "2147483647" /* 32-bit signed int */
 
@@ -24,324 +22,15 @@ define(["./name", "./cell"], function (name, oCell) {
 
     return f(sheet.cssRules[sheet.cssRules.length - 1].style)
   }
-  
-  /*function testStyle(prop, a, s) {
-    var e = document.createElement("div")
-    for (var i = 0, iLen = a.length; i < iLen; ++i) {
-      e.style[prop] = a[i] + s
-      if (e.style[prop] === a[i] + s) {
-        return a[i]
-      }
-    }
-  }
-  
-  var calcStyle = testStyle("width",
-                            ["calc",
-                             "-webkit-calc"],
-                            "(100%)")
-  
-  var linearGradientStyle = testStyle("backgroundImage",
-                                      ["linear-gradient",
-                                       "-webkit-linear-gradient"],
-                                      "(blue, red)")
-
-  var repeatingLinearGradientStyle = testStyle("backgroundImage",
-                                               ["repeating-linear-gradient",
-                                                "-webkit-repeating-linear-gradient"],
-                                               "(blue, red)")
-  
-  var reverse = {
-    "top": "bottom",
-    "bottom": "top",
-    "left": "right",
-    "right": "left"
-  }
-  
-  function reverseGradient(s, prop) {
-    var a = s.split(/ +/)
-    if (a[0] === "to" && /^\-webkit\-/.test(prop)) {
-      return a.slice(1).map(function (x) {
-        return reverse[x]
-      }).join(" ")
-    } else {
-      return s
-    }
-  }
-  
-  console.log(calcStyle, linearGradientStyle, repeatingLinearGradientStyle)*/
-
-  /*function makeSet(Block, name, s) {
-    Block.prototype[name] = function (s2) {
-      this[_e].style[s] = s2
-    }
-  }
-
-  function makeJoin(Block, name, s, s2) {
-    Block.prototype[name] = function () {
-      this[_e].style[s] = join(arguments, 0, s2)
-    }
-  }*/
-
-  // TODO closure
-  function makeBorderSide(name) {
-    return function (f) {
-      var style = this[_e].style
-      f({
-        style: function (s) {
-          style[name + "Style"] = s
-        },
-        size: function (s) {
-          style[name + "Width"] = s
-        },
-        color: function (s) {
-          style[name + "Color"] = s
-        },
-        remove: function () {
-          style[name] = "none"
-        }
-      })
-    }
-  }
-
-  // TODO closure
-  function makeBorderCorner(name) {
-    return function (f) {
-      var style = this[_e].style
-      f({
-        rounded: function (s) {
-          style[name + "Radius"] = s
-        }
-      })
-    }
-  }
-
-  var styleBorder = {
-    top: makeBorderSide("borderTop"),
-    right: makeBorderSide("borderRight"),
-    bottom: makeBorderSide("borderBottom"),
-    left: makeBorderSide("borderLeft"),
-    topRight: makeBorderCorner("borderTopRight"),
-    topLeft: makeBorderCorner("borderTopLeft"),
-    bottomRight: makeBorderCorner("borderBottomRight"),
-    bottomLeft: makeBorderCorner("borderBottomLeft"),
-    rounded: function (s) {
-      this[_e].style.borderRadius = s
-    },
-    style: function (s) {
-      this[_e].style.borderStyle = s
-    },
-    size: function (s) {
-      this[_e].style.borderWidth = s
-    },
-    color: function (s) {
-      this[_e].style.borderColor = s
-    },
-    remove: function () {
-      this[_e].style.border = "none"
-    }
-  }
-  
-  var styleOutline = {
-    style: function (s) {
-      this[_e].style.outlineStyle = s
-    },
-    size: function (s) {
-      this[_e].style.outlineWidth = s
-    },
-    color: function (s) {
-      this[_e].style.outlineColor = s
-    },
-    remove: function () {
-      this[_e].style.outline = "none"
-    }
-  }
-
-  var styleMove = {
-    left: function (s) {
-      this[_e].style.left = s
-    },
-    top: function (s) {
-      this[_e].style.top = s
-    },
-    right: function (s) {
-      this[_e].style.right = s
-    },
-    bottom: function (s) {
-      this[_e].style.bottom = s
-    }
-  }
-  
-  // TODO closure
-  function styleSides(s) {
-    return {
-      all: function (x) {
-        this[_e].style[s] = x
-      },
-      left: function (x) {
-        this[_e].style[s + "Left"] = x
-      },
-      top: function (x) {
-        this[_e].style[s + "Top"] = x
-      },
-      right: function (x) {
-        this[_e].style[s + "Right"] = x
-      },
-      bottom: function (x) {
-        this[_e].style[s + "Bottom"] = x
-      },
-      vertical: function (x) {
-        this[_e].style[s + "Top"] = this[_e].style[s + "Bottom"] = x
-      },
-      horizontal: function (x) {
-        this[_e].style[s + "Left"] = this[_e].style[s + "Right"] = x
-      }
-    }
-  }
-
-  var stylePadding = styleSides("padding")
-  var styleMargin  = styleSides("margin")
-
-  /*var stylePanel = {
-    left: function (s) {
-      this[_e].style.left = s
-    },
-    top: function (s) {
-      this[_e].style.top = s
-    },
-    right: function (s) {
-      this[_e].style.right = s
-    },
-    bottom: function (s) {
-      this[_e].style.bottom = s
-    }
-  }*/
-
-  var styleFont = {
-    align: function (s) {
-      this[_e].style.textAlign = s
-    },
-    letterSpacing: function (s) {
-      this[_e].style.letterSpacing = s
-    },
-    variant: function (s) {
-      this[_e].style.fontVariant = s
-    },
-    family: function () {
-      this[_e].style.fontFamily = join(arguments, 0, ",")
-    },
-    size: function (s) {
-      if (arguments.length > 1) {
-        throw new Error() // TODO
-      }
-      this[_e].style.fontSize = s
-    },
-    weight: function (s) {
-      this[_e].style.fontWeight = s
-    },
-    color: function (s) {
-      this[_e].style.color = s
-    },
-    // TODO closure
-    shadow: function (f) {
-      var left  = []
-        , top   = []
-        , blur  = []
-        , color = []
-        , r     = []
-      f({
-        left: function () {
-          left = [].slice.call(arguments)
-        },
-        top: function () {
-          top = [].slice.call(arguments)
-        },
-        blur: function () {
-          blur = [].slice.call(arguments)
-        },
-        color: function () {
-          color = [].slice.call(arguments)
-        },
-        remove: function () {
-          left  = []
-          top   = []
-          blur  = []
-          color = []
-          r     = ["none"]
-        }
-      })
-      while (left.length || top.length || blur.length || color.length) {
-        r.push((left.pop() || "0px") + " " +
-               (top.pop()  || "0px") + " " +
-               (blur.pop() || "0px") + " " +
-               color.pop())
-      }
-      this[_e].style.textShadow = r.join(",")
-    }
-  }
-
-  var styleBackground = {
-    attachment: function (s) {
-      this[_e].style.backgroundAttachment = s
-    },
-    repeat: function (s) {
-      this[_e].style.backgroundRepeat = s
-    },
-    color: function (s) {
-      if (arguments.length > 1) {
-        throw new Error() // TODO
-      }
-      this[_e].style.backgroundColor = s
-    },
-    // TODO closure
-    position: function (f) {
-      var left = []
-        , top  = []
-      f({
-        left: function () {
-          left = [].slice.call(arguments)
-        },
-        top: function () {
-          top = [].slice.call(arguments)
-        }
-      })
-      var r = []
-      while (left.length || top.length) {
-        r.push((left.pop() || "0px") + " " +
-               (top.pop()  || "0px"))
-      }
-      this[_e].style.backgroundPosition = r.join(",")
-    },
-    image: function () {
-      this[_e].style.backgroundImage = join(arguments, 0, ",")
-    }
-  }
-
-  var styleTransition = {
-    duration: function () {
-      this[_e].style.transitionDuration = join(arguments, 0, ",")
-    },
-    property: function () {
-      this[_e].style.transitionProperty = join(arguments, 0, ",")
-    },
-    timingFunction: function () {
-      this[_e].style.transitionTimingFunction = join(arguments, 0, ",")
-    }
-  }
-  
-  //var animations = []
 
   var Box = {
-    // TODO
-    whitespace: function (s) {
-      this[_e].style.whiteSpace = s
-    },
     name: function (s) {
       this[_e].name = s
     },
     addText: function (s) {
       this[_e].appendChild(document.createTextNode(s || ""))
     },
-    previous: function () {
+    /*previous: function () {
       var e = this[_e].previousSibling
       while (true) {
         if (e) {
@@ -368,15 +57,9 @@ define(["./name", "./cell"], function (name, oCell) {
           return e
         }
       }
-    },
+    },*/
     dom: function () {
       return this[_e]
-    },
-    /*nextElement: function () {
-      return this[_e].nextElementChild[_e]
-    },*/
-    transform: function (s) {
-      this[_e].style.transform = s
     },
     clip: function (b) {
       if (b) {
@@ -402,34 +85,8 @@ define(["./name", "./cell"], function (name, oCell) {
       }
       this.clip(b)
     },
-    width: function (s) {
-      //this[_e].style.width = s
-      // TODO necessary due to tables
-      this[_e].style.width/* = this[_e].style.minWidth = this[_e].style.maxWidth */= s
-    },
-    height: function (s) {
-      //this[_e].style.height = s
-      // TODO necessary due to tables
-      this[_e].style.height/* = this[_e].style.minHeight = this[_e].style.maxHeight */= s
-    },
-    // TODO maybe remove these two
-    maxWidth: function (s) {
-      this[_e].style.maxWidth = s
-    },
-    maxHeight: function (s) {
-      this[_e].style.maxHeight = s
-    },
-    scrollbars: function () {
-      this[_e].style.overflow = "auto"
-    },
-    opacity: function (s) {
-      this[_e].style.opacity = s
-    },
-    cursor: function (s) {
-      this[_e].style.cursor = s
-    },
+    // TODO
     filter: function (s) {
-      // TODO
       this[_e].style.webkitFilter = s
     },
     // TODO test the false version
@@ -456,111 +113,6 @@ define(["./name", "./cell"], function (name, oCell) {
     /*replace: function (e) {
       e[_e].parentNode.replaceChild(this[_e], e[_e])
     },*/
-    /*getChildren: function () {
-      // TODO inefficient
-      return [].filter.call(this[_e].children, function (x) {
-        return _e in x
-      }).map(function (x) {
-        return x[_e]
-      })
-    },*/
-
-    border: function (f) {
-      var o = Object.create(styleBorder)
-      o[_e] = this[_e]
-      f(o)
-    },
-    outline: function (f) {
-      var o = Object.create(styleOutline)
-      o[_e] = this[_e]
-      f(o)
-    },
-    position: function (f) {
-      var o = Object.create(styleMove)
-      o[_e] = this[_e]
-      f(o)
-    },
-    padding: function (f) {
-      var o = Object.create(stylePadding)
-      o[_e] = this[_e]
-      f(o)
-    },
-    margin: function (f) {
-      var o = Object.create(styleMargin)
-      o[_e] = this[_e]
-      f(o)
-    },
-    /*panel: function (f) {
-      var o = Object.create(stylePanel)
-      o[_e] = this[_e]
-      this[_e].style.position = "fixed"
-      this[_e].style.zIndex = highestZIndex
-      f(o)
-    },*/
-    font: function (f) {
-      var o = Object.create(styleFont)
-      o[_e] = this[_e]
-      f(o)
-    },
-    background: function (f) {
-      var o = Object.create(styleBackground)
-      o[_e] = this[_e]
-      f(o)
-    },
-    transition: function (f) {
-      var o = Object.create(styleTransition)
-      o[_e] = this[_e]
-      f(o)
-    },
-
-    // TODO size
-    // TODO closure
-    shadow: function (f) {
-      var inset = []
-        , left  = []
-        , top   = []
-        , blur  = []
-        , size  = []
-        , color = []
-        , r     = []
-      f({
-        inset: function () {
-          inset = [].slice.call(arguments)
-        },
-        left: function () {
-          left = [].slice.call(arguments)
-        },
-        top: function () {
-          top = [].slice.call(arguments)
-        },
-        blur: function () {
-          blur = [].slice.call(arguments)
-        },
-        size: function () {
-          size = [].slice.call(arguments)
-        },
-        color: function () {
-          color = [].slice.call(arguments)
-        },
-        remove: function () {
-          inset = []
-          left  = []
-          top   = []
-          blur  = []
-          color = []
-          r     = ["none"]
-        }
-      })
-      while (inset.length || left.length || top.length || blur.length || size.length || color.length) {
-        r.push((inset.pop() ? "inset " : "") +
-               (left.pop() || "0px") + " " +
-               (top.pop()  || "0px") + " " +
-               (blur.pop() || "0px") + " " +
-               (size.pop() || "0px") + " " +
-               color.pop())
-      }
-      this[_e].style.boxShadow = r.join(",")
-    },
 
     text: function (s) {
       this[_e].textContent = s || ""
@@ -586,7 +138,7 @@ define(["./name", "./cell"], function (name, oCell) {
       this[_e].title = s
     },
     isHidden: function () {
-      return this[_e].hidden
+      return !!this[_e].hidden
     },
     hide: function () {
       this[_e].hidden = true
@@ -614,9 +166,6 @@ define(["./name", "./cell"], function (name, oCell) {
   }
   
   var Table = Object.create(Box)
-  Table.align = function (s) {
-    this[_e].style.verticalAlign = s
-  }
   Table.rowspan = function (s) {
     this[_e].rowSpan = s
   }
@@ -664,6 +213,7 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   var Panel = Object.create(Box)
+  // TODO remove these ?
   Panel.left = function (s) {
     this[_e].style.left = s
   }
@@ -1072,7 +622,7 @@ define(["./name", "./cell"], function (name, oCell) {
     //calculate(x)
     return call(f, make(Box, o))
   }
-  
+
   function element(s, f) {
     var o = document.createElement(s)
     o.className = "box"
@@ -1439,7 +989,7 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   function calc() {
-    return "calc(" + join(arguments, 0) + ")"
+    return "calc(" + [].slice.call(arguments).join(" ") + ")"
   }
 
   function gradient(x) {
@@ -1472,20 +1022,21 @@ define(["./name", "./cell"], function (name, oCell) {
   function height() {
     return document.documentElement.offsetHeight
   }
-  
-  // TODO rename addRule to stylesheet then get rid of this
-  function stylesheet(s, f) {
-    return addRule(document, s, f)
+
+  function style(f) {
+    var name = "__private__" + (++styleIds)
+    addRule(document, "." + name, f)
+    return name
   }
 
-  return Object.create({
+  return Object.freeze({
     gradient: gradient,
     repeatingGradient: repeatingGradient,
     calc: calc,
     exclude: exclude,
     //highestZIndex: highestZIndex,
-    
-    stylesheet: stylesheet,
+
+    style: style,
 
     normalize: normalize,
     box: box,
