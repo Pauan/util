@@ -24,8 +24,15 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   var Box = {
-    style: function () {
-      this[_e].className = [].slice.call(arguments).join(" ")
+    style: function (f) {
+      if (arguments.length > 1) {
+        throw new Error()
+      }
+      if (typeof f === "function") {
+        f(this[_e].style)
+      } else {
+        this[_e].className = f
+      }
     },
     name: function (s) {
       this[_e].name = s
@@ -1021,6 +1028,13 @@ define(["./name", "./cell"], function (name, oCell) {
       return "hsla(" + hue + ", " + sat + "%, " + light + "%, " + alpha + ")"
     }
   }
+  
+  function textStroke(color, blur) {
+    return ["-1px -1px " + blur + " " + color,
+            "-1px  1px " + blur + " " + color,
+            " 1px -1px " + blur + " " + color,
+            " 1px  1px " + blur + " " + color].join(",")
+  }
 
   // TODO not completely ideal, but it's the best I've come up with so far...
   function exclude(x, e) {
@@ -1049,6 +1063,7 @@ define(["./name", "./cell"], function (name, oCell) {
     calc: calc,
     exclude: exclude,
     hsl: hsl,
+    textStroke: textStroke,
     //highestZIndex: highestZIndex,
 
     style: style,
