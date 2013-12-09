@@ -34,6 +34,13 @@ define(["./name", "./cell"], function (name, oCell) {
         this[_e].className = f
       }
     },
+    styleWhen: function (s, b) {
+      if (b) {
+        this[_e].classList.add(s)
+      } else {
+        this[_e].classList.remove(s)
+      }
+    },
     name: function (s) {
       this[_e].name = s
     },
