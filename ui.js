@@ -1061,6 +1061,10 @@ define(["./name", "./cell"], function (name, oCell) {
     addRule(document, "." + name, f)
     return name
   }
+  
+  var poly = {
+    filter: "webkitFilter"
+  }
 
   return Object.freeze({
     gradient: gradient,
@@ -1069,6 +1073,7 @@ define(["./name", "./cell"], function (name, oCell) {
     exclude: exclude,
     hsl: hsl,
     textStroke: textStroke,
+    poly: poly,
     //highestZIndex: highestZIndex,
 
     style: style,
