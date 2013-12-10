@@ -28,11 +28,10 @@ define(["./name", "./cell"], function (name, oCell) {
       if (arguments.length > 1) {
         throw new Error()
       }
-      if (typeof f === "function") {
-        f(this[_e].style)
-      } else {
-        this[_e].className = f
-      }
+      f(this[_e].style)
+    },
+    styles: function () {
+      this[_e].className = [].slice.call(arguments).join(" ")
     },
     styleWhen: function (s, b) {
       if (b) {
