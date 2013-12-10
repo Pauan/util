@@ -1057,7 +1057,7 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   function style(f) {
-    var name = "__private__" + (++styleIds)
+    var name = "__" + (++styleIds)
     addRule(document, "." + name, f)
     return name
   }
