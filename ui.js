@@ -1057,7 +1057,7 @@ define(["./name", "./cell"], function (name, oCell) {
   }
 
   function style(f) {
-    var name = "_" + (++styleIds) + "_"
+    var name = "_" + (++styleIds)
     addRule(document, "." + name, f)
     return name
   }
