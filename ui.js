@@ -102,9 +102,9 @@ define(["./name", "./cell"], function (name, oCell) {
       this.clip(b)
     },
     // TODO
-    filter: function (s) {
+    /*filter: function (s) {
       this[_e].style.webkitFilter = s
-    },
+    },*/
     // TODO test the false version
     autofocus: function (b) {
       this[_e].autofocus = b
@@ -226,21 +226,6 @@ define(["./name", "./cell"], function (name, oCell) {
   }
   File.click = function () {
     this[_e].click()
-  }
-
-  var Panel = Object.create(Box)
-  // TODO remove these ?
-  Panel.left = function (s) {
-    this[_e].style.left = s
-  }
-  Panel.right = function (s) {
-    this[_e].style.right = s
-  }
-  Panel.top = function (s) {
-    this[_e].style.top = s
-  }
-  Panel.bottom = function (s) {
-    this[_e].style.bottom = s
   }
 
   function remove(x) {
@@ -982,14 +967,14 @@ define(["./name", "./cell"], function (name, oCell) {
     o.dataset["box"] = ""
     o.dataset["panel"] = ""
     document.body.appendChild(o)
-    return call(f, make(Panel, o))
+    return call(f, make(Box, o))
   }
   
   function inlinePanel(f) {
     var o = document.createElement("div")
     o.dataset["box"] = ""
     o.style.position = "absolute"
-    return call(f, make(Panel, o))
+    return call(f, make(Box, o))
   }
   
   function button(f) {
