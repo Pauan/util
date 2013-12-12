@@ -70,6 +70,9 @@ define(["./name", "./cell"], function (name, oCell) {
         s.forEach(function (s) {
           self.set(s, v, type)
         })
+      // TODO if v is null, convert it to ""
+      //      http://dev.w3.org/csswg/cssom/#the-cssstyledeclaration-interface
+      // TODO if v is not a string, throw an error
       } else {
         var props = (specialStyles[s] != null
                       ? specialStyles[s]
@@ -1048,10 +1051,12 @@ define(["./name", "./cell"], function (name, oCell) {
     return call(f, make(Table, o))
   }
 
+  // TODO multi-platform, e.g. -webkit, -moz, etc.
   function calc() {
     return "calc(" + [].slice.call(arguments).join(" ") + ")"
   }
 
+  // TODO multi-platform, e.g. -webkit, -moz, etc.
   function gradient(x) {
     var r = [x]
     ;[].slice.call(arguments, 1).forEach(function (a) {
@@ -1060,6 +1065,7 @@ define(["./name", "./cell"], function (name, oCell) {
     return "linear-gradient(" + r.join(",") + ")"
   }
 
+  // TODO multi-platform, e.g. -webkit, -moz, etc.
   function repeatingGradient(x) {
     var r = [x]
     ;[].slice.call(arguments, 1).forEach(function (a) {
