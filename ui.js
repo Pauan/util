@@ -38,7 +38,7 @@ define(["./name", "./cell"], function (name, oCell) {
   }
   
   var styleProto = {
-    // TODO not sure if these are right or not...
+    // TODO not sure if these are right or not... maybe they should add a [data-clip] and [data-stretch] attributes...?
     clip: function (b) {
       if (b) {
         //this[_e].classList.add("clip")
