@@ -94,6 +94,17 @@ define(["./name", "./cell"], function (name, oCell) {
       }
     }
   }
+  
+  function style(f) {
+    var name = "_" + (++styleIds)
+    addRule(document, "." + name, function (e) {
+      var o = Object.create(styleProto)
+      o[_e] = e
+      Object.freeze(o) // TODO remove this later ?
+      f(o)
+    })
+    return name
+  }
 
   var Box = {
     style: function (f) {
@@ -1073,7 +1084,7 @@ define(["./name", "./cell"], function (name, oCell) {
     })
     return "repeating-linear-gradient(" + r.join(",") + ")"
   }
-  
+
   function hsl(hue, sat, light, alpha) {
     if (alpha == null) {
       alpha = 1
@@ -1105,17 +1116,6 @@ define(["./name", "./cell"], function (name, oCell) {
   
   function height() {
     return document.documentElement.offsetHeight
-  }
-
-  function style(f) {
-    var name = "_" + (++styleIds)
-    addRule(document, "." + name, function (e) {
-      var o = Object.create(styleProto)
-      o[_e] = e
-      Object.freeze(o) // TODO remove this later ?
-      f(o)
-    })
-    return name
   }
 
   return Object.freeze({
