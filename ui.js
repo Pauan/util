@@ -22,13 +22,86 @@ define(["./name", "./cell"], function (name, oCell) {
 
     return f(sheet.cssRules[sheet.cssRules.length - 1].style)
   }
+  
+  var specialStyles = {
+    "filter": ["-webkit-filter"]
+  }
+
+  function isSameStyle(x, y) {
+    if (x === null) {
+      x = ""
+    }
+    if (y === null) {
+      y = ""
+    }
+    return x === y
+  }
+  
+  var styleProto = {
+    // TODO not sure if these are right or not...
+    clip: function (b) {
+      if (b) {
+        //this[_e].classList.add("clip")
+        this[_e].overflow = "hidden"
+        this[_e].textOverflow = "ellipsis"
+        this[_e].flexShrink = "1"
+      // TODO test the false version
+      } else {
+        this[_e].overflow = ""
+        this[_e].textOverflow = ""
+        this[_e].flexShrink = ""
+      }
+    },
+    stretch: function (b) {
+      if (b) {
+        this[_e].flexGrow = "1"
+        this[_e].flexBasis = "0%"
+      // TODO test the false version
+      } else {
+        this[_e].flexGrow = ""
+        this[_e].flexBasis = ""
+      }
+      this.clip(b)
+    },
+    set: function (s, v, type) {
+      var self = this
+      if (Array.isArray(s)) {
+        // TODO use "iter" module ?
+        s.forEach(function (s) {
+          self.set(s, v, type)
+        })
+      } else {
+        var props = (specialStyles[s] != null
+                      ? specialStyles[s]
+                      : [s])
+        var sOld = props.map(function (s) {
+          return self[_e].getPropertyValue(s)
+        })
+        props.forEach(function (s) {
+          self[_e].setProperty(s, v, type)
+        })
+        var every = props.every(function (s, i) {
+          var sNew = self[_e].getPropertyValue(s)
+                                     // TODO a bit hacky ?
+          return sOld[i] === sNew && !isSameStyle(v, sNew)
+        })
+        if (every) {
+          throw new Error(s + ": " + v)
+        }
+      }
+    }
+  }
 
   var Box = {
     style: function (f) {
+      // TODO remove this eventually
       if (arguments.length > 1) {
         throw new Error()
       }
-      f(this[_e].style)
+      var o = Object.create(styleProto)
+      o[_e] = this[_e].style
+      Object.freeze(o) // TODO remove this later ?
+      f(o)
     },
     styles: function () {
       this[_e].className = [].slice.call(arguments).join(" ")
@@ -77,34 +150,6 @@ define(["./name", "./cell"], function (name, oCell) {
     dom: function () {
       return this[_e]
     },
-    clip: function (b) {
-      if (b) {
-        //this[_e].classList.add("clip")
-        this[_e].style.overflow = "hidden"
-        this[_e].style.textOverflow = "ellipsis"
-        this[_e].style.flexShrink = "1"
-      // TODO test the false version
-      } else {
-        this[_e].style.overflow = ""
-        this[_e].style.textOverflow = ""
-        this[_e].style.flexShrink = ""
-      }
-    },
-    stretch: function (b) {
-      if (b) {
-        this[_e].style.flexGrow = "1"
-        this[_e].style.flexBasis = "0%"
-      // TODO test the false version
-      } else {
-        this[_e].style.flexGrow = ""
-        this[_e].style.flexBasis = ""
-      }
-      this.clip(b)
-    },
-    // TODO
-    /*filter: function (s) {
-      this[_e].style.webkitFilter = s
-    },*/
     // TODO test the false version
     autofocus: function (b) {
       this[_e].autofocus = b
@@ -1058,12 +1103,13 @@ define(["./name", "./cell"], function (name, oCell) {
 
   function style(f) {
     var name = "_" + (++styleIds)
-    addRule(document, "." + name, f)
+    addRule(document, "." + name, function (e) {
+      var o = Object.create(styleProto)
+      o[_e] = e
+      Object.freeze(o) // TODO remove this later ?
+      f(o)
+    })
     return name
-  }
-  
-  var poly = {
-    filter: "webkitFilter"
   }
 
   return Object.freeze({
@@ -1073,7 +1119,6 @@ define(["./name", "./cell"], function (name, oCell) {
     exclude: exclude,
     hsl: hsl,
     textStroke: textStroke,
-    poly: poly,
     //highestZIndex: highestZIndex,
 
     style: style,
