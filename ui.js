@@ -177,6 +177,7 @@ define(["./name", "./cell"], function (name, oCell) {
     },
     move: function (e) {
       e[_e].appendChild(this[_e])
+      return this
     },
     moveBefore: function (e, x) {
       if (x) {
