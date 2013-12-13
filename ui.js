@@ -478,6 +478,9 @@ define(["./name", "./cell"], function (name, oCell) {
     o.borderWidth = "0px"
     o.borderColor = "transparent"
     o.borderStyle = "solid"
+    
+    o.outlineWidth = "0px"
+    o.outlineStyle = "solid"
 
     o.flexGrow = "0"
     o.flexShrink = "0" // "1"
