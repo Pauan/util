@@ -38,31 +38,6 @@ define(["./name", "./cell"], function (name, oCell) {
   }
   
   var styleProto = {
-    // TODO not sure if these are right or not... maybe they should add a [data-clip] and [data-stretch] attributes...?
-    clip: function (b) {
-      if (b) {
-        //this[_e].classList.add("clip")
-        this[_e].overflow = "hidden"
-        this[_e].textOverflow = "ellipsis"
-        this[_e].flexShrink = "1"
-      // TODO test the false version
-      } else {
-        this[_e].overflow = ""
-        this[_e].textOverflow = ""
-        this[_e].flexShrink = ""
-      }
-    },
-    stretch: function (b) {
-      if (b) {
-        this[_e].flexGrow = "1"
-        this[_e].flexBasis = "0%"
-      // TODO test the false version
-      } else {
-        this[_e].flexGrow = ""
-        this[_e].flexBasis = ""
-      }
-      this.clip(b)
-    },
     set: function (s, v, type) {
       var self = this
       if (Array.isArray(s)) {
@@ -498,21 +473,6 @@ define(["./name", "./cell"], function (name, oCell) {
     //o.tableLayout = "fixed"
     //o.backgroundClip = "padding-box" // TODO content-box
   })
-  
-  addRule(document, "[data-shrink]", function (o) {
-    o.display = "inline-block"
-  })
-
-  addRule(document, "[data-horiz]", function (o) {
-    o.display = "flex"
-    o.flexDirection = "row"
-    //o.alignItems = "center"
-    //o.display = "inline-block"
-    //o.cssFloat = "left"
-    //o.display = "table"
-    //o.display = "flex"
-    //o.flexDirection = "row"
-  })
 
   /*addRule(document, ".horiz > *", function (o) {
     o.display = "inline-block"
@@ -523,23 +483,10 @@ define(["./name", "./cell"], function (name, oCell) {
     //o.width = "100%"
   })*/
 
-  addRule(document, "[data-vert]", function (o) {
-    o.display = "flex"
-    o.flexDirection = "column"
-    //o.display = "table"
-    //o.display = "flex"
-    //o.flexDirection = "column"
-  })
-
   /*addRule(document, ".vert > *", function (o) {
 
     //o.width = "100%"
   })*/
-
-  addRule(document, "[data-panel]", function (o) {
-    o.position = "fixed"
-    o.zIndex = highestZIndex
-  })
 
   addRule(document, "[data-body]", function (o) {
     o.cursor = "default"
@@ -587,6 +534,42 @@ define(["./name", "./cell"], function (name, oCell) {
     //o.position = "relative"
     //o.top = "-1px"
     //o.marginRight = "3px"
+  })
+  
+  var horiz = style(function (e) {
+    e.set("display", "flex")
+    e.set("flex-direction", "row")
+  })
+  
+  var vert = style(function (e) {
+    e.set("display", "flex")
+    e.set("flex-direction", "column")
+  })
+  
+  var panel = style(function (e) {
+    e.set("position", "absolute")
+    e.set("z-index", highestZIndex)
+  })
+  
+  var fixedPanel = style(function (e) {
+    e.set("position", "fixed")
+    e.set("z-index", highestZIndex)
+  })
+  
+  var shrink = style(function (e) {
+    // e.set("display", "inline-block")
+    e.set("flex-shrink", "1")
+  })
+  
+  var clip = style(function (e) {
+    e.set("overflow", "hidden")
+    e.set("text-overflow", "ellipsis")
+  })
+  
+  var stretch = style(function (e) {
+    e.set("flex-shrink", "1")
+    e.set("flex-grow", "1")
+    e.set("flex-basis", "0%")
   })
 
   function normalize(f) {
@@ -666,31 +649,8 @@ define(["./name", "./cell"], function (name, oCell) {
     //calculate(x)
     return call(f, make(Box, o))
   }
-  
-  function shrink(f) {
-    var o = document.createElement("div")
-    o.dataset["box"] = ""
-    o.dataset["shrink"] = ""
-    //calculate(x)
-    return call(f, make(Box, o))
-  }
 
-  function horiz(f) {
-    var o = document.createElement("div")
-    o.dataset["box"] = ""
-    o.dataset["horiz"] = ""
-    //calculate(x)
-    return call(f, make(Box, o))
-  }
-
-  function vert(f) {
-    var o = document.createElement("div")
-    o.dataset["box"] = ""
-    o.dataset["vert"] = ""
-    //calculate(x)
-    return call(f, make(Box, o))
-  }
-
+  // TODO remove this ?
   function element(s, f) {
     var o = document.createElement(s)
     o.dataset["box"] = ""
@@ -700,7 +660,6 @@ define(["./name", "./cell"], function (name, oCell) {
   function label(f) {
     var o = document.createElement("label")
     o.dataset["box"] = ""
-    o.dataset["horiz"] = ""
     return call(f, make(Box, o))
   }
   
@@ -1024,21 +983,6 @@ define(["./name", "./cell"], function (name, oCell) {
     //calculate(x)
     return call(f, make(Image, o))
   }
-
-  function panel(f) {
-    var o = document.createElement("div")
-    o.dataset["box"] = ""
-    o.dataset["panel"] = ""
-    document.body.appendChild(o)
-    return call(f, make(Box, o))
-  }
-  
-  function inlinePanel(f) {
-    var o = document.createElement("div")
-    o.dataset["box"] = ""
-    o.style.position = "absolute"
-    return call(f, make(Box, o))
-  }
   
   function button(f) {
     var o = document.createElement("button")
@@ -1132,20 +1076,23 @@ define(["./name", "./cell"], function (name, oCell) {
     //highestZIndex: highestZIndex,
 
     style: style,
+    
+    horiz: horiz,
+    vert: vert,
+    panel: panel,
+    fixedPanel: fixedPanel,
+    shrink: shrink,
+    clip: clip,
+    stretch: stretch,
 
     normalize: normalize,
     box: box,
-    shrink: shrink,
-    horiz: horiz,
-    vert: vert,
     search: search,
     textbox: textbox,
     textarea: textarea,
     label: label,
     checkbox: checkbox,
     image: image,
-    panel: panel,
-    inlinePanel: inlinePanel,
     element: element,
     list: list,
     listItem: listItem,
