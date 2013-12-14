@@ -285,6 +285,38 @@ define(["./name", "./cell"], function (name, oCell) {
     o[_e]       = e
     e[_e]       = o
     e[bindings] = []
+    
+    // TODO maybe needs to bind the events even if the cell isn't bound
+    e.focused = oCell.dedupe(false, {
+      bind: function (self) {
+        function focus() {
+          self.set(document.hasFocus())
+        }
+
+        function blur() {
+          self.set(false)
+        }
+
+        o.addEventListener("focus", focus, true)
+        o.addEventListener("blur", blur, true)
+
+        return {
+          focus: focus,
+          blur: blur
+        }
+      },
+      unbind: function (e) {
+        o.removeEventListener("focus", e.focus, true)
+        o.removeEventListener("blur", e.blur, true)
+      },
+      set: function (self, b) {
+        if (b) {
+          o.focus()
+        } else {
+          o.blur()
+        }
+      }
+    })
 
     // TODO closures
     e.mouseclick = oCell.dedupe(undefined, {
