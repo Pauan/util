@@ -6,6 +6,7 @@ define(["./name", "./cell"], function (name, oCell) {
   var highestZIndex = "2147483647" /* 32-bit signed int */
 
   var _e       = new name.Name()
+    , _styles  = new name.Name()
     , bindings = new name.Name()
 
   function isOver(self, e) {
@@ -70,15 +71,52 @@ define(["./name", "./cell"], function (name, oCell) {
     }
   }
   
+  var styleProto2 = Object.create(styleProto)
+  styleProto2.styles = function () {
+    var a = this[_styles]
+    // TODO "iter" module ?
+    ;[].slice.call(arguments).forEach(function (x) {
+      a.push(x)
+    })
+  }
+  
   function style(f) {
     var name = "_" + (++styleIds)
+    var o = Object.create(styleProto2)
+    o.name = name
+    o[_styles] = []
     addRule(document, "." + name, function (e) {
-      var o = Object.create(styleProto)
       o[_e] = e
       Object.freeze(o) // TODO remove this later ?
       f(o)
     })
-    return name
+    return o
+  }
+  
+  function addStyleTo(r, o, a) {
+    a.forEach(function (x) {
+      addStyleTo(r, o, x[_styles])
+      var s = x.name
+      if (o[s] == null) {
+        o[s] = 0
+        r.push(s)
+      }
+      ++o[s]
+    })
+  }
+
+  function removeStyleFrom(r, o, a) {
+    a.forEach(function (x) {
+      removeStyleFrom(r, o, x[_styles])
+      var s = x.name
+      if (o[s] != null) {
+        --o[s]
+        if (o[s] === 0) {
+          delete o[s]
+          r.push(s)
+        }
+      }
+    })
   }
 
   var Box = {
@@ -93,13 +131,27 @@ define(["./name", "./cell"], function (name, oCell) {
       f(o)
     },
     styles: function () {
-      this[_e].className = [].slice.call(arguments).join(" ")
+      this[_styles] = {}
+
+      var r = []
+      addStyleTo(r, this[_styles], [].slice.call(arguments))
+
+      this[_e].className = r.join(" ")
     },
     styleWhen: function (s, b) {
+      var self = this[_e]
       if (b) {
-        this[_e].classList.add(s)
+        var r = []
+        addStyleTo(r, this[_styles], [s])
+        r.forEach(function (s) {
+          self.classList.add(s)
+        })
       } else {
-        this[_e].classList.remove(s)
+        var r = []
+        removeStyleFrom(r, this[_styles], [s])
+        r.forEach(function (s) {
+          self.classList.remove(s)
+        })
       }
     },
     name: function (s) {
@@ -285,10 +337,14 @@ define(["./name", "./cell"], function (name, oCell) {
     o[_e]       = e
     e[_e]       = o
     e[bindings] = []
+    e[_styles]  = {}
     
     // TODO maybe needs to bind the events even if the cell isn't bound
+    // TODO if the window loses focus and refocuses, it doesn't update properly
     e.focused = oCell.dedupe(false, {
       bind: function (self) {
+        o.tabIndex = -1
+
         function focus() {
           self.set(document.hasFocus())
         }
@@ -306,6 +362,7 @@ define(["./name", "./cell"], function (name, oCell) {
         }
       },
       unbind: function (e) {
+        o.tabIndex = ""
         o.removeEventListener("focus", e.focus, true)
         o.removeEventListener("blur", e.blur, true)
       },
