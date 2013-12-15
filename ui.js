@@ -107,7 +107,6 @@ define(["./name", "./cell"], function (name, oCell) {
 
   function removeStyleFrom(r, o, a) {
     a.forEach(function (x) {
-      removeStyleFrom(r, o, x[_styles])
       var s = x.name
       if (o[s] != null) {
         --o[s]
@@ -115,6 +114,7 @@ define(["./name", "./cell"], function (name, oCell) {
           delete o[s]
           r.push(s)
         }
+        removeStyleFrom(r, o, x[_styles])
       }
     })
   }
