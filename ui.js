@@ -154,11 +154,13 @@ define(["./name", "./cell"], function (name, oCell) {
         })
       }
     },
-    styleObject: function (o, prop) {
-      this.styleWhen(o[prop], true)
+    styleObject: function (o, prop, b) {
+      if (b) {
+        this.styleWhen(o[prop], true)
+      }
       // TODO use "iter" module
       for (var s in o) {
-        if (s !== prop) {
+        if (!b || s !== prop) {
           this.styleWhen(o[s], false)
         }
       }
