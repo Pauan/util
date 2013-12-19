@@ -213,9 +213,9 @@ define(["./name", "./cell"], function (name, oCell) {
     },
     stopDragging: function () {
       this[_e].addEventListener("selectstart", function (e) {
-        e.preventDefault()
-        /*if (e.target.localName !== "input") { // && !e.target.draggable
-        }*/
+        if (e.target.localName !== "input") { // && !e.target.draggable
+          e.preventDefault()
+        }
       }, true)
     },
     move: function (e) {
