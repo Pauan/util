@@ -978,11 +978,12 @@ define(["./name", "./cell"], function (name, oCell) {
     e.changed = oCell.value(undefined, {
       bind: function (self) {
         function change() {
+          e.value.set(o.value)
           self.set(o.value)
         }
-        
+
         o.addEventListener("change", change, true)
-        
+
         return {
           change: change
         }
@@ -996,6 +997,7 @@ define(["./name", "./cell"], function (name, oCell) {
     // TODO code duplication
     // TODO should <cell>.get() trigger <cell>bind() ?
     e.value = oCell.dedupe(o.value, {
+      // TODO is all this stuff necessary ?
       bind: function (self) {
         // TODO is this correct; does it leak; is it inefficient; can it be replaced with cell.map ?
         return e.event([e.changed], function (x) {
