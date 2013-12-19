@@ -138,17 +138,21 @@ define(["./name", "./cell"], function (name, oCell) {
 
       this[_e].className = r.join(" ")
     },
-    styleWhen: function (s, b) {
+    styleWhen: function (x, b) {
       var self = this[_e]
+        , o    = this[_styles]
       if (b) {
-        var r = []
-        addStyleTo(r, this[_styles], [s])
-        r.forEach(function (s) {
-          self.classList.add(s)
-        })
+        var s = x.name
+        if (o[s] == null) {
+          var r = []
+          addStyleTo(r, o, [x])
+          r.forEach(function (s) {
+            self.classList.add(s)
+          })
+        }
       } else {
         var r = []
-        removeStyleFrom(r, this[_styles], [s])
+        removeStyleFrom(r, o, [x])
         r.forEach(function (s) {
           self.classList.remove(s)
         })
