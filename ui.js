@@ -208,7 +208,8 @@ define(["./name", "./cell"], function (name, oCell) {
       this[_e].autofocus = b
     },
     stopDragging: function () {
-      this[_e].addEventListener("mousedown", function (e) {
+      this[_e].addEventListener("selectstart", function (e) {
+        console.log(e.target)
         if (e.target.localName !== "input"/* && !e.target.draggable*/) {
           e.preventDefault()
         }
