@@ -610,9 +610,9 @@ define(["./name", "./cell"], function (name, oCell) {
 
   // TODO code duplication with horiz
   addRule(document, "[data-label]", function (o) {
-    e.set("display", "flex")
-    e.set("flex-direction", "row")
-    e.set("align-items", "center")
+    o.display = "flex"
+    o.flexDirection = "row"
+    o.alignItems = "center"
   })
 
   addRule(document, "[data-list]", function (o) {
