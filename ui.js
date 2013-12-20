@@ -607,7 +607,14 @@ define(["./name", "./cell"], function (name, oCell) {
     o.outline = "none"
     o.cursor = "pointer"
   })
-  
+
+  // TODO code duplication with horiz
+  addRule(document, "[data-label]", function (o) {
+    e.set("display", "flex")
+    e.set("flex-direction", "row")
+    e.set("align-items", "center")
+  })
+
   addRule(document, "[data-list]", function (o) {
     o.outline = "none"
     //o.display = "block"
@@ -634,16 +641,10 @@ define(["./name", "./cell"], function (name, oCell) {
     //o.color = "black"
   })
   
-  addRule(document, "[data-checkbox]", function (o) {
-    o.marginTop = "1px"
-    //o.position = "relative"
-    //o.top = "-1px"
-    //o.marginRight = "3px"
-  })
-  
   var horiz = style(function (e) {
     e.set("display", "flex")
     e.set("flex-direction", "row")
+    e.set("align-items", "center")
   })
   
   var vert = style(function (e) {
@@ -667,6 +668,7 @@ define(["./name", "./cell"], function (name, oCell) {
   })
   
   var clip = style(function (e) {
+    e.set("flex-shrink", "1")
     e.set("overflow", "hidden")
     e.set("text-overflow", "ellipsis")
   })
@@ -765,6 +767,7 @@ define(["./name", "./cell"], function (name, oCell) {
   function label(f) {
     var o = document.createElement("label")
     o.dataset["box"] = ""
+    o.dataset["label"] = ""
     return call(f, make(Box, o))
   }
   
@@ -778,7 +781,6 @@ define(["./name", "./cell"], function (name, oCell) {
   function checkbox(f) {
     var o = document.createElement("input")
     o.dataset["box"] = ""
-    o.dataset["checkbox"] = ""
     o.type = "checkbox"
     
     var e = make(Box, o)
@@ -832,7 +834,6 @@ define(["./name", "./cell"], function (name, oCell) {
   function radio(f) {
     var o = document.createElement("input")
     o.dataset["box"] = ""
-    o.dataset["checkbox"] = ""
     o.type = "radio"
     
     var e = make(Box, o)
