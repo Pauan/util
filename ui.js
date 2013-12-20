@@ -572,7 +572,7 @@ define(["./name", "./cell"], function (name, oCell) {
     
     o.cursor = "inherit"
     
-    o.verticalAlign = "middle"
+    o.verticalAlign = "middle" // TODO I can probably get rid of this
 
     //o.verticalAlign = "top" // TODO needed in Firefox
     //o.tableLayout = "fixed"
