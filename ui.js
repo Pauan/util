@@ -1,13 +1,13 @@
-define(["./name", "./cell"], function (name, oCell) {
+define(["./key", "./cell"], function (key, oCell) {
   "use strict";
-  
+
   var styleIds = 0
 
   var highestZIndex = "2147483647" /* 32-bit signed int */
 
-  var _e       = new name.Name()
-    , _styles  = new name.Name()
-    , bindings = new name.Name()
+  var _e       = new key.Key()
+    , _styles  = new key.Key()
+    , bindings = new key.Key()
 
   function isOver(self, e) {
     return !self.contains(e.relatedTarget)
@@ -23,7 +23,7 @@ define(["./name", "./cell"], function (name, oCell) {
 
     return f(sheet.cssRules[sheet.cssRules.length - 1].style)
   }
-  
+
   var specialStyles = {
     "filter": ["-webkit-filter"]
   }
@@ -37,7 +37,7 @@ define(["./name", "./cell"], function (name, oCell) {
     }
     return x === y
   }
-  
+
   var styleProto = {
     set: function (s, v, type) {
       var self = this
@@ -70,7 +70,7 @@ define(["./name", "./cell"], function (name, oCell) {
       }
     }
   }
-  
+
   var styleProto2 = Object.create(styleProto)
   styleProto2.styles = function () {
     var a = this[_styles]
@@ -79,7 +79,7 @@ define(["./name", "./cell"], function (name, oCell) {
       a.push(x)
     })
   }
-  
+
   function style(f) {
     var name = "_" + (++styleIds)
     var o = Object.create(styleProto2)
@@ -92,7 +92,7 @@ define(["./name", "./cell"], function (name, oCell) {
     })
     return o
   }
-  
+
   function addStyleTo(r, o, a) {
     a.forEach(function (x) {
       addStyleTo(r, o, x[_styles])
@@ -273,17 +273,17 @@ define(["./name", "./cell"], function (name, oCell) {
       this[_e].value = s
     }
   }
-  
+
   var ListItem = Object.create(Box)
   ListItem.select = function () {
     this[_e].selected = true
   }
-  
+
   var ListGroup = Object.create(Box)
   ListGroup.label = function (s) {
     this[_e].label = s
   }
-  
+
   var Table = Object.create(Box)
   Table.rowspan = function (s) {
     this[_e].rowSpan = s
@@ -296,7 +296,7 @@ define(["./name", "./cell"], function (name, oCell) {
   Image.src = function (s) {
     this[_e].src = s
   }
-  
+
   var IFrame = Object.create(Box)
   IFrame.src = function (s) {
     this[_e].src = s
@@ -311,7 +311,7 @@ define(["./name", "./cell"], function (name, oCell) {
   IFrame.getWindow = function () {
     return this[_e].contentWindow
   }
-  
+
   var Link = Object.create(Box)
   Link.src = function (s) {
     this[_e].href = s
@@ -322,7 +322,7 @@ define(["./name", "./cell"], function (name, oCell) {
   Link.click = function () {
     this[_e].click()
   }
-  
+
   var File = Object.create(Box)
   File.accept = function (s) {
     this[_e].accept = s
@@ -354,7 +354,7 @@ define(["./name", "./cell"], function (name, oCell) {
     e[_e]       = o
     e[bindings] = []
     e[_styles]  = {}
-    
+
     // TODO maybe needs to bind the events even if the cell isn't bound
     // TODO if the window loses focus and refocuses, it doesn't update properly
     e.focused = oCell.dedupe(false, {
@@ -435,7 +435,7 @@ define(["./name", "./cell"], function (name, oCell) {
         o.removeEventListener("contextmenu", e.contextmenu, true)
       }
     })
-    
+
     function makeSeen(seen, e) {
       var o    = {}
       o.left   = seen.left
@@ -533,11 +533,11 @@ define(["./name", "./cell"], function (name, oCell) {
     }
     return e
   }
-  
+
   addRule(document, "[hidden]", function (o) {
     o.setProperty("display", "none", "important")
   })
-  
+
   /*addRule(document, ".clip *", function (o) {
     o.overflow = "hidden"
     o.textOverflow = "ellipsis"
@@ -546,32 +546,32 @@ define(["./name", "./cell"], function (name, oCell) {
   addRule(document, "[data-box]", function (o) {
     o.MozBoxSizing = "border-box" // TODO
     o.boxSizing = "border-box"
-    
+
     o.margin = "0px"
     o.padding = "0px"
 
     //o.whiteSpace = "pre-wrap" // TODO
-    
+
     o.backgroundColor = "transparent"
 
     // TODO I wish there was a way to get rid of these two
     o.borderWidth = "0px"
     o.borderColor = "transparent"
     o.borderStyle = "solid"
-    
+
     o.outlineWidth = "0px"
     o.outlineStyle = "solid"
 
     o.flexGrow = "0"
     o.flexShrink = "0" // "1"
     o.flexBasis = "auto" // TODO try out other stuff like min-content once it becomes available
-    
+
     o.position = "relative"
-    
+
     o.backgroundSize = "100% 100%"
-    
+
     o.cursor = "inherit"
-    
+
     o.verticalAlign = "middle" // TODO I can probably get rid of this
 
     //o.verticalAlign = "top" // TODO needed in Firefox
@@ -602,7 +602,7 @@ define(["./name", "./cell"], function (name, oCell) {
     o.marginTop = o.marginBottom = "0.5em"
     o.backgroundColor = "rgb(238, 238, 238)"
   })
-  
+
   addRule(document, "[data-button]", function (o) {
     o.outline = "none"
     o.cursor = "pointer"
@@ -621,58 +621,58 @@ define(["./name", "./cell"], function (name, oCell) {
     /*o.position = "relative"
     o.top = "-2px"*/
   })
-  
+
   addRule(document, "[data-table]", function (o) {
     o.borderSpacing = "0px"
   })
-  
+
   addRule(document, "[data-text]", function (o) {
     o.cursor = "auto"
   })
-  
+
   addRule(document, "[data-search]", function (o) {
     o.border = "none"
     o.outline = "none"
     //o.margin = "0px"
-    
+
     o.cursor = "auto"
 
     //o.backgroundColor = "white"
     //o.color = "black"
   })
-  
+
   var horiz = style(function (e) {
     e.set("display", "flex")
     e.set("flex-direction", "row")
     e.set("align-items", "center")
   })
-  
+
   var vert = style(function (e) {
     e.set("display", "flex")
     e.set("flex-direction", "column")
   })
-  
+
   var panel = style(function (e) {
     e.set("position", "absolute")
     e.set("z-index", highestZIndex)
   })
-  
+
   var fixedPanel = style(function (e) {
     e.set("position", "fixed")
     e.set("z-index", highestZIndex)
   })
-  
+
   var shrink = style(function (e) {
     // e.set("display", "inline-block")
     e.set("flex-shrink", "1")
   })
-  
+
   var clip = style(function (e) {
     e.set("flex-shrink", "1")
     e.set("overflow", "hidden")
     e.set("text-overflow", "ellipsis")
   })
-  
+
   var stretch = style(function (e) {
     e.set("flex-shrink", "1")
     e.set("flex-grow", "1")
@@ -688,7 +688,7 @@ define(["./name", "./cell"], function (name, oCell) {
       o.width = "100%"
       o.height = "100%"
     })
-    
+
     /*addRule(document, "*", function (o) {
       //o.textOverflow = "ellipsis"
 
@@ -763,28 +763,28 @@ define(["./name", "./cell"], function (name, oCell) {
     o.dataset["box"] = ""
     return call(f, make(Box, o))
   }
-  
+
   function label(f) {
     var o = document.createElement("label")
     o.dataset["box"] = ""
     o.dataset["label"] = ""
     return call(f, make(Box, o))
   }
-  
+
   function separator(f) {
     var o = document.createElement("hr")
     o.dataset["box"] = ""
     o.dataset["separator"] = ""
     return call(f, make(Box, o))
   }
-  
+
   function checkbox(f) {
     var o = document.createElement("input")
     o.dataset["box"] = ""
     o.type = "checkbox"
-    
+
     var e = make(Box, o)
-    
+
     // TODO closure
     e.changed = oCell.value(undefined, {
       bind: function (self) {
@@ -802,7 +802,7 @@ define(["./name", "./cell"], function (name, oCell) {
         o.removeEventListener("change", e.change, true)
       }
     })
-    
+
     // indeterminate has priority
     // TODO closure
     // TODO should <cell>.get() trigger <cell>bind() ?
@@ -830,23 +830,23 @@ define(["./name", "./cell"], function (name, oCell) {
 
     return call(f, e)
   }
-  
+
   function radio(f) {
     var o = document.createElement("input")
     o.dataset["box"] = ""
     o.type = "radio"
-    
+
     var e = make(Box, o)
-    
+
     // TODO closure
     e.changed = oCell.value(undefined, {
       bind: function (self) {
         function change() {
           self.set(o.checked)
         }
-        
+
         o.addEventListener("change", change, true)
-        
+
         return {
           change: change
         }
@@ -855,7 +855,7 @@ define(["./name", "./cell"], function (name, oCell) {
         o.removeEventListener("change", e.change, true)
       }
     })
-    
+
     // indeterminate has priority
     // TODO code duplication with checkbox
     // TODO closure
@@ -881,17 +881,17 @@ define(["./name", "./cell"], function (name, oCell) {
         }
       }
     })
-    
+
     return call(f, e)
   }
-  
+
   function list(f) {
     var o = document.createElement("select")
     o.dataset["box"] = ""
     o.dataset["list"] = ""
-    
+
     var e = make(Box, o)
-    
+
     // TODO closure
     // TODO maybe this can ignore duplicates
     e.changed = oCell.value(undefined, {
@@ -900,9 +900,9 @@ define(["./name", "./cell"], function (name, oCell) {
           //var x = o.options[o.selectedIndex]
           self.set(o.value)
         }
-        
+
         o.addEventListener("change", change, true)
-        
+
         return {
           change: change
         }
@@ -911,16 +911,16 @@ define(["./name", "./cell"], function (name, oCell) {
         o.removeEventListener("change", e.change, true)
       }
     })
-    
+
     return call(f, e)
   }
-  
+
   function listItem(f) {
     var o = document.createElement("option")
     o.dataset["box"] = ""
     return call(f, make(ListItem, o))
   }
-  
+
   function listGroup(f) {
     var o = document.createElement("optgroup")
     o.dataset["box"] = ""
@@ -965,15 +965,15 @@ define(["./name", "./cell"], function (name, oCell) {
 
     return call(f, e)
   }
-  
+
   function textbox(f) {
     var o = document.createElement("input")
     o.dataset["box"] = ""
     o.dataset["text"] = ""
     o.type = "text"
-    
+
     var e = make(Box, o)
-    
+
     // TODO closure
     // TODO code duplication
     e.changed = oCell.value(undefined, {
@@ -993,7 +993,7 @@ define(["./name", "./cell"], function (name, oCell) {
         o.removeEventListener("change", e.change, true)
       }
     })
-    
+
     // TODO closure
     // TODO code duplication
     // TODO should <cell>.get() trigger <cell>bind() ?
@@ -1012,16 +1012,16 @@ define(["./name", "./cell"], function (name, oCell) {
         o.value = x
       }
     })
-    
+
     return call(f, e)
   }
-  
+
   function textarea(f) {
     var o = document.createElement("textarea")
     o.dataset["box"] = ""
-    
+
     var e = make(Box, o)
-    
+
     // TODO closure
     // TODO code duplication
     e.value = oCell.dedupe(o.value, {
@@ -1029,9 +1029,9 @@ define(["./name", "./cell"], function (name, oCell) {
         function input() {
           self.set(o.value)
         }
-        
+
         o.addEventListener("input", input, true)
-        
+
         return {
           input: input
         }
@@ -1043,34 +1043,34 @@ define(["./name", "./cell"], function (name, oCell) {
         o.value = x
       }
     })
-    
+
     return call(f, e)
   }
-  
+
   function link(f) {
     var o = document.createElement("a")
     o.dataset["box"] = ""
     return call(f, make(Link, o))
   }
-  
+
   function iframe(f) {
     var o = document.createElement("iframe")
     o.dataset["box"] = ""
     return call(f, make(IFrame, o))
   }
-  
+
   function file(f) {
     var o = document.createElement("input")
     o.dataset["box"] = ""
     o.type = "file"
-    
+
     o.addEventListener("error", function (e) {
       console.log(e)
       alert("Error: " + JSON.stringify(e))
     }, true)
-    
+
     var e = make(File, o)
-    
+
     // TODO closure
     e.changed = oCell.value(undefined, {
       bind: function (self) {
@@ -1085,9 +1085,9 @@ define(["./name", "./cell"], function (name, oCell) {
           }
           x.readAsText(e.target.files[0])
         }
-        
+
         o.addEventListener("change", change, true)
-        
+
         return {
           change: change
         }
@@ -1106,27 +1106,27 @@ define(["./name", "./cell"], function (name, oCell) {
     //calculate(x)
     return call(f, make(Image, o))
   }
-  
+
   function button(f) {
     var o = document.createElement("button")
     o.dataset["box"] = ""
     o.dataset["button"] = ""
     return call(f, make(Box, o))
   }
-  
+
   function table(f) {
     var o = document.createElement("table")
     o.dataset["box"] = ""
     o.dataset["table"] = ""
     return call(f, make(Box, o))
   }
-  
+
   function row(f) {
     var o = document.createElement("tr")
     o.dataset["box"] = ""
     return call(f, make(Box, o))
   }
-  
+
   function cell(f) {
     var o = document.createElement("td")
     o.dataset["box"] = ""
@@ -1166,7 +1166,7 @@ define(["./name", "./cell"], function (name, oCell) {
       return "hsla(" + hue + ", " + sat + "%, " + light + "%, " + alpha + ")"
     }
   }
-  
+
   function textStroke(color, blur) {
     return ["-1px -1px " + blur + " " + color,
             "-1px  1px " + blur + " " + color,
@@ -1180,11 +1180,11 @@ define(["./name", "./cell"], function (name, oCell) {
       return !x || !e[_e].contains(x[_e])
     })
   }
-  
+
   function width() {
     return document.documentElement.offsetWidth
   }
-  
+
   function height() {
     return document.documentElement.offsetHeight
   }
@@ -1199,7 +1199,7 @@ define(["./name", "./cell"], function (name, oCell) {
     //highestZIndex: highestZIndex,
 
     style: style,
-    
+
     horiz: horiz,
     vert: vert,
     panel: panel,
@@ -1226,11 +1226,11 @@ define(["./name", "./cell"], function (name, oCell) {
     radio: radio,
     iframe: iframe,
     separator: separator,
-    
+
     table: table,
     row: row,
     cell: cell,
-    
+
     width: width,
     height: height,
   })

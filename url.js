@@ -1,88 +1,101 @@
 define(function () {
   "use strict";
 
-  // TODO: doesn't handle ALL URL syntax, only the most common
-  function parse(s) {
-    var a = /^([^:]+:\/\/)?([^@]+@)?([^:\/]+)(:[0-9]+)?([^?#]*\/)?([^?#\/]*)([^#]*)(.*)$/.exec(s)
+  // http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
+  var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*):(?:\/\/(?:([^\@]+)\@)?([^\/\?\#\:]+)(?:\:([0-9]+))?)?([^\?\#]*)?(?:\?([^\#]+))?(?:\#(.+))?$/
+
+  function parseURI(s) {
+    var a = reUri.exec(s)
     if (a) {
-      var r       = {}
-      r.protocol  = a[1] || ""
-      r.authority = a[2] || ""
-      r.domain    = a[3]
-      r.port      = a[4] || ""
-      r.path      = a[5] || ""
-      r.file      = a[6]
-      r.query     = a[7]
-      r.hash      = a[8]
-      return r
+      return {
+        scheme:    a[1].toLowerCase(),
+        authority: a[2] || null,
+        hostname:  a[3] || null,
+        port:      (+a[4] || null),
+        path:      (a[5]
+                     ? a[5].split(/\//g)
+                     : null),
+        query:     a[6] || null,
+        fragment:  a[7] || null
+      }
+    } else {
+      throw new Error("invalid URI: " + s)
     }
   }
-  
-  function toString(x) {
-    return x.protocol + x.authority + x.domain + x.port + x.path + x.file + x.query + x.hash
+
+  function printURI(o) {
+    var s = []
+    if (o.scheme) {
+      s.push(o.scheme)
+      s.push(":")
+    }
+    if (o.authority || o.hostname || o.port) {
+      if (o.scheme) {
+        s.push("//")
+      }
+      if (o.authority) {
+        s.push(o.authority)
+        s.push("@")
+      }
+      if (o.hostname) {
+        s.push(o.hostname)
+      }
+      if (o.port) {
+        s.push(":")
+        s.push(o.port)
+      }
+    }
+    if (o.path) {
+      s.push(o.path.join("/"))
+    }
+    if (o.query) {
+      s.push("?")
+      s.push(o.query)
+    }
+    if (o.fragment) {
+      s.push("#")
+      s.push(o.fragment)
+    }
+    return s.join("")
   }
   
   function simplify(x) {
     var y = {}
-    
-    if (x.protocol === "http://" || x.protocol === "https://") {
-      y.protocol = ""
+
+    if (x.scheme === "http" || x.scheme === "https") {
+      y.scheme = null
     } else {
-      y.protocol = x.protocol
+      y.scheme = x.scheme
     }
 
-    y.authority = x.authority
-    
-    // http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
-    y.domain = x.domain.replace(/^www\.|\.\w\w$/g, "") // .co.uk
-                       .replace(/\.(?:aero|asia|biz|cat|com|co|coop|info|int|jobs|mobi|museum|name|net|org|pro|tel|travel|xxx|edu|gov|mil)$/, "")
-                       // TODO: is this needed?
-                       .replace(/\.\w\w$/, "") // .ac.edu
-    
-    y.port = x.port
-    y.path = x.path
-    y.file = x.file
-    y.query = x.query
-    y.hash = x.hash
-    return y
-  }
-
-  function minify(x) {
-    var y = simplify(x)
-
-    if (x.protocol === "http://" || x.protocol === "https://") {
-      y.protocol = ""
-    } else if (x.protocol) {
-      y.protocol = x.protocol.replace(/:\/\/$/, "") + " "
+    if (x.authority) {
+      y.authority = x.authority
     }
-    
-    y.path = ""
-    y.file = ""
-    y.query = ""
-
+    if (x.hostname) {
+      // http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
+      y.hostname = x.hostname.replace(/^www\.|\.\w\w$/g, "") // .co.uk
+                             .replace(/\.(?:aero|asia|biz|cat|com|co|coop|info|int|jobs|mobi|museum|name|net|org|pro|tel|travel|xxx|edu|gov|mil)$/, "")
+                             // TODO: is this needed?
+                             .replace(/\.\w\w$/, "") // .ac.edu
+    }
+    if (x.port) {
+      y.port = x.port
+    }
+    if (x.path) {
+      y.path = x.path
+    }
     if (x.query) {
-      y.query = " " + decodeURIComponent(x.query).replace(/^\?/, "")
-                                                 .replace(/\+/g, " ")
-                                                 .replace(/=/g, ":")
-                                                 .replace(/&/g, " ")
-    } else if (x.file) {
-      y.file = " " + decodeURIComponent(x.file).replace(/\.(?:html?|php|asp)$/, "")
-                                               .replace(/_|\-/g, " ")
-    } else if (x.path && x.path !== "/") {
-      y.path = " " + decodeURIComponent(x.path)
+      y.query = x.query
     }
-
-    if (x.hash) {
-      y.hash = " " + decodeURIComponent(x.hash)
+    if (x.fragment) {
+      y.fragment = x.fragment
     }
-
     return y
   }
 
   return Object.freeze({
-    toString: toString,
+    parseURI: parseURI,
+    printURI: printURI,
     simplify: simplify,
-    parse: parse,
-    minify: minify,
   })
 })

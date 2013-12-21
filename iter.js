@@ -1,4 +1,4 @@
-define(["./name", "./object"], function (name, object) {
+define(["./key", "./object"], function (key, object) {
   "use strict";
 
   var hasOwn = {}.hasOwnProperty
@@ -225,7 +225,7 @@ define(["./name", "./object"], function (name, object) {
 
 
   // Standard stuff
-  var iterator = new name.Name()
+  var iterator = new key.Key()
 
   // TODO: should be a unique [[Class]] but can't
   function StopIteration() {}

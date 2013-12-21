@@ -1,15 +1,15 @@
 // Extremely light-weight Functional Reactive Programming implementation
 // Event dispatch is handled synchronously: no concurrency or parallelism
 // Loosely based on Elm (http://elm-lang.org/)
-define(["./name", "./object"], function (name, object) {
+define(["./key", "./object"], function (key, object) {
   "use strict";
 
-  var events = new name.Name()
-    , info   = new name.Name()
-    , saved  = new name.Name()
-    , get    = new name.Name()
-    , array  = new name.Name()
-    , func   = new name.Name()
+  var events = new key.Key()
+    , info   = new key.Key()
+    , saved  = new key.Key()
+    , get    = new key.Key()
+    , array  = new key.Key()
+    , func   = new key.Key()
 
   //var skip = {}
 
