@@ -5,9 +5,9 @@ define(["./key", "./cell"], function (key, oCell) {
 
   var highestZIndex = "2147483647" /* 32-bit signed int */
 
-  var _e       = new key.Key()
-    , _styles  = new key.Key()
-    , bindings = new key.Key()
+  var _e       = key.Key("element")
+    , _styles  = key.Key("styles")
+    , bindings = key.Key("bindings")
 
   function isOver(self, e) {
     return !self.contains(e.relatedTarget)

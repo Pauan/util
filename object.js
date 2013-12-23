@@ -1,33 +1,35 @@
-define(function () {
+define(["./key"], function (a) {
   "use strict";
 
-  function create(x) {
-    return Object.create(x)
-  }
-
+  var Key = a.Key
+  
+  var isIs = Key("is?")
+  
   function isObject(x) {
     return x === Object(x)
   }
 
   // http://wiki.ecmascript.org/doku.php?id=harmony:egal
   function is(x, y) {
-    if (x === y) {
+    if (isObject(x) && isIs in x) {
+      return x[isIs](x, y)
+    } else if (x === y) {
       // 0 === -0, but they are not identical
       return x !== 0 || 1 / x === 1 / y
+    } else {
+      // NaN !== NaN, but they are identical.
+      // NaNs are the only non-reflexive value, i.e., if x !== x,
+      // then x is a NaN.
+      // isNaN is broken: it converts its argument to number, so
+      // isNaN("foo") => true
+      return x !== x && y !== y
     }
-
-    // NaN !== NaN, but they are identical.
-    // NaNs are the only non-reflexive value, i.e., if x !== x,
-    // then x is a NaN.
-    // isNaN is broken: it converts its argument to number, so
-    // isNaN("foo") => true
-    return x !== x && y !== y
   }
 
   function isnt(x, y) {
     return !is(x, y)
   }
-
+  
   function iso(x, y) {
     if (is(x, y)) {
       return true
@@ -47,6 +49,11 @@ define(function () {
     } else {
       return false
     }
+  }
+
+
+  function create(x) {
+    return Object.create(x)
   }
 
   function merge(x) {
@@ -116,6 +123,7 @@ define(function () {
     isnt: isnt,
 
     // Non-standard
+    isIs: isIs,
     isObject: isObject,
     iso: iso,
     merge: merge,

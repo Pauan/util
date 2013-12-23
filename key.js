@@ -3,24 +3,24 @@ define(function () {
   "use strict";
 
   var id  = 0
-    , sId = "__private__0"
+    , sId = "Key(null, 0)"
 
-  function Key() {
+  function Key(s) {
     if (!(this instanceof Key)) {
-      return new Key()
+      return new Key(s)
     }
-    this[sId] = "__private__" + (++id)
+    if (s == null) {
+      this[sId] = "Key(null, " + (++id) + ")"
+    } else {
+      this[sId] = "Key(\"" + s + "\", " + (++id) + ")"
+    }
+    Object.freeze(this) // TODO is this a good idea ?
   }
   Key.prototype.toString = function () {
     return this[sId]
   }
 
-  function isKey(x) {
-    return x instanceof Key
-  }
-
   return Object.freeze({
     Key: Key,
-    isKey: isKey,
   })
 })

@@ -82,9 +82,10 @@ define(["./iter"], function (iter) {
   }
   Buffer.prototype.next = function () {
     if (!this.has()) {
-      throw new iter.StopIteration()
+      return { done: true }
+    } else {
+      return { value: this.read() }
     }
-    return this.read()
   }
 
   function BufferError(o, s) {

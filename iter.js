@@ -1,5 +1,49 @@
 define(["./key", "./object"], function (key, object) {
   "use strict";
+  
+  // Standard stuff
+  var iterator = key.Key("iterator")
+
+  // TODO: eager, but can't make lazy due to lack of generators
+  function allKeys(x) {
+    var r = []
+    for (var s in x) {
+      r.push(s)
+    }
+    return toIterator(r)
+  }
+
+  function allValues(x) {
+    return map(allKeys(x), function (s) {
+      return x[s]
+    })
+  }
+
+  function allItems(x) {
+    return map(allKeys(x), function (s) {
+      return [s, x[s]]
+    })
+  }
+
+  // TODO inefficient?
+  function keys(x) {
+    return filter(allKeys(x), function (s) {
+      return hasOwn.call(x, s)
+    })
+  }
+
+  function values(x) {
+    return map(keys(x), function (s) {
+      return x[s]
+    })
+  }
+
+  function items(x) {
+    return map(keys(x), function (s) {
+      return [s, x[s]]
+    })
+  }
+
 
   var hasOwn = {}.hasOwnProperty
 
@@ -21,24 +65,33 @@ define(["./key", "./object"], function (key, object) {
   }*/
 
   function toIterator(x) {
-    // TODO codepoints
-    if (typeof x === "string") {
-      return toIterator(x.split(""))
-    } else if (iterator in x) {
+    if (iterator in x) {
       return x[iterator]()
+    // TODO ew
     } else if ("length" in x) {
-      var i = 0
-      return {
-        next: function () {
-          if (i < (x.length >>> 0)) {
-            return x[i++]
-          } else {
-            throw new StopIteration()
-          }
+      // TODO ew
+      return Array.prototype[iterator].call(x)
+    } else {
+      throw new TypeError(x + " does not have an @@iterator or length property")
+    }
+  }
+
+  // TODO codepoints
+  String.prototype[iterator] = function () {
+    return toIterator(this.split(""))
+  }
+
+  Array.prototype[iterator] = function () {
+    var x = this
+      , i = 0
+    return {
+      next: function () {
+        if (i < (x.length >>> 0)) {
+          return { value: x[i++] }
+        } else {
+          return { done: true }
         }
       }
-    } else {
-      throw new TypeError(x + " does not have an @iterator or length property")
     }
   }
 
@@ -53,21 +106,17 @@ define(["./key", "./object"], function (key, object) {
 
   // Non-standard but useful stuff
 
-  // Strict evaluation
+  // TODO strict evaluation, but should be lazy
   function some(x, f) {
     x = toIterator(x)
-    try {
-      while (true) {
-        if (f(x.next())) {
-          return true
-        }
-      }
-    } catch (e) {
-      if (!(e instanceof StopIteration)) {
-        throw e
+    while (true) {
+      var o = x.next()
+      if (o.done) {
+        return false
+      } else if (f(o.value)) {
+        return true
       }
     }
-    return false
   }
 
   function every(x, f) {
@@ -156,7 +205,12 @@ define(["./key", "./object"], function (key, object) {
   function map(x, f) {
     x = toIterator(x)
     return makeIterator(function () {
-      return f(x.next())
+      var o = x.next()
+      if (o.done) {
+        return { done: true }
+      } else {
+        return { value: f(o.value) }
+      }
     })
   }
 
@@ -164,9 +218,11 @@ define(["./key", "./object"], function (key, object) {
     x = toIterator(x)
     return makeIterator(function () {
       while (true) {
-        var y = x.next()
-        if (f(y)) {
-          return y
+        var o = x.next()
+        if (o.done) {
+          return { done: true }
+        } else if (f(o.value)) {
+          return { value: o.value }
         }
       }
     })
@@ -176,15 +232,12 @@ define(["./key", "./object"], function (key, object) {
     x = toIterator(x)
     return makeIterator(function () {
       var l = x.next()
-        , r
-      try {
-        r = x.next()
-      } catch (e) {
-        if (!(e instanceof StopIteration)) {
-          throw e
-        }
+      if (l.done) {
+        return { done: true }
+      } else {
+        var r = x.next()
+        return { value: [l.value, r.value] }
       }
-      return [l, r]
     })
   }
 
@@ -203,15 +256,17 @@ define(["./key", "./object"], function (key, object) {
   function range(min, max) {
     return makeIterator(function () {
       if (min < max) {
-        return min++
+        return { value: min++ }
       } else if (min > max) {
-        return min--
+        return { value: min-- }
       } else {
-        throw new StopIteration()
+        return { done: true }
       }
     })
   }
   
+  // TODO
+  /*
   function zip() {
     var a = [].map.call(arguments, function (x) {
       return toIterator(x)
@@ -221,76 +276,11 @@ define(["./key", "./object"], function (key, object) {
         return x.next()
       })
     })
-  }
-
-
-  // Standard stuff
-  var iterator = new key.Key()
-
-  // TODO: should be a unique [[Class]] but can't
-  function StopIteration() {}
-
-  function Iterator(x) {
-    // TODO is this spec-compliant?
-    if (!(this instanceof Iterator)) {
-      return new Iterator(x)
-    }
-  }
-  Iterator.prototype[iterator] = function () {
-    return this
-  }
-
-  // TODO not quite correct, should use {}.toString.call, but that returns "[object Object]"
-  function isStopIteration(x) {
-    return x instanceof StopIteration
-  }
-
-  // TODO: this returns an array, it should return an iterator, but can't due to lack of generators
-  function allKeys(x) {
-    var r = []
-    for (var s in x) {
-      r.push(s)
-    }
-    return r
-  }
-
-  function allValues(x) {
-    return map(allKeys(x), function (s) {
-      return x[s]
-    })
-  }
-
-  function allItems(x) {
-    return map(allKeys(x), function (s) {
-      return [s, x[s]]
-    })
-  }
-
-  // TODO inefficient?
-  function keys(x) {
-    return filter(allKeys(x), function (s) {
-      return hasOwn.call(x, s)
-    })
-  }
-
-  function values(x) {
-    return map(keys(x), function (s) {
-      return x[s]
-    })
-  }
-
-  function items(x) {
-    return map(keys(x), function (s) {
-      return [s, x[s]]
-    })
-  }
+  }*/
 
   return {
     iterator: iterator,
-    Iterator: Iterator,
-    StopIteration: StopIteration,
     //isGenerator: isGenerator,
-    isStopIteration: isStopIteration,
 
     keys: keys,
     values: values,
@@ -313,6 +303,6 @@ define(["./key", "./object"], function (key, object) {
     pair: pair,
     dedupe: dedupe,
     range: range,
-    zip: zip,
+    //zip: zip,
   }
 })

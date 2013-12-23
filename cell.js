@@ -4,12 +4,12 @@
 define(["./key", "./object"], function (key, object) {
   "use strict";
 
-  var events = new key.Key()
-    , info   = new key.Key()
-    , saved  = new key.Key()
-    , get    = new key.Key()
-    , array  = new key.Key()
-    , func   = new key.Key()
+  var events = key.Key("events")
+    , info   = key.Key("info")
+    , saved  = key.Key("saved")
+    , get    = key.Key("get")
+    , array  = key.Key("array")
+    , func   = key.Key("func")
 
   //var skip = {}
 
