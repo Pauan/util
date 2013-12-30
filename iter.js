@@ -1,8 +1,10 @@
 define(["./object"], function (object) {
-  "use strict";  
+  "use strict";
 
   // Axioms
-  
+
+  var stop = {}
+
   //var fnApply = (function () {}).apply
 
   // TODO: eager, but can't make lazy due to lack of generators
@@ -20,9 +22,15 @@ define(["./object"], function (object) {
   }*/
 
   function some(a, f) {
-    for (var i = 0; i < a.length; ++i) {
-      if (f(a[i])) {
-        return true
+    try {
+      for (var i = 0; i < a.length; ++i) {
+        if (f(a[i])) {
+          return true
+        }
+      }
+    } catch (e) {
+      if (e !== stop) {
+        throw e
       }
     }
     return false
@@ -30,20 +38,32 @@ define(["./object"], function (object) {
 
   function partitionWhile(a, f) {
     var l = []
-    for (var i = 0; i < a.length; ++i) {
-      var x = a[i]
-      if (f(x)) {
-        l.push(x)
-      } else {
-        return [l, [].slice.call(a, i)]
+    try {
+      for (var i = 0; i < a.length; ++i) {
+        var x = a[i]
+        if (f(x)) {
+          l.push(x)
+        } else {
+          return [l, [].slice.call(a, i)]
+        }
+      }
+    } catch (e) {
+      if (e !== stop) {
+        throw e
       }
     }
     return [l, []]
   }
 
   function foldl(x, a, f) {
-    for (var i = 0; i < a.length; ++i) {
-      x = f(x, a[i])
+    try {
+      for (var i = 0; i < a.length; ++i) {
+        x = f(x, a[i])
+      }
+    } catch (e) {
+      if (e !== stop) {
+        throw e
+      }
     }
     return x
   }
@@ -57,24 +77,37 @@ define(["./object"], function (object) {
     }
   }
 
+  // TODO should be cancelable with throwing stop
   function foldr(a, x, f) {
     return foldr1(0, a, x, f)
   }
 
   function map(a, f) {
     var r = []
-    for (var i = 0; i < a.length; ++i) {
-      r.push(f(a[i]))
+    try {
+      for (var i = 0; i < a.length; ++i) {
+        r.push(f(a[i]))
+      }
+    } catch (e) {
+      if (e !== stop) {
+        throw e
+      }
     }
     return r
   }
 
   function filter(a, f) {
     var r = []
-    for (var i = 0; i < a.length; ++i) {
-      var x = a[i]
-      if (f(x)) {
-        r.push(x)
+    try {
+      for (var i = 0; i < a.length; ++i) {
+        var x = a[i]
+        if (f(x)) {
+          r.push(x)
+        }
+      }
+    } catch (e) {
+      if (e !== stop) {
+        throw e
       }
     }
     return r
@@ -90,6 +123,7 @@ define(["./object"], function (object) {
     }
     return r
   }
+
 /*
   function range(min, max) {
     return makeIterator(function () {
@@ -105,6 +139,29 @@ define(["./object"], function (object) {
 
 
   // Derived
+
+  // TODO inefficient ?
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Example.3A_Flatten_an_array_of_arrays
+  function flatten(x) {
+    return foldl([], x, function (x, y) {
+      // TODO alternative to concat
+      return x.concat(y)
+    })
+  }
+
+  // TODO probably inefficient
+  // http://stackoverflow.com/a/12628791/449477
+  // http://stackoverflow.com/a/5860190/449477
+  function product() {
+    return foldl([[]], arguments, function (x, y) {
+      return flatten(map(x, function (x) {
+        return map(y, function (y) {
+          // TODO alternative to concat
+          return x.concat([y])
+        })
+      }))
+    })
+  }
 
   function allValues(x) {
     return map(allKeys(x), function (s) {
@@ -207,7 +264,7 @@ define(["./object"], function (object) {
       }
     })
   }*/
-  
+
   // TODO
   /*
   function zip() {
@@ -222,6 +279,7 @@ define(["./object"], function (object) {
   }*/
 
   return {
+    stop: stop,
     partitionWhile: partitionWhile,
     keys: keys,
     values: values,
@@ -239,5 +297,7 @@ define(["./object"], function (object) {
     map: map,
     filter: filter,
     pair: pair,
+    product: product,
+    flatten: flatten,
   }
 })

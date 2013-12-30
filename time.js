@@ -23,6 +23,7 @@ define([], function () {
       , t   = performance
       , mem = {}
 
+    // TODO check this
     for (var s in t.memory) {
       mem[s] = t.memory[s]
     }
