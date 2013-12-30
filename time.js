@@ -1,4 +1,4 @@
-define(function () {
+define([], function () {
   "use strict";
 
   // TODO this probably isn't super-robust, but it should work for common cases
@@ -14,7 +14,41 @@ define(function () {
     return x
   }
 
+  function benchmark(f, duration) {
+    if (duration == null) {
+      duration = 10000
+    }
+
+    var i   = 0
+      , t   = performance
+      , mem = {}
+
+    for (var s in t.memory) {
+      mem[s] = t.memory[s]
+    }
+
+    var start = t.now()
+      , end   = start + duration
+      , curr
+
+    while ((curr = t.now()) < end) {
+      f()
+      ++i
+    }
+
+    for (var s in t.memory) {
+      mem[s] = t.memory[s] - mem[s]
+    }
+
+    return {
+      iterations: i,
+      milliseconds: (curr - start) / i,
+      memory: mem
+    }
+  }
+
   return Object.freeze({
     timestamp: timestamp,
+    benchmark: benchmark,
   })
 })

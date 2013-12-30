@@ -1,18 +1,38 @@
 define(["./key"], function (a) {
   "use strict";
 
+  function type(x) {
+    return {}.toString.call(x)
+  }
+
+  function typeChecker(s) {
+    return function (x) {
+      return type(x) === s
+    }
+  }
+
+  var isArray    = typeChecker("[object Array]")
+  var isBoolean  = typeChecker("[object Boolean]")
+  var isDate     = typeChecker("[object Date]")
+  var isError    = typeChecker("[object Error]")
+  var isFunction = typeChecker("[object Function]")
+  var isNumber   = typeChecker("[object Number]")
+  var isRegexp   = typeChecker("[object RegExp]")
+  var isString   = typeChecker("[object String]")
+  var isDict     = typeChecker("[object Object]")
+
   var Key = a.Key
-  
-  var isIs = Key("is?")
-  
+
+  var $is = Key("%is")
+
   function isObject(x) {
     return x === Object(x)
   }
 
   // http://wiki.ecmascript.org/doku.php?id=harmony:egal
   function is(x, y) {
-    if (isObject(x) && isIs in x) {
-      return x[isIs](x, y)
+    if (isObject(x) && $is in x) {
+      return x[$is](x, y)
     } else if (x === y) {
       // 0 === -0, but they are not identical
       return x !== 0 || 1 / x === 1 / y
@@ -123,8 +143,19 @@ define(["./key"], function (a) {
     isnt: isnt,
 
     // Non-standard
-    isIs: isIs,
+    type: type,
+    isArray: isArray,
+    isBoolean: isBoolean,
+    isDate: isDate,
+    isError: isError,
+    isFunction: isFunction,
+    isNumber: isNumber,
+    isRegexp: isRegexp,
+    isString: isString,
     isObject: isObject,
+    isDict: isDict,
+
+    $is: $is,
     iso: iso,
     merge: merge,
     deepMerge: deepMerge,
