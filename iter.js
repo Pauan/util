@@ -3,6 +3,7 @@ define(["./key", "./object"], function (key, object) {
 
   var isObject  = object.isObject
     , isBoolean = object.isBoolean
+    , isString  = object.isString
 
   var iterator = key.Key("@@iterator")
 
@@ -116,6 +117,24 @@ define(["./key", "./object"], function (key, object) {
       }
 
       return r
+    }
+  }
+
+  function toString(a) {
+    // Optimization, should remove later ?
+    if (isString(a)) {
+      return a
+    } else if (isIter(a)) {
+      a = toIter(a)
+
+      var o, r = []
+      while ((o = step(a))) {
+        r.push(toString(value(o)))
+      }
+
+      return r.join("")
+    } else {
+      return "" + a
     }
   }
 
@@ -306,13 +325,14 @@ define(["./key", "./object"], function (key, object) {
   }
 
 /*
-  iterpose("~", [])           -> []
-  iterpose("~", [1])          -> [1]
-  iterpose("~", [1, 2])       -> [1, "~", 2]
-  iterpose("~", [1, 2, 3])    -> [1, "~", 2, "~", 3]
-  iterpose("~", [1, 2, 3, 4]) -> [1, "~", 2, "~", 3, "~", 4]
+  intersperse("~", [])           -> []
+  intersperse("~", [1])          -> [1]
+  intersperse("~", [1, 2])       -> [1, "~", 2]
+  intersperse("~", [1, 2, 3])    -> [1, "~", 2, "~", 3]
+  intersperse("~", [1, 2, 3, 4]) -> [1, "~", 2, "~", 3, "~", 4]
 */
-  function interpose(s, a) {
+  // TODO I don't like this implementation, is it possible to implement this without looking ahead one element?
+  function intersperse(s, a) {
     a = toIter(a)
 
     var first = true
@@ -324,9 +344,10 @@ define(["./key", "./object"], function (key, object) {
       }
       if (o) {
         if (first) {
+          var x = value(o)
           first = false
           o     = false
-          return result(true, value(o))
+          return result(true, x)
         } else {
           first = true
           return result(true, s)
@@ -469,7 +490,8 @@ define(["./key", "./object"], function (key, object) {
 
       // TODO converts the iterators into arrays, because the algorithm
       //      requires the arguments to be looped through multiple times
-      //x = toArray(x)
+      // TODO use streams, instead of arrays? slower, but guaranteed to be lazy (probably still not constant memory, though...)
+      x = toArray(x)
 
       // This is so empty inputs cause the output iterator to also be empty
       if (x.length === 0) {
@@ -517,7 +539,7 @@ define(["./key", "./object"], function (key, object) {
 
 
   // Misc stuff
-  
+
   function join() {
     return flatten1([].slice.call(arguments))
   }
@@ -597,7 +619,10 @@ define(["./key", "./object"], function (key, object) {
   }*/
 
   return {
+    apply: apply,
+    each: each,
     toArray: toArray,
+    toString: toString,
     map: map,
     foldl: foldl,
     foldr: foldr,
@@ -606,5 +631,6 @@ define(["./key", "./object"], function (key, object) {
     zipMin: zipMin,
     zipMax: zipMax,
     product: product,
+    intersperse: intersperse,
   }
 })
