@@ -3,9 +3,9 @@ define(["./key", "./object"], function (key, object) {
 
   var isObject  = object.isObject
     , isBoolean = object.isBoolean
-  
+
   var iterator = key.Key("@@iterator")
-  
+
   function makeIterator(f) {
     var o = {}
     o[iterator] = function () {
@@ -30,7 +30,7 @@ define(["./key", "./object"], function (key, object) {
   }
 
 
-  // Standard ES6 methods, but without the Iterator prefix
+  // Standard internal ES6 methods, but without the Iterator prefix
 
   function next(x, v) {
     var o = x.next(v)
@@ -40,7 +40,24 @@ define(["./key", "./object"], function (key, object) {
     }
     return o
   }
-  
+
+  // Returns whether the iterator has a value or not, rather than whether it's done or not
+  function has(x) {
+    // TODO is this correct ?
+    if (!isObject(x)) {
+      throw new TypeError(x)
+    }
+    return !x.done
+  }
+
+  function value(x) {
+    // TODO is this correct ?
+    if (!isObject(x)) {
+      throw new TypeError(x)
+    }
+    return x.value
+  }
+
   // Order of arguments is swapped, for convenience
   // Also, the first argument says whether it has a value or not, not whether it's done or not
   function result(has, value) {
@@ -51,9 +68,14 @@ define(["./key", "./object"], function (key, object) {
     return { done: !has, value: value }
   }
 
+  // Non-standard
+  function isIter(x) {
+    return isObject(x) && (iterator in x || "length" in x)
+  }
+
   // Non-standard, because it supports array-like objects, but I prefer that for convenience
   // Once iterators become more common, support for array-like objects can be easily removed
-  function get(x) {
+  function toIter(x) {
     if (isObject(x)) {
       if (iterator in x) {
         var o = x[iterator]()
@@ -72,380 +94,247 @@ define(["./key", "./object"], function (key, object) {
     }
   }
 
-  function isStream(x) {
-    return x instanceof Stream// || has(x, toStream)
-  }
-
-  function stream(x, y) {
-    return new Stream(x, y)
-  }
-
-  function value(x) {
-    return toStream1(x).value
-  }
-
-  function next(x) {
-    x = toStream1(x)
-    if (!("cached" in x)) {
-      x.cached = x.next()
-    }
-    return x.cached
-  }
-
-  //var fnApply = (function () {}).apply
-/*
-  function apply(f, self, a) {
-    return fnApply.call(f, self, a)
-  }*/
-
-  // Converters
-  // TODO could probably be made more efficient, with a fold or something ?
-  function arrayToStream(a, i) {
-    if (i < a.length) {
-      return stream(a[i], function () {
-        return arrayToStream(a, i + 1)
-      })
+  function step(x, value) {
+    var result = next(x, value)
+    if (has(result)) {
+      return result
     } else {
-      return null // TODO is null a good sentinel for empty-stream ?
-    }
-  }
-
-  function toStream(a) {
-    if (isStream(a)) {
-      return a
-    } else if (has(a, "length")) {
-      return arrayToStream(a, 0)
-    } else {
-      throw new Error("cannot convert " + a + " to stream")
+      return false
     }
   }
 
   function toArray(a) {
-    if (isStream(a)) {
-      var r = []
-      do {
-        r.push(value(a))
-        a = next(a)
-      } while (isStream(a))
-      return r
-    } else if (Array.isArray(a)) {
+    // Optimization, should remove later ?
+    if (Array.isArray(a)) {
       return a
-    } else if (has(a, "length")) {
-      return [].slice.call(a)
     } else {
-      throw new Error("cannot convert " + a + " to array")
+      a = toIter(a)
+
+      var o, r = []
+      while ((o = step(a))) {
+        r.push(value(o))
+      }
+
+      return r
     }
   }
 
+/*
+  (def ->array -> a
+    (if (array? a)
+      a
+      (loop a = (->iter a)
+            r = []
+        (if-let x = (iter/step a)
+          (recur a (push! r (iter/value x)))
+          r))))
+*/
 
-  // Functions that work on both streams and array-likes
+  var fnApply = (function () {}).apply
+
+  // TODO remove this once ES6 comes out, woohoo spread operator supporting iterators!
+  function apply(f, self, a) {
+    return fnApply.call(f, self, toArray(a))
+  }
+
   function some(a, f) {
-    if (isStream(a)) {
-      do {
-        if (f(value(a))) {
-          return true
-        } else {
-          a = next(a)
-        }
-      } while (isStream(a))
+    a = toIter(a)
 
-    } else if (has(a, "length")) {
-      for (var i = 0; i < a.length; ++i) {
-        if (f(a[i])) {
-          return true
-        }
+    var o
+    while ((o = step(a))) {
+      if (f(value(o))) {
+        return true
       }
-
-    } else {
-      throw new Error("not iterable: " + a)
     }
 
     return false
   }
 
   function partitionWhile(a, f) {
-    var l = []
+    a = toIter(a)
 
-    if (isStream(a)) {
-      // TODO returns an array, not a stream
-      do {
-        var x = value(a)
-        if (f(x)) {
-          l.push(x)
-          a = next(a)
-        } else {
-          break
-        }
-      } while (isStream(a))
-      return [l, a]
-
-    } else if (has(a, "length")) {
-      for (var i = 0; i < a.length; ++i) {
-        var x = a[i]
-        if (f(x)) {
-          l.push(x)
-        } else {
-          return [l, [].slice.call(a, i)]
-        }
+    var o, l = []
+    while ((o = step(a))) {
+      var x = value(o)
+      if (f(x)) {
+        l.push(x)
+      } else {
+        break
       }
-      return [l, []]
-
-    } else {
-      throw new Error("not iterable: " + a)
     }
+
+    // TODO should this just return the iterator, or should it convert it into an array?
+    return [l, a]
   }
 
   function foldl(x, a, f) {
-    if (isStream(a)) {
-      do {
-        x = f(x, value(a))
-        a = next(a)
-      } while (isStream(a))
+    a = toIter(a)
 
-    } else if (has(a, "length")) {
-      for (var i = 0; i < a.length; ++i) {
-        x = f(x, a[i])
-      }
-
-    } else {
-      throw new Error("not iterable: " + a)
+    var o
+    while ((o = step(a))) {
+      x = f(x, value(o))
     }
 
     return x
   }
 
   // TODO does this have to be implemented recursively like this...?
-  function stream_foldr(a, x, f) {
-    if (isStream(a)) {
-      return f(value(a), stream_foldr(next(a), x, f))
+  function foldr1(a, x, f) {
+    var o = step(a)
+    if (o) {
+      return f(value(o), foldr1(a, x, f))
     } else {
       return x
     }
   }
 
   function foldr(a, x, f) {
-    if (isStream(a)) {
-      return stream_foldr(a, x, f)
+    a = toIter(a)
+    return foldr1(a, x, f)
 
-    } else if (has(a, "length")) {
+    // TODO optimization for array-like objects ?
+    /*if (isObject(a) && "length" in a) {
       var i = a.length
       while (i--) {
         x = f(a[i], x)
       }
       return x
-
-    } else {
-      throw new Error("not iterable: " + a)
-    }
-  }
-
-  function stream_map(a, f) {
-    if (isStream(a)) {
-      return stream(f(value(a)), function () {
-        return stream_map(next(a), f)
-      })
-    } else {
-      return a
-    }
+    }*/
   }
 
   function map(a, f) {
-    if (isStream(a)) {
-      return stream_map(a, f)
+    a = toIter(a)
 
-    } else if (has(a, "length")) {
-      var r = []
-      for (var i = 0; i < a.length; ++i) {
-        r.push(f(a[i]))
-      }
-      return r
-
-    } else {
-      throw new Error("not iterable: " + a)
-    }
-
-    /*return foldr(a, null, function (x, y) {
-      return stream(f(x), function () {
-        return y
-      })
-    })*/
-
-    /*return foldl([], a, function (x, y) {
-      x.push(f(y))
-      return x
-    })*/
-  }
-
-  function stream_filter(a, f) {
-    while (true) {
-      if (isStream(a)) {
-        var x = value(a)
-        if (f(x)) {
-          return stream(x, function () {
-            return stream_filter(next(a), f)
-          })
-        } else {
-          a = next(a)
-        }
+    return makeIterator(function () {
+      var o = step(a)
+      if (o) {
+        return result(true, f(value(o)))
       } else {
-        return a
+        return result(false)
       }
-    }
+    })
   }
 
   function filter(a, f) {
-    if (isStream(a)) {
-      return stream_filter(a, f)
+    a = toIter(a)
 
-    } else if (has(a, "length")) {
-      var r = []
-      for (var i = 0; i < a.length; ++i) {
-        var x = a[i]
-        if (f(x)) {
-          r.push(x)
-        }
-      }
-      return r
-
-    } else {
-      throw new Error("not iterable: " + a)
-    }
-
-    /*return foldr(a, null, function (x, y) {
-      if (f(x)) {
-        return stream(x, function () {
-          return y
-        })
-      } else {
-        return y
-      }
-    })*/
-
-    /*return foldl([], a, function (x, y) {
-      if (f(y)) {
-        x.push(y)
-      }
-      return x
-    })*/
-  }
-/*
-  function chunk(iTop, a) {
-    if (isStream(a)) {
-      var r = []
-        , i = iTop
-      while (i--) {
-        if (isStream(a)) {
-          r.push(value(a))
-          a = next(a)
+    return makeIterator(function () {
+      while (true) {
+        var o = step(a)
+        if (o) {
+          var x = value(o)
+          if (f(x)) {
+            return result(true, x)
+          }
         } else {
-          throw new Error("expected " + i + " elements but got " + (i - i2))
+          return result(false)
         }
       }
-      return stream(r, function () {
-        return chunk(iTop, a)
-      })
-    } else {
-      return a
-    }
-  }*/
+    })
+  }
 
-/*
+  function chunk(iTop, a) {
+    a = toIter(a)
+
+    return makeIterator(function () {
+      var i = iTop
+        , r = []
+
+      while (i--) {
+        var o = step(a)
+        if (o) {
+          r.push(value(o))
+        // TODO not quite correct
+        } else {
+          throw new Error("expected " + iTop + " elements but got " + (iTop - i))
+        }
+      }
+
+      return result(true, r)
+    })
+  }
+
   function range(min, max) {
     return makeIterator(function () {
       if (min < max) {
-        return { value: min++ }
+        return result(true, min++)
       } else if (min > max) {
-        return { value: min-- }
+        return result(true, min--)
       } else {
-        return { done: true }
+        return result(false)
       }
     })
-  }*/
+  }
+
+  // TODO doesn't work ?
+  function flatten1(a) {
+    a = [toIter(a)]
+
+    return makeIterator(function () {
+      while (true) {
+        if (a.length) {
+          var last = a[a.length - 1]
+            , o    = step(last)
+          var x = value(o)
+          if (isIter(x)) {
+            a.push(x)
+          } else {
+            return result(true, x)
+          }
+        } else {
+          return result(false)
+        }
+      }
+
+      /*var o, r = []
+      while ((o = step(a))) {
+        var x = value(o)
+        if (isIter(x)) {
+          x = toIter(x)
+
+          var o2
+          while ((o2 = step(x))) {
+            r.push(value(o2))
+          }
+
+        } else {
+          r.push(x)
+        }
+      }
+      return r*/
+    })
+  }
 
 /*
-  (def flatten1 -> a
-    (if (stream? a)
-      (let x = (value a)
-        (if (stream? x)
-          (stream (value x)
-            (let n = (next x)
-              (if (stream? n)
-                (flatten1:stream n (next a))
-                (flatten1:next a))))
-          (stream x (flatten1:next a))))
-      a))
-
-  (def join (args)
-    (if (isa args 'cons)
-        (let a (car args)
-          (if (no a)
-              (join (cdr args))
-              (cons (car a) (join (cons (cdr a) (cdr args))))))
-        args))
+  iterpose("~", [])           -> []
+  iterpose("~", [1])          -> [1]
+  iterpose("~", [1, 2])       -> [1, "~", 2]
+  iterpose("~", [1, 2, 3])    -> [1, "~", 2, "~", 3]
+  iterpose("~", [1, 2, 3, 4]) -> [1, "~", 2, "~", 3, "~", 4]
 */
-  // TODO inefficient ?
-  function stream_flatten1(a) {
-    if (isStream(a)) {
-      var x = value(a)
-      if (isStream(x)) {
-        return stream(value(x), function () {
-          var n = next(x)
-          if (isStream(n)) {
-            return stream_flatten1(stream(n, function () {
-              return next(a)
-            }))
-          } else {
-            return stream_flatten1(next(a))
-          }
-        })
-      } else {
-        return stream(x, function () {
-          return stream_flatten1(next(a))
-        })
+  function interpose(s, a) {
+    a = toIter(a)
+
+    var first = true
+      , o     = false
+
+    return makeIterator(function () {
+      if (!o) {
+        o = step(a)
       }
-    } else {
-      return a
-    }
-  }
-
-  function array_flatten1(a) {
-    var r = []
-
-    for (var i = 0; i < a.length; ++i) {
-      var x = a[i]
-
-      if (isStream(x)) {
-        do {
-          r.push(value(x))
-          x = next(x)
-        } while (isStream(x))
-
-      } else if (has(x, "length")) {
-        for (var i2 = 0; i2 < x.length; ++i2) {
-          r.push(x[i2])
+      if (o) {
+        if (first) {
+          first = false
+          o     = false
+          return result(true, value(o))
+        } else {
+          first = true
+          return result(true, s)
         }
-
       } else {
-        r.push(x)
+        return result(false)
       }
-    }
-
-    return r
-  }
-
-  function flatten1(a) {
-    if (isStream(a)) {
-      return stream_flatten1(a)
-    } else if (has(a, "length")) {
-      return array_flatten1(a)
-    } else {
-      throw new Error("not iterable: " + a)
-    }
-  }
-
-  // TODO
-  function interpose(s, x) {
-    return [].join.call(x, s)
+    })
 /*
     var initial = true
     return foldl("", x, function (x, y) {
@@ -458,122 +347,183 @@ define(["./key", "./object"], function (key, object) {
     })*/
   }
 
-/*
-  function stream_zip(a) {
-    var vals = map(a, function (a) {
-      return value(a)
+  function zip1(a, fail) {
+    a = [].map.call(a, function (x) {
+      return toIter(x)
     })
-    return stream(vals, function () {
-      return stream_zip(map(a, function (a) {
-        return next(a)
-      }))
-    })
-  }*/
 
-  // TODO stream_zip version; what about mixed arrays/streams ?
-  function array_zip(a, max) {
-    var r = []
-    for (var i = 0; i < max; ++i) {
-      r.push(map(a, function (x) { return x[i] }))
+    if (a.length) {
+      return makeIterator(function () {
+        var every = true
+          , some  = false
+
+        var o = a.map(function (x) {
+          var o = step(x)
+          if (o) {
+            some = true
+            return value(o)
+          } else {
+            every = false
+            return
+          }
+        })
+
+        if (every) {
+          return result(true, o)
+        } else if (some) {
+          return fail(o)
+        } else {
+          return result(false)
+        }
+      })
+    } else {
+      // TODO get rid of this by using `var every = a.length` ?
+      // TODO emptyIterator ?
+      return makeIterator(function () {
+        return result(false)
+      })
     }
-    return r
   }
 
   function zipMin() {
-    if (arguments.length) {
-                      // TODO hacky
-      var max = foldl(Infinity, arguments, function (x, y) {
-        return Math.min(x, len(y))
-      })
-      return array_zip(arguments, max)
-    } else {
-      return []
-    }
+    return zip1(arguments, function (o) {
+      return result(false)
+    })
   }
 
   function zipMax() {
-    // TODO is there a better way to find the length of the arguments...?
-    var max = foldl(0, arguments, function (x, y) {
-      return Math.max(x, len(y))
+    return zip1(arguments, function (o) {
+      return result(true, o)
     })
-    return array_zip(arguments, max)
   }
 
   function zip() {
-    if (arguments.length) {
-      // TODO hacky
-      var max = len(arguments[0])
-      // TODO hacky ?
-      each(arguments, function (x) {
-        var i = len(x)
-        if (i !== max) {
-          throw new Error("expected length of " + max + " but got " + i)
-        }
-      })
-      return array_zip(arguments, max)
-    } else {
-      return []
-    }
+    return zip1(arguments, function () {
+      throw new Error("arguments must be the same length; perhaps you want to use zipMin or zipMax?")
+    })
   }
 
   function len(a) {
-    if (isStream(a)) {
-      var i = 0
-      do {
-        ++i
-        a = next(a)
-      } while (isStream(a))
-      return i
-
-    } else if (has(a, "length")) {
+    // TODO optimization that should probably be removed later ?
+    if (isObject(a) && "length" in a) {
       return a.length
-
     } else {
-      throw new Error("not iterable: " + a)
-    }
-/*
-    // TODO how robust is this ?
-    // TODO is this actually any faster than just doing the iteration loop ?
-    var y = x[iterator]
-    if ((y === ArrayIterator  && object.isArray(x)) ||
-        (y === StringIterator && object.isString(x))) {
-      return x.length
-    } else {
+      a = toIter(a)
       var i = 0
-      each(x, function () {
+      while (step(a)) {
         ++i
-      })
+      }
       return i
-    }*/
+    }
   }
 
+/*
+              -> []
+  []          ->
+  [1] [2] [3] -> [1 2 3]
+  [1 2 3]     -> [1] [2] [3]
 
-  // Stuff derived from the above
-  function join() {
-    return flatten1([].slice.call(arguments))
-  }
+  [1 2 3] [4 5 6] -> [1 4] [1 5] [1 6]
+                     [2 4] [2 5] [2 6]
+                     [3 4] [3 5] [3 6]
 
-  // TODO probably inefficient
-  // http://stackoverflow.com/a/12628791/449477
-  // http://stackoverflow.com/a/5860190/449477
-  // TODO lazy version for streams
-  // TODO lazy version for arrays ?
+  [1 2] [3 4] [5 6 7] -> [1 3 5] [1 3 6] [1 3 7]
+                         [1 4 5] [1 4 6] [1 4 7]
+                         [2 3 5] [2 3 6] [2 3 7]
+                         [2 4 5] [2 4 6] [2 4 7]
+*/
+  // Super fast cartesian product that returns its results lazily.
+  //
+  // Unfortunately, due to the way cartesian product works, it has to loop
+  // over the inputs multiple times, so it first converts its inputs into arrays.
+  //
+  // This means that it uses memory proportional to all its inputs, so passing
+  // in a super huge (or infinite) iterator to product won't work.
+  //
+  // As a general overview of how the function works...
+  // The general pattern of a cartesian product looks like this:
+  //
+  //   [ 0 0 0 ]
+  //   [     1 ]
+  //   [   1 0 ]
+  //   [     1 ]
+  //   [ 1 0 0 ]
+  //   [     1 ]
+  //   [   1 0 ]
+  //   [     1 ]
+  //
+  // To implement product as a (fast) iterator, you just have to realize that when
+  // yielding a new element, you only have to increment the index of the right-most
+  // array. If the index goes beyond the bounds of the array, you then reset the index
+  // to 0 and try again with the array to the left. Repeat this process until you get
+  // to the left-most array, which is when you stop yielding.
   function product() {
-    return foldl([[]], arguments, function (x, y) {
-      // TODO does this need to be flatten or can it be flatten1? is it necessary? can it be removed?
-      return flatten(map(x, function (x) {
-        return map(y, function (y) {
-          // TODO can this be replaced with x.push(y) ?
-          return join(x, [y])
-        })
-      }))
+    var done  = false
+      , first = true
+
+    var indices = []
+
+    var a = [].map.call(arguments, function (x) {
+      // Initialize the indices, so for 3 arguments, indices will be [0, 0, 0]
+      indices.push(0)
+
+      // TODO converts the iterators into arrays, because the algorithm
+      //      requires the arguments to be looped through multiple times
+      //x = toArray(x)
+
+      // This is so empty inputs cause the output iterator to also be empty
+      if (x.length === 0) {
+        done = true
+      }
+      return x
+    })
+
+    return makeIterator(function () {
+      if (done) {
+        return result(false)
+      } else {
+        if (first) {
+          first = false
+          // Handles the case where no arguments are passed in
+          if (a.length === 0) {
+            done = true
+          }
+        } else {
+          var index = (a.length - 1)
+          while (true) {
+            ++indices[index]
+            if (indices[index] < a[index].length) {
+              break
+            // TODO move this outside of the while loop for efficiency ?
+            } else if (index === 0) {
+              done = true
+              return result(false)
+            } else {
+              indices[index] = 0
+              --index
+            }
+          }
+        }
+
+        var r = []
+        for (var i = 0; i < a.length; ++i) {
+          r.push(a[i][indices[i]])
+        }
+
+        return result(true, r)
+      }
     })
   }
 
 
   // Misc stuff
+  
+  function join() {
+    return flatten1([].slice.call(arguments))
+  }
+
   // TODO: eager, but can't make lazy due to lack of generators
-  // TODO returns an array, not a stream
+  // TODO returns an array, not an iterator
   function allKeys(x) {
     var r = []
     for (var s in x) {
@@ -647,11 +597,14 @@ define(["./key", "./object"], function (key, object) {
   }*/
 
   return {
+    toArray: toArray,
+    map: map,
     foldl: foldl,
     foldr: foldr,
     flatten1: flatten1,
     zip: zip,
     zipMin: zipMin,
     zipMax: zipMax,
+    product: product,
   }
 })
