@@ -29,6 +29,10 @@ define(["./key"], function (a) {
     return x === Object(x)
   }
 
+  function has(x, y) {
+    return isObject(x) && y in x
+  }
+
   // http://wiki.ecmascript.org/doku.php?id=harmony:egal
   function is(x, y) {
     if (isObject(x) && $is in x) {
@@ -49,7 +53,7 @@ define(["./key"], function (a) {
   function isnt(x, y) {
     return !is(x, y)
   }
-  
+
   function iso(x, y) {
     if (is(x, y)) {
       return true
@@ -88,7 +92,7 @@ define(["./key"], function (a) {
     }
     return x
   }
-  
+
   function deepMerge(x, y) {
     if (isObject(y)) {
       if (!isObject(x)) {
@@ -162,5 +166,6 @@ define(["./key"], function (a) {
     clone: clone,
     deepClone: deepClone,
     set: set,
+    has: has,
   })
 })
