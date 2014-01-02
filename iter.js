@@ -1,4 +1,4 @@
-define(["./key", "./object"], function (key, object) {
+define(["exports", "./key", "./object"], function (exports, key, object) {
   "use strict";
 
   var isObject  = object.isObject
@@ -6,6 +6,7 @@ define(["./key", "./object"], function (key, object) {
     , isString  = object.isString
 
   var iterator = key.Key("@@iterator")
+  exports.iterator = iterator
 
   function makeIterator(f) {
     var o = {}
@@ -15,6 +16,7 @@ define(["./key", "./object"], function (key, object) {
     o.next = f
     return o
   }
+  exports.makeIterator = makeIterator
 
   function arrayToIterator(a) {
     var i = 0
@@ -29,6 +31,50 @@ define(["./key", "./object"], function (key, object) {
       }
     }
   }
+
+  /*function Stream(x, y) {
+    this.value = x
+    this.next  = y
+  }
+  Stream.prototype[iterator] = function () {
+    var self = this
+    return {
+      next: function () {
+        if (self == null) {
+          return result(false)
+        } else {
+          var x = value(self)
+          self = step(self)
+          return result(true, x)
+        }
+      }
+    }
+  }
+
+  function stream(x, y) {
+    return new Stream(x, y)
+  }
+  exports.stream = stream
+
+  function toStream1(a) {
+    var o = step(a)
+    if (o) {
+      return stream(value(o), function () {
+        return toStream1(a)
+      })
+    } else {
+      return null
+    }
+  }
+
+  function toStream(a) {
+    if (a instanceof Stream) {
+      return a
+    } else {
+      return toStream1(toIter(a))
+    }
+  }
+  exports.toStream = toStream*/
 
 
   // Standard internal ES6 methods, but without the Iterator prefix
@@ -50,6 +96,7 @@ define(["./key", "./object"], function (key, object) {
     }
     return !x.done
   }
+  exports.has = has
 
   function value(x) {
     // TODO is this correct ?
@@ -58,6 +105,7 @@ define(["./key", "./object"], function (key, object) {
     }
     return x.value
   }
+  exports.value = value
 
   // Order of arguments is swapped, for convenience
   // Also, the first argument says whether it has a value or not, not whether it's done or not
@@ -68,11 +116,13 @@ define(["./key", "./object"], function (key, object) {
     }
     return { done: !has, value: value }
   }
+  exports.result = result
 
   // Non-standard
   function isIter(x) {
     return isObject(x) && (iterator in x || "length" in x)
   }
+  exports.isIter = isIter
 
   // Non-standard, because it supports array-like objects, but I prefer that for convenience
   // Once iterators become more common, support for array-like objects can be easily removed
@@ -94,6 +144,7 @@ define(["./key", "./object"], function (key, object) {
       throw TypeError(x)
     }
   }
+  exports.toIter = toIter
 
   function step(x, value) {
     var result = next(x, value)
@@ -103,6 +154,7 @@ define(["./key", "./object"], function (key, object) {
       return false
     }
   }
+  exports.step = step
 
   function toArray(a) {
     // Optimization, should remove later ?
@@ -119,6 +171,7 @@ define(["./key", "./object"], function (key, object) {
       return r
     }
   }
+  exports.toArray = toArray
 
   function toString(a) {
     // Optimization, should remove later ?
@@ -137,6 +190,7 @@ define(["./key", "./object"], function (key, object) {
       return "" + a
     }
   }
+  exports.toString = toString
 
 /*
   (def ->array -> a
@@ -155,6 +209,7 @@ define(["./key", "./object"], function (key, object) {
   function apply(f, self, a) {
     return fnApply.call(f, self, toArray(a))
   }
+  exports.apply = apply
 
   function some(a, f) {
     a = toIter(a)
@@ -168,6 +223,19 @@ define(["./key", "./object"], function (key, object) {
 
     return false
   }
+  exports.some = some
+
+  function wrap(x, a) {
+    var returned = false
+    return makeIterator(function () {
+      if (returned) {
+        return next(a)
+      } else {
+        returned = true
+        return result(true, x)
+      }
+    })
+  }
 
   function partitionWhile(a, f) {
     a = toIter(a)
@@ -178,13 +246,15 @@ define(["./key", "./object"], function (key, object) {
       if (f(x)) {
         l.push(x)
       } else {
-        break
+        // TODO should this just return the iterator, or should it convert it into an array?
+        return [l, wrap(x, a)]
       }
     }
 
-    // TODO should this just return the iterator, or should it convert it into an array?
-    return [l, a]
+    // TODO emptyIterator
+    return [l, []]
   }
+  exports.partitionWhile = partitionWhile
 
   function foldl(x, a, f) {
     a = toIter(a)
@@ -196,30 +266,22 @@ define(["./key", "./object"], function (key, object) {
 
     return x
   }
-
-  // TODO does this have to be implemented recursively like this...?
-  function foldr1(a, x, f) {
-    var o = step(a)
-    if (o) {
-      return f(value(o), foldr1(a, x, f))
-    } else {
-      return x
-    }
-  }
+  exports.foldl = foldl
 
   function foldr(a, x, f) {
-    a = toIter(a)
-    return foldr1(a, x, f)
+    // Faster than doing it recursively
+    // Still gets the same result, because whether doing it recursively or not,
+    // you have to hold the entire iterator in memory
+    a = toArray(a)
 
-    // TODO optimization for array-like objects ?
-    /*if (isObject(a) && "length" in a) {
-      var i = a.length
-      while (i--) {
-        x = f(a[i], x)
-      }
-      return x
-    }*/
+    var i = a.length
+    while (i--) {
+      x = f(a[i], x)
+    }
+
+    return x
   }
+  exports.foldr = foldr
 
   function map(a, f) {
     a = toIter(a)
@@ -233,6 +295,7 @@ define(["./key", "./object"], function (key, object) {
       }
     })
   }
+  exports.map = map
 
   function filter(a, f) {
     a = toIter(a)
@@ -251,27 +314,34 @@ define(["./key", "./object"], function (key, object) {
       }
     })
   }
+  exports.filter = filter
 
   function chunk(iTop, a) {
     a = toIter(a)
 
+    if (iTop < 0) {
+      throw new Error("first argument to chunk must be greater than or equal to 0")
+    }
+
     return makeIterator(function () {
       var i = iTop
         , r = []
+        , o
 
-      while (i--) {
-        var o = step(a)
-        if (o) {
-          r.push(value(o))
-        // TODO not quite correct
-        } else {
-          throw new Error("expected " + iTop + " elements but got " + (iTop - i))
-        }
+      while (i-- && (o = step(a))) {
+        r.push(value(o))
       }
 
-      return result(true, r)
+      if (r.length === iTop) {
+        return result(true, r)
+      } else if (r.length === 0) {
+        return result(false)
+      } else {
+        throw new Error("expected " + iTop + " elements but got " + r.length)
+      }
     })
   }
+  exports.chunk = chunk
 
   function range(min, max) {
     return makeIterator(function () {
@@ -284,7 +354,8 @@ define(["./key", "./object"], function (key, object) {
       }
     })
   }
-  
+  exports.range = range
+
   function flatten1(a, f) {
     a = [toIter(a)]
     return makeIterator(function () {
@@ -311,36 +382,14 @@ define(["./key", "./object"], function (key, object) {
       return true
     })
   }
+  exports.deepFlatten = deepFlatten
 
   function flatten(a) {
     return flatten1(a, function (a) {
       return a.length === 1
     })
-
-    /*a = toIter(a)
-
-    var old = false
-
-    return makeIterator(function () {
-      while (true) {
-        var o = step(a)
-        if (o) {
-          var x = value(o)
-          if (!old && isIter(x)) {
-            old = a
-            a   = toIter(x)
-          } else {
-            return result(true, x)
-          }
-        } else if (old) {
-          a   = old
-          old = false
-        } else {
-          return result(false)
-        }
-      }
-    })*/
   }
+  exports.flatten = flatten
 
 /*
   intersperse("~", [])           -> []
@@ -385,16 +434,18 @@ define(["./key", "./object"], function (key, object) {
       }
     })*/
   }
+  exports.intersperse = intersperse
 
   function zip1(a, fail) {
-    a = [].map.call(a, function (x) {
+    // TODO inefficient ?
+    a = toArray(map(a, function (x) {
       return toIter(x)
-    })
+    }))
 
     if (a.length) {
       return makeIterator(function () {
-        var every = true
-          , some  = false
+        var some  = false
+          , every = true
 
         var o = a.map(function (x) {
           var o = step(x)
@@ -429,18 +480,26 @@ define(["./key", "./object"], function (key, object) {
       return result(false)
     })
   }
+  exports.zipMin = zipMin
 
   function zipMax() {
     return zip1(arguments, function (o) {
       return result(true, o)
     })
   }
+  exports.zipMax = zipMax
 
-  function zip() {
-    return zip1(arguments, function () {
+  function unzip(a) {
+    return zip1(a, function () {
       throw new Error("arguments must be the same length; perhaps you want to use zipMin or zipMax?")
     })
   }
+  exports.unzip = unzip
+
+  function zip() {
+    return unzip(arguments)
+  }
+  exports.zip = zip
 
   function len(a) {
     // TODO optimization that should probably be removed later ?
@@ -455,6 +514,7 @@ define(["./key", "./object"], function (key, object) {
       return i
     }
   }
+  exports.len = len
 
 /*
               -> []
@@ -554,35 +614,56 @@ define(["./key", "./object"], function (key, object) {
       }
     })
   }
+  exports.product = product
+
+  function nOf(i, x) {
+    if (i < 0) {
+      throw new Error("first argument to nOf must be greater than or equal to 0")
+    }
+
+    return makeIterator(function () {
+      if (i) {
+        --i
+        return result(true, x)
+      } else {
+        return result(false)
+      }
+    })
+  }
+  exports.nOf = nOf
 
 
   // Misc stuff
 
+  // TODO faster version that returns an array and splices arrays in directly and converts iters to arrays ?
   function join() {
     return flatten([].slice.call(arguments))
   }
+  exports.join = join
 
   // TODO: eager, but can't make lazy due to lack of generators
-  // TODO returns an array, not an iterator
   function allKeys(x) {
     var r = []
     for (var s in x) {
       r.push(s)
     }
-    return r
+    return toIter(r)
   }
+  exports.allKeys = allKeys
 
   function allValues(x) {
     return map(allKeys(x), function (s) {
       return x[s]
     })
   }
+  exports.allValues = allValues
 
   function allEntries(x) {
     return map(allKeys(x), function (s) {
       return [s, x[s]]
     })
   }
+  exports.allEntries = allEntries
 
   // TODO inefficient?
   function keys(x) {
@@ -590,24 +671,28 @@ define(["./key", "./object"], function (key, object) {
       return {}.hasOwnProperty.call(x, s)
     })
   }
+  exports.keys = keys
 
   function values(x) {
     return map(keys(x), function (s) {
       return x[s]
     })
   }
+  exports.values = values
 
   function entries(x) {
     return map(keys(x), function (s) {
       return [s, x[s]]
     })
   }
+  exports.entries = entries
 
   function every(x, f) {
     return !some(x, function (x) {
       return !f(x)
     })
   }
+  exports.every = every
 
   function each(x, f) {
     some(x, function (x) {
@@ -615,6 +700,7 @@ define(["./key", "./object"], function (key, object) {
       return false
     })
   }
+  exports.each = each
 /*
   function forin(x, f) {
     each(entries(x), function (a) {
@@ -622,8 +708,7 @@ define(["./key", "./object"], function (key, object) {
     })
   }*/
 
-/*
-  // TODO WeakMap or Set or something ?
+  // TODO WeakMap or WeakSet or something ?
   function dedupe(x) {
     var seen = {}
     return filter(x, function (x) {
@@ -634,24 +719,6 @@ define(["./key", "./object"], function (key, object) {
         return true
       }
     })
-  }*/
-
-  return {
-    join: join,
-    step: step,
-    apply: apply,
-    each: each,
-    toArray: toArray,
-    toString: toString,
-    map: map,
-    foldl: foldl,
-    foldr: foldr,
-    flatten: flatten,
-    deepFlatten: deepFlatten,
-    zip: zip,
-    zipMin: zipMin,
-    zipMax: zipMax,
-    product: product,
-    intersperse: intersperse,
   }
+  exports.dedupe = dedupe
 })
