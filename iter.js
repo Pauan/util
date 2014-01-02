@@ -284,44 +284,62 @@ define(["./key", "./object"], function (key, object) {
       }
     })
   }
-
-  // TODO doesn't work ?
-  function flatten1(a) {
+  
+  function flatten1(a, f) {
     a = [toIter(a)]
-
     return makeIterator(function () {
-      while (true) {
-        if (a.length) {
-          var last = a[a.length - 1]
-            , o    = step(last)
+      while (a.length) {
+        var last = a[a.length - 1]
+          , o    = step(last)
+        if (o) {
           var x = value(o)
-          if (isIter(x)) {
-            a.push(x)
+          if (isIter(x) && f(a)) {
+            a.push(toIter(x))
           } else {
             return result(true, x)
           }
         } else {
+          a.pop()
+        }
+      }
+      return result(false)
+    })
+  }
+
+  function deepFlatten(a) {
+    return flatten1(a, function () {
+      return true
+    })
+  }
+
+  function flatten(a) {
+    return flatten1(a, function (a) {
+      return a.length === 1
+    })
+
+    /*a = toIter(a)
+
+    var old = false
+
+    return makeIterator(function () {
+      while (true) {
+        var o = step(a)
+        if (o) {
+          var x = value(o)
+          if (!old && isIter(x)) {
+            old = a
+            a   = toIter(x)
+          } else {
+            return result(true, x)
+          }
+        } else if (old) {
+          a   = old
+          old = false
+        } else {
           return result(false)
         }
       }
-
-      /*var o, r = []
-      while ((o = step(a))) {
-        var x = value(o)
-        if (isIter(x)) {
-          x = toIter(x)
-
-          var o2
-          while ((o2 = step(x))) {
-            r.push(value(o2))
-          }
-
-        } else {
-          r.push(x)
-        }
-      }
-      return r*/
-    })
+    })*/
   }
 
 /*
@@ -541,7 +559,7 @@ define(["./key", "./object"], function (key, object) {
   // Misc stuff
 
   function join() {
-    return flatten1([].slice.call(arguments))
+    return flatten([].slice.call(arguments))
   }
 
   // TODO: eager, but can't make lazy due to lack of generators
@@ -619,6 +637,8 @@ define(["./key", "./object"], function (key, object) {
   }*/
 
   return {
+    join: join,
+    step: step,
     apply: apply,
     each: each,
     toArray: toArray,
@@ -626,7 +646,8 @@ define(["./key", "./object"], function (key, object) {
     map: map,
     foldl: foldl,
     foldr: foldr,
-    flatten1: flatten1,
+    flatten: flatten,
+    deepFlatten: deepFlatten,
     zip: zip,
     zipMin: zipMin,
     zipMax: zipMax,
