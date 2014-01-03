@@ -23,7 +23,7 @@ define(function (require, exports) {
   //
   function Nil() {}
 
-  // Return this in the cdr to mean "list is done"
+  // Return nil in the cdr to mean "list is done"
   var nil = new Nil()
   exports.nil = nil
 
@@ -206,7 +206,7 @@ define(function (require, exports) {
   function foldr(a, x, f) {
     // Faster than doing it recursively
     // Still gets the same result, because whether doing it recursively or not,
-    // you have to hold the entire iterator in memory
+    // you have to hold the entire cons in memory
     a = toArray(a)
 
     var i = a.length
@@ -478,7 +478,7 @@ define(function (require, exports) {
   // over the inputs multiple times, so it first converts its inputs into arrays.
   //
   // This means that it uses memory proportional to all its inputs, so passing
-  // in a super huge (or infinite) iterator to product won't work.
+  // in a super huge (or infinite) cons to product won't work.
   //
   // As a general overview of how the function works...
   // The general pattern of a cartesian product looks like this:
@@ -547,12 +547,10 @@ define(function (require, exports) {
       // Initialize the indices, so for 3 arguments, indices will be [0, 0, 0]
       indices.push(0)
 
-      // TODO converts the iterators into arrays, because the algorithm
-      //      requires the arguments to be looped through multiple times
-      // TODO use streams, instead of arrays? slower, but guaranteed to be lazy (probably still not constant memory, though...)
+      // TODO use conses, instead of arrays? slower, but guaranteed to be lazy (probably still not constant memory, though...)
       x = toArray(x)
 
-      // This is so empty inputs cause the output iterator to also be empty
+      // This is so empty inputs cause the output to also be empty
       if (x.length === 0) {
         done = true
       }
@@ -585,7 +583,7 @@ define(function (require, exports) {
 
   // Misc stuff
 
-  // TODO faster version that returns an array and splices arrays in directly and converts iters to arrays ?
+  // TODO faster version that returns an array and splices arrays in directly and converts conses to arrays ?
   function join() {
     return flatten([].slice.call(arguments))
   }
