@@ -26,7 +26,7 @@ define(["./key"], function (a) {
   var $is = Key("%is")
 
   function isObject(x) {
-    return x === Object(x)
+    return x !== null && x !== void 0
   }
 
   function has(x, y) {

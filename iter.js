@@ -1,195 +1,147 @@
 define(function (require, exports) {
   "use strict";
 
-  var key    = require("./key")
-    , object = require("./object")
+  var object = require("./object")
 
-  var isObject  = object.isObject
-    , isBoolean = object.isBoolean
-    , isString  = object.isString
+  var isObject = object.isObject
+    , isString = object.isString
+    , isNumber = object.isNumber
 
-  var iterator = key.Key("@@iterator")
-  exports.iterator = makeIterator
+  // Lazy cons implementation; slightly slower than iterators (in comparable situations), but:
+  //
+  //  * Functional, can iterate over the same cons cell multiple times
+  //
+  //  * Naturally supports peeking; great for file streams
+  //
+  //  * The cdr of the cons is lazy, but the car is NOT lazy
+  //
+  //  * Can easily convert to/from iterators, with a bit of extra overhead, while retaining laziness
+  //
+  //  * Much easier implementation than iterators
+  //
+  //  * Simpler and more consistent (no difference between an "iterable" and an "iterator")
+  //
 
-  var makeIterator = function (f) {
-    var o = {}
-    o[iterator] = function () {
-      return this
-    }
-    o.next = f
-    return o
+
+
+  //  * Can still use mutation/imperative programming (e.g. while loops) for speed;
+  //    doesn't force you to use recursion! In fact, if you use cons cells in this way,
+  //    you can write in a style which is very similar to iterators, but with all the
+  //    benefits of cons cells. See, for instance, the implementation of `arrayToCons`
+  //
+  function Nil() {}
+
+  // Return this in the cdr to mean "list is done"
+  var nil = new Nil()
+  exports.nil = nil
+
+  function Cons(x, y) {
+    this.car = x
+    this.cdr = y
   }
-  exports.makeIterator = makeIterator
+  Cons.prototype = nil
 
-  function arrayToIterator(a) {
+  function cons(x, y) {
+    if (typeof y !== "function") {
+      throw new TypeError(y)
+    }
+    return new Cons(x, y)
+  }
+  exports.cons = cons
+
+  function car(x) {
+    if (!(x instanceof Cons)) {
+      throw new TypeError(x)
+    }
+    return x.car
+  }
+  exports.car = car
+
+  function cdr(x) {
+    if (!(x instanceof Cons)) {
+      throw new TypeError(x)
+    }
+    if (!x.cached) {
+      x.cached = true
+      x.cdr = x.cdr()
+    }
+    return x.cdr
+  }
+  exports.cdr = cdr
+
+
+  function arrayToCons(a) {
     var i = 0
-    return {
-      next: function () {
-        // TODO non-standard, but probably better
-        if (i < a.length) {
-          return result(true, a[i++])
-        } else {
-          return result(false)
-        }
-      }
-    }
-  }
-
-  /*function Stream(x, y) {
-    this.value = x
-    this.next  = y
-  }
-  Stream.prototype[iterator] = function () {
-    var self = this
-    return {
-      next: function () {
-        if (self == null) {
-          return result(false)
-        } else {
-          var x = value(self)
-          self = step(self)
-          return result(true, x)
-        }
-      }
-    }
-  }
-
-  function stream(x, y) {
-    return new Stream(x, y)
-  }
-  exports.stream = stream
-
-  function toStream1(a) {
-    var o = step(a)
-    if (o) {
-      return stream(value(o), function () {
-        return toStream1(a)
-      })
-    } else {
-      return null
-    }
-  }
-
-  function toStream(a) {
-    if (a instanceof Stream) {
-      return a
-    } else {
-      return toStream1(toIter(a))
-    }
-  }
-  exports.toStream = toStream*/
-
-
-  // Standard internal ES6 methods, but without the Iterator prefix
-
-  function next(x, v) {
-    var o = x.next(v)
-    // TODO is this correct ?
-    if (!isObject(o)) {
-      throw TypeError(o)
-    }
-    return o
-  }
-
-  // Returns whether the iterator has a value or not, rather than whether it's done or not
-  function has(x) {
-    // TODO is this correct ?
-    if (!isObject(x)) {
-      throw new TypeError(x)
-    }
-    return !x.done
-  }
-  exports.has = has
-
-  function value(x) {
-    // TODO is this correct ?
-    if (!isObject(x)) {
-      throw new TypeError(x)
-    }
-    return x.value
-  }
-  exports.value = value
-
-  // Order of arguments is swapped, for convenience
-  // Also, the first argument says whether it has a value or not, not whether it's done or not
-  function result(has, value) {
-    // TODO is this correct ?
-    if (!isBoolean(has)) {
-      throw TypeError(has)
-    }
-    return { done: !has, value: value }
-  }
-  exports.result = result
-
-  // Non-standard
-  function isIter(x) {
-    return (isObject(x) && (iterator in x || "length" in x)) || isString(x)
-  }
-  exports.isIter = isIter
-
-  // Non-standard, because it supports array-like objects, but I prefer that for convenience
-  // Once iterators become more common, support for array-like objects can be easily removed
-  function toIter(x) {
-    if (isObject(x)) {
-      if (iterator in x) {
-        var o = x[iterator]()
-        // TODO is this correct ?
-        if (!isObject(o)) {
-          throw TypeError(o)
-        }
-        return o
-      } else if ("length" in x) {
-        return arrayToIterator(x)
+    return (function anon() {
+      if (i < a.length) {
+        return cons(a[i++], anon)
       } else {
-        throw TypeError(x)
+        return null
       }
-    } else if (isString(x)) {
-      return arrayToIterator(x)
+    })()
+  }
+
+  function isCons(x) {
+    return x instanceof Nil || (isObject(x) && "length" in x)
+  }
+  exports.isCons = isCons
+
+  function toCons(x) {
+    if (x instanceof Nil) {
+      return x
+    } else if (isObject(x) && "length" in x) {
+      return arrayToCons(x)
     } else {
-      throw TypeError(x)
+      throw new Error("can't convert to cons: " + x)
     }
   }
-  exports.toIter = toIter
+  exports.toCons = toCons
 
-  function step(x, value) {
-    var result = next(x, value)
-    if (has(result)) {
-      return result
-    } else {
-      return false
-    }
-  }
-  exports.step = step
-
-  function toArray(a) {
-    // Optimization, should remove later ?
-    if (Array.isArray(a)) {
-      return a
-    } else {
-      a = toIter(a)
-
-      var o, r = []
-      while ((o = step(a))) {
-        r.push(value(o))
+  function toArray(x) {
+    if (Array.isArray(x)) {
+      return x
+    } else if (x instanceof Nil) {
+      var r = []
+      while (x !== nil) {
+        r.push(car(x))
+        x = cdr(x)
       }
-
       return r
+    } else if (isObject(x) && "length" in x) {
+      return [].slice.call(x)
+    } else {
+      throw new Error("can't convert to array: " + x)
     }
   }
   exports.toArray = toArray
 
+  function len(a) {
+    if (isObject(a) && "length" in a) {
+      return a.length
+    } else if (a instanceof Nil) {
+      var i = 0
+      while (a !== nil) {
+        ++i
+        a = cdr(a)
+      }
+      return i
+    } else {
+      throw new Error("can't use len: " + a)
+    }
+  }
+  exports.len = len
+
   function toString(a) {
-    // Optimization, should remove later ?
     if (isString(a)) {
       return a
-    } else if (isIter(a)) {
-      a = toIter(a)
+    } else if (isCons(a)) {
+      a = toCons(a)
 
-      var o, r = []
-      while ((o = step(a))) {
-        r.push(toString(value(o)))
+      var r = []
+      while (a !== nil) {
+        r.push(toString(car(a)))
+        a = cdr(a)
       }
-
       return r.join("")
     } else {
       return "" + a
@@ -201,11 +153,11 @@ define(function (require, exports) {
   (def ->array -> a
     (if (array? a)
       a
-      (loop a = (->iter a)
+      (loop a = (->cons a)
             r = []
-        (if-let x = (iter/step a)
-          (recur a (push! r (iter/value x)))
-          r))))
+        (if (is a nil)
+          a
+          (recur (cdr a) (push! r (car a)))))))
 */
 
   var fnApply = (function () {}).apply
@@ -217,58 +169,43 @@ define(function (require, exports) {
   exports.apply = apply
 
   function some(a, f) {
-    a = toIter(a)
+    a = toCons(a)
 
-    var o
-    while ((o = step(a))) {
-      if (f(value(o))) {
+    while (a !== nil) {
+      if (f(car(a))) {
         return true
       }
+      a = cdr(a)
     }
 
     return false
   }
   exports.some = some
 
-  function wrap(x, a) {
-    var returned = false
-    return makeIterator(function () {
-      if (returned) {
-        return next(a)
-      } else {
-        returned = true
-        return result(true, x)
-      }
-    })
-  }
-
   function partitionWhile(a, f) {
-    a = toIter(a)
+    a = toCons(a)
 
-    var o, l = []
-    while ((o = step(a))) {
-      var x = value(o)
+    var l = []
+    while (a !== nil) {
+      var x = car(a)
       if (f(x)) {
         l.push(x)
+        a = cdr(a)
       } else {
-        // TODO should this just return the iterator, or should it convert it into an array?
-        return [l, wrap(x, a)]
+        return [l, a]
       }
     }
-
-    // TODO emptyIterator
-    return [l, []]
+    return [l, nil]
   }
   exports.partitionWhile = partitionWhile
 
   function foldl(x, a, f) {
-    a = toIter(a)
+    a = toCons(a)
 
-    var o
-    while ((o = step(a))) {
-      x = f(x, value(o))
+    while (a !== nil) {
+      x = f(x, car(a))
+      a = cdr(a)
     }
-
     return x
   }
   exports.foldl = foldl
@@ -288,129 +225,142 @@ define(function (require, exports) {
   }
   exports.foldr = foldr
 
-  function map(a, f) {
-    a = toIter(a)
+  function map1(a, f) {
+    if (a === nil) {
+      return a
+    } else {
+      return cons(f(car(a)), function () {
+        return map1(cdr(a), f)
+      })
+    }
+  }
 
-    return makeIterator(function () {
-      var o = step(a)
-      if (o) {
-        return result(true, f(value(o)))
-      } else {
-        return result(false)
-      }
-    })
+  function map(a, f) {
+    return map1(toCons(a), f)
   }
   exports.map = map
 
-  function filter(a, f) {
-    a = toIter(a)
-
-    return makeIterator(function () {
-      while (true) {
-        var o = step(a)
-        if (o) {
-          var x = value(o)
-          if (f(x)) {
-            return result(true, x)
-          }
+  function filter1(a, f) {
+    while (true) {
+      if (a === nil) {
+        return a
+      } else {
+        var x = car(a)
+        if (f(x)) {
+          return cons(x, function () {
+            return filter1(cdr(a), f)
+          })
         } else {
-          return result(false)
+          a = cdr(a)
         }
       }
-    })
+    }
+  }
+
+  function filter(a, f) {
+    return filter1(toCons(a), f)
   }
   exports.filter = filter
 
-  function take(iTop, a) {
-    a = toIter(a)
+  function take1(iTop, a) {
+    if (iTop && a !== nil) {
+      return cons(car(a), function () {
+        return take1(iTop - 1, cdr(a))
+      })
+    } else {
+      return nil
+    }
+  }
 
+  function take(iTop, a) {
     if (iTop < 0) {
       throw new Error("first argument to take must be greater than or equal to 0")
     }
-
-    return makeIterator(function () {
-      var o
-      if (iTop && (o = step(a))) {
-        --iTop
-        return result(true, value(o))
-      } else {
-        return result(false)
-      }
-    })
+    return take1(iTop, toCons(a))
   }
   exports.take = take
 
-  function chunk(iTop, a) {
-    a = toIter(a)
+  function chunk1(iTop, a) {
+    var i = iTop
+      , r = []
+    while (i && a !== nil) {
+      --i
+      r.push(car(a))
+      a = cdr(a)
+    }
+    if (r.length === iTop) {
+      return cons(r, function () {
+        return chunk1(iTop, a)
+      })
+    } else if (r.length === 0) {
+      return nil
+    } else {
+      throw new Error("expected " + iTop + " elements but got " + r.length)
+    }
+  }
 
+  function chunk(iTop, a) {
     if (iTop < 0) {
       throw new Error("first argument to chunk must be greater than or equal to 0")
     }
-
-    return makeIterator(function () {
-      var r = toArray(take(iTop, a))
-      if (r.length === iTop) {
-        return result(true, r)
-      } else if (r.length === 0) {
-        return result(false)
-      } else {
-        throw new Error("expected " + iTop + " elements but got " + r.length)
-      }
-    })
+    return chunk1(iTop, toCons(a))
   }
   exports.chunk = chunk
 
+  function range1(min, max) {
+    if (min < max) {
+      return cons(min, function () {
+        return range1(min + 1, max)
+      })
+    } else if (min > max) {
+      return cons(min, function () {
+        return range1(min - 1, max)
+      })
+    } else {
+      return nil
+    }
+  }
+
   function range(min, max) {
-    // TODO isNumber
-    if (typeof min !== "number") {
+    if (!isNumber(min)) {
       throw new Error("first argument to range must be a number")
     }
     if (max == null) {
       max = Infinity
     }
     // TODO error checking for the max number too ?
-    return makeIterator(function () {
-      if (min < max) {
-        return result(true, min++)
-      } else if (min > max) {
-        return result(true, min--)
-      } else {
-        return result(false)
-      }
-    })
+    return range1(min, max)
   }
   exports.range = range
 
   function flatten1(a, f) {
-    a = [toIter(a)]
-    return makeIterator(function () {
-      while (a.length) {
-        var last = a[a.length - 1]
-          , o    = step(last)
-        if (o) {
-          var x = value(o)
-          if (isIter(x) && f(a)) {
-            a.push(toIter(x))
-          } else {
-            return result(true, x)
-          }
+    while (a.length) {
+      var last = a[a.length - 1]
+      if (last === nil) {
+        a.pop()
+      } else {
+        var x = car(last)
+        if (isCons(x) && f(a)) {
+          a.push(toCons(x))
         } else {
-          a.pop()
+          return cons(x, function () {
+            return flatten1(a, f)
+          })
         }
       }
-      return result(false)
-    })
+    }
+    return nil
   }
 
   function deepFlatten(a) {
-    return flatten1(a, function () {
+    return flatten1([toCons(a)], function () {
       return true
     })
   }
   exports.deepFlatten = deepFlatten
 
   function flatten(a) {
-    return flatten1(a, function (a) {
+    return flatten1([toCons(a)], function (a) {
       return a.length === 1
     })
   }
@@ -423,101 +373,89 @@ define(function (require, exports) {
   intersperse("~", [1, 2, 3])    -> [1, "~", 2, "~", 3]
   intersperse("~", [1, 2, 3, 4]) -> [1, "~", 2, "~", 3, "~", 4]
 */
-  // TODO I don't like this implementation, is it possible to implement this without looking ahead one element?
-  function intersperse(s, a) {
-    a = toIter(a)
-
-    var first = true
-      , o     = false
-
-    return makeIterator(function () {
-      if (!o) {
-        o = step(a)
-      }
-      if (o) {
-        if (first) {
-          var x = value(o)
-          first = false
-          o     = false
-          return result(true, x)
-        } else {
-          first = true
-          return result(true, s)
-        }
-      } else {
-        return result(false)
-      }
-    })
-/*
-    var initial = true
-    return foldl("", x, function (x, y) {
-      if (initial) {
-        initial = false
-        return x + y
-      } else {
-        return x + s + y
-      }
-    })*/
-  }
-  exports.intersperse = intersperse
-
-  function zip1(a, fail) {
-    // TODO inefficient ?
-    a = toArray(map(a, function (x) {
-      return toIter(x)
-    }))
-
-    if (a.length) {
-      return makeIterator(function () {
-        var some  = false
-          , every = true
-
-        var o = a.map(function (x) {
-          var o = step(x)
-          if (o) {
-            some = true
-            return value(o)
-          } else {
-            every = false
-            return
-          }
-        })
-
-        if (every) {
-          return result(true, o)
-        } else if (some) {
-          return fail(o)
-        } else {
-          return result(false)
-        }
+  function intersperse1(s, a, first) {
+    if (a === nil) {
+      return nil
+    } else if (first) {
+      return cons(car(a), function () {
+        return intersperse1(s, cdr(a), false)
       })
     } else {
-      // TODO get rid of this by using `var every = a.length` ?
-      // TODO emptyIterator ?
-      return makeIterator(function () {
-        return result(false)
+      return cons(s, function () {
+        return intersperse1(s, a, true)
       })
     }
   }
 
-  function zipMin() {
-    return zip1(arguments, function (o) {
-      return result(false)
+  function intersperse(s, a) {
+    return intersperse1(s, toCons(a), true)
+  }
+  exports.intersperse = intersperse
+
+  function zip2(a, fail) {
+    var every = true
+      , some  = false
+
+    var r = a.map(function (x) {
+      if (x === nil) {
+        every = false
+        return
+      } else {
+        some = true
+        return car(x)
+      }
     })
+
+    if (every) {
+      return cons(r, function () {
+        return zip2(a.map(function (x) {
+          return cdr(x)
+        }), fail)
+      })
+    } else if (some) {
+      if (fail === "max") {
+        // TODO code duplication
+        return cons(r, function () {
+          return zip2(a.map(function (x) {
+            return cdr(x)
+          }), fail)
+        })
+      } else if (fail === "min") {
+        return nil
+      } else if (fail === "error") {
+        throw new Error("arguments must be the same length; perhaps you want to use zipMin or zipMax?")
+      }
+      return fail(r)
+    } else {
+      return nil
+    }
+  }
+
+  function zip1(a, fail) {
+    // TODO inefficient ?
+    a = toArray(map(a, function (x) {
+      return toCons(x)
+    }))
+
+    if (a.length) {
+      return zip2(a, fail)
+    } else {
+      return nil
+    }
+  }
+
+  function zipMin() {
+    return zip1(arguments, "min")
   }
   exports.zipMin = zipMin
 
   function zipMax() {
-    return zip1(arguments, function (o) {
-      return result(true, o)
-    })
+    return zip1(arguments, "max")
   }
   exports.zipMax = zipMax
 
   function unzip(a) {
-    return zip1(a, function () {
-      throw new Error("arguments must be the same length; perhaps you want to use zipMin or zipMax?")
-    })
+    return zip1(a, "error")
   }
   exports.unzip = unzip
 
@@ -525,21 +463,6 @@ define(function (require, exports) {
     return unzip(arguments)
   }
   exports.zip = zip
-
-  function len(a) {
-    // TODO optimization that should probably be removed later ?
-    if (isObject(a) && "length" in a) {
-      return a.length
-    } else {
-      a = toIter(a)
-      var i = 0
-      while (step(a)) {
-        ++i
-      }
-      return i
-    }
-  }
-  exports.len = len
 
 /*
               -> []
@@ -581,9 +504,49 @@ define(function (require, exports) {
   // array. If the index goes beyond the bounds of the array, you then reset the index
   // to 0 and try again with the array to the left. Repeat this process until you get
   // to the left-most array, which is when you stop yielding.
+
+  // TODO since we now use conses rather than iterators, we can implement this in a lazier way that won't compute the inputs until they're needed
+  function product1(a, indices, done, first) {
+    if (done) {
+      return nil
+    } else {
+      if (first) {
+        first = false
+        // Handles the case where no arguments are passed in
+        if (a.length === 0) {
+          done = true
+        }
+      } else {
+        var index = (a.length - 1)
+        while (true) {
+          ++indices[index]
+          if (indices[index] < a[index].length) {
+            break
+          // TODO move this outside of the while loop for efficiency ?
+          } else if (index === 0) {
+            done = true
+            return nil
+          } else {
+            indices[index] = 0
+            --index
+          }
+        }
+      }
+
+      var r = []
+      for (var i = 0; i < a.length; ++i) {
+        r.push(a[i][indices[i]])
+      }
+
+      return cons(r, function () {
+        return product1(a, indices, done, first)
+      })
+    }
+  }
+
   function product() {
-    var done  = false
-      , first = true
+    var first = true
+      , done  = false
 
     var indices = []
 
@@ -603,57 +566,26 @@ define(function (require, exports) {
       return x
     })
 
-    return makeIterator(function () {
-      if (done) {
-        return result(false)
-      } else {
-        if (first) {
-          first = false
-          // Handles the case where no arguments are passed in
-          if (a.length === 0) {
-            done = true
-          }
-        } else {
-          var index = (a.length - 1)
-          while (true) {
-            ++indices[index]
-            if (indices[index] < a[index].length) {
-              break
-            // TODO move this outside of the while loop for efficiency ?
-            } else if (index === 0) {
-              done = true
-              return result(false)
-            } else {
-              indices[index] = 0
-              --index
-            }
-          }
-        }
-
-        var r = []
-        for (var i = 0; i < a.length; ++i) {
-          r.push(a[i][indices[i]])
-        }
-
-        return result(true, r)
-      }
-    })
+    return product1(a, indices, done, first)
   }
   exports.product = product
+
+  function nOf1(i, x) {
+    if (i) {
+      // TODO can probably be implemented with --i ?
+      return cons(x, function () {
+        return nOf1(i - 1, x)
+      })
+    } else {
+      return nil
+    }
+  }
 
   function nOf(i, x) {
     if (i < 0) {
       throw new Error("first argument to nOf must be greater than or equal to 0")
     }
-
-    return makeIterator(function () {
-      if (i) {
-        --i
-        return result(true, x)
-      } else {
-        return result(false)
-      }
-    })
+    return nOf1(i, x)
   }
   exports.nOf = nOf
 
@@ -672,7 +604,8 @@ define(function (require, exports) {
     for (var s in x) {
       r.push(s)
     }
-    return toIter(r)
+    // TODO returns an array, not a lazy cons
+    return r
   }
   exports.allKeys = allKeys
 
