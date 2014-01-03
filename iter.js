@@ -1,14 +1,17 @@
-define(["exports", "./key", "./object"], function (exports, key, object) {
+define(function (require, exports) {
   "use strict";
+
+  var key    = require("./key")
+    , object = require("./object")
 
   var isObject  = object.isObject
     , isBoolean = object.isBoolean
     , isString  = object.isString
 
   var iterator = key.Key("@@iterator")
-  exports.iterator = iterator
+  exports.iterator = makeIterator
 
-  function makeIterator(f) {
+  var makeIterator = function (f) {
     var o = {}
     o[iterator] = function () {
       return this
@@ -316,6 +319,25 @@ define(["exports", "./key", "./object"], function (exports, key, object) {
   }
   exports.filter = filter
 
+  function take(iTop, a) {
+    a = toIter(a)
+
+    if (iTop < 0) {
+      throw new Error("first argument to take must be greater than or equal to 0")
+    }
+
+    return makeIterator(function () {
+      var o
+      if (iTop && (o = step(a))) {
+        --iTop
+        return result(true, value(o))
+      } else {
+        return result(false)
+      }
+    })
+  }
+  exports.take = take
+
   function chunk(iTop, a) {
     a = toIter(a)
 
@@ -324,14 +346,7 @@ define(["exports", "./key", "./object"], function (exports, key, object) {
     }
 
     return makeIterator(function () {
-      var i = iTop
-        , r = []
-        , o
-
-      while (i-- && (o = step(a))) {
-        r.push(value(o))
-      }
-
+      var r = toArray(take(iTop, a))
       if (r.length === iTop) {
         return result(true, r)
       } else if (r.length === 0) {
@@ -344,6 +359,14 @@ define(["exports", "./key", "./object"], function (exports, key, object) {
   exports.chunk = chunk
 
   function range(min, max) {
+    // TODO isNumber
+    if (typeof min !== "number") {
+      throw new Error("first argument to range must be a number")
+    }
+    if (max == null) {
+      max = Infinity
+    }
+    // TODO error checking for the max number too ?
     return makeIterator(function () {
       if (min < max) {
         return result(true, min++)
@@ -701,12 +724,13 @@ define(["exports", "./key", "./object"], function (exports, key, object) {
     })
   }
   exports.each = each
-/*
+
   function forin(x, f) {
     each(entries(x), function (a) {
       f(a[0], a[1])
     })
-  }*/
+  }
+  exports.forin = forin
 
   // TODO WeakMap or WeakSet or something ?
   function dedupe(x) {
@@ -721,4 +745,9 @@ define(["exports", "./key", "./object"], function (exports, key, object) {
     })
   }
   exports.dedupe = dedupe
+
+  function mapzip(x, f) {
+    return unzip(map(unzip(x), f))
+  }
+  exports.mapzip = mapzip
 })
