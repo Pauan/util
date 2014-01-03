@@ -7,7 +7,7 @@ define(function (require, exports) {
     , isString = object.isString
     , isNumber = object.isNumber
 
-  // Lazy cons implementation; slightly slower than iterators (in comparable situations), but:
+  // Lazy cons implementation; slower than iterators, but:
   //
   //  * Functional, can iterate over the same cons cell multiple times
   //
@@ -30,6 +30,7 @@ define(function (require, exports) {
   function Cons(x, y) {
     this.car = x
     this.cdr = y
+    this.cached = false
   }
   Cons.prototype = nil
 
