@@ -123,7 +123,7 @@ define(function (require, exports) {
 
   // Non-standard
   function isIter(x) {
-    return isObject(x) && (iterator in x || "length" in x)
+    return (isObject(x) && (iterator in x || "length" in x)) || isString(x)
   }
   exports.isIter = isIter
 
@@ -143,6 +143,8 @@ define(function (require, exports) {
       } else {
         throw TypeError(x)
       }
+    } else if (isString(x)) {
+      return arrayToIterator(x)
     } else {
       throw TypeError(x)
     }

@@ -1,5 +1,54 @@
-define(["./iter"], function (iter) {
+define(function (require, exports) {
   "use strict";
+
+  var a = require("./iter")
+
+  var makeIterator = a.makeIterator
+    , toIter       = a.toIter
+    , step         = a.step
+    , value        = a.value
+    , result       = a.result
+
+  var iterator = a.iterator
+
+  function buffer(a, filename) {
+    a = toIter(a)
+
+    if (filename == null) {
+      filename = null
+    }
+
+    var line   = 1
+      , column = 0
+
+    return makeIterator(function () {
+      var o
+      if ((o = step(a))) {
+        o = value(o)
+
+        var start = { line:   line
+                    , column: column }
+
+        var end = (o === "\n"
+                    ? { line:   ++line
+                      , column: (column = 0) }
+                    : { line:   line
+                      , column: ++column })
+
+        return result(true, {
+          value: o,
+          loc: {
+            source: filename,
+            start: start,
+            end: end
+          }
+        })
+      } else {
+        return result(false)
+      }
+    })
+  }
+  exports.buffer = buffer
 
   function line(x) {
     var r    = []
@@ -15,7 +64,7 @@ define(["./iter"], function (iter) {
     }
     return r
   }
-  
+
   // Takes any array-like object and returns a Reader, which has a `has`, `peek`, and `read` methods.
   function Reader(a) {
     this.input = a
@@ -77,7 +126,7 @@ define(["./iter"], function (iter) {
     }
     return old
   }
-  Buffer.prototype[iter.iterator] = function () {
+  Buffer.prototype[iterator] = function () {
     return this
   }
   Buffer.prototype.next = function () {
@@ -159,10 +208,4 @@ define(["./iter"], function (iter) {
   BufferError.prototype = new Error()
   //BufferError.prototype.constructor = BufferError // TODO is this needed?
   BufferError.prototype.name = "buffer.Error"
-
-  return Object.freeze({
-    Reader: Reader,
-    Buffer: Buffer,
-    Error: BufferError,
-  })
 })
