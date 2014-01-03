@@ -21,14 +21,6 @@ define(function (require, exports) {
   //
   //  * Simpler and more consistent (no difference between an "iterable" and an "iterator")
   //
-
-
-
-  //  * Can still use mutation/imperative programming (e.g. while loops) for speed;
-  //    doesn't force you to use recursion! In fact, if you use cons cells in this way,
-  //    you can write in a style which is very similar to iterators, but with all the
-  //    benefits of cons cells. See, for instance, the implementation of `arrayToCons`
-  //
   function Nil() {}
 
   // Return this in the cdr to mean "list is done"
