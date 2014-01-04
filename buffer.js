@@ -79,7 +79,7 @@ define(function (require, exports) {
         a.push("  (")
         if (b1) {
           a.push(o.source)
-          if (b2 || b3) {
+          if (b2) {
             a.push(":")
           }
         }
@@ -87,10 +87,8 @@ define(function (require, exports) {
           a.push(o.start.line)
           if (b3) {
             a.push(":")
+            a.push(o.start.column)
           }
-        }
-        if (b3) {
-          a.push(o.start.column)
         }
         a.push(")")
       }
