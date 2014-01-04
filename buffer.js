@@ -31,11 +31,16 @@ define(function (require, exports) {
       var start = { line:   line
                   , column: column }
 
-      var end = (s === "\n"
-                  ? { line:   ++line
-                    , column: (column = 0) }
-                  : { line:   line
-                    , column: ++column })
+      if (s === "\n") {
+        line   = start.line + 1
+        column = 0
+      } else {
+        line   = start.line
+        column = start.column + 1
+      }
+
+      var end = { line:   line
+                , column: column }
 
       return cons({ value: s
                   , loc:   { source: filename

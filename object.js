@@ -26,7 +26,11 @@ define(["./key"], function (a) {
   var $is = Key("%is")
 
   function isObject(x) {
-    return x !== null && x !== void 0
+    return Object(x) === x
+  }
+
+  function isArrayLike(x) {
+    return (isObject(x) && "length" in x) || isString(x)
   }
 
   function has(x, y) {
@@ -158,6 +162,7 @@ define(["./key"], function (a) {
     isString: isString,
     isObject: isObject,
     isDict: isDict,
+    isArrayLike: isArrayLike,
 
     $is: $is,
     iso: iso,

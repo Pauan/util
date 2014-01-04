@@ -3,9 +3,9 @@ define(function (require, exports) {
 
   var object = require("./object")
 
-  var isObject = object.isObject
-    , isString = object.isString
-    , isNumber = object.isNumber
+  var isString    = object.isString
+    , isNumber    = object.isNumber
+    , isArrayLike = object.isArrayLike
 
   // Lazy cons implementation; slower than iterators, but:
   //
@@ -69,20 +69,20 @@ define(function (require, exports) {
       if (i < a.length) {
         return cons(a[i++], anon)
       } else {
-        return null
+        return nil
       }
     })()
   }
 
   function isCons(x) {
-    return x instanceof Nil || (isObject(x) && "length" in x)
+    return x instanceof Nil || isArrayLike(x)
   }
   exports.isCons = isCons
 
   function toCons(x) {
     if (x instanceof Nil) {
       return x
-    } else if (isObject(x) && "length" in x) {
+    } else if (isArrayLike(x)) {
       return arrayToCons(x)
     } else {
       throw new Error("can't convert to cons: " + x)
@@ -100,7 +100,7 @@ define(function (require, exports) {
         x = cdr(x)
       }
       return r
-    } else if (isObject(x) && "length" in x) {
+    } else if (isArrayLike(x)) {
       return [].slice.call(x)
     } else {
       throw new Error("can't convert to array: " + x)
@@ -109,7 +109,7 @@ define(function (require, exports) {
   exports.toArray = toArray
 
   function len(a) {
-    if (isObject(a) && "length" in a) {
+    if (isArrayLike(a)) {
       return a.length
     } else if (a instanceof Nil) {
       var i = 0
