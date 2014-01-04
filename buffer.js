@@ -76,11 +76,11 @@ define(function (require, exports) {
         , b3 = (o.start.column != null)
 
       if (b1 || b2 || b3) {
-        a.push(" (")
+        a.push("  (")
         if (b1) {
           a.push(o.source)
           if (b2 || b3) {
-            a.push(" ")
+            a.push(":")
           }
         }
         if (b2) {
