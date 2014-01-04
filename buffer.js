@@ -1,198 +1,93 @@
 define(function (require, exports) {
   "use strict";
 
-  var a = require("./iter")
+  var a = require("./cons")
+    , b = require("./object")
 
-  var makeIterator = a.makeIterator
-    , toIter       = a.toIter
-    , step         = a.step
-    , value        = a.value
-    , result       = a.result
+  var toCons   = a.toCons
+    , cons     = a.cons
+    , car      = a.car
+    , cdr      = a.cdr
+    , nil      = a.nil
+    , isObject = b.isObject
 
-  var iterator = a.iterator
+  function loc(x, y) {
+    return {
+      source: (x.source !== null
+                ? x.source
+                : y.source),
+      start: x.start,
+      end: y.end
+    }
+  }
+  exports.loc = loc
 
+  function buffer1(a, filename, line, column) {
+    if (a === nil) {
+      return a
+    } else {
+      var s = car(a)
+
+      var start = { line:   line
+                  , column: column }
+
+      var end = (s === "\n"
+                  ? { line:   ++line
+                    , column: (column = 0) }
+                  : { line:   line
+                    , column: ++column })
+
+      return cons({ value: s
+                  , loc:   { source: filename
+                           , start:  start
+                           , end:    end } }, function () {
+        return buffer1(cdr(a), filename, line, column)
+      })
+    }
+  }
+
+  // Takes a cons (usually a string) and returns a cons that goes through the
+  // string 1 character at a time, keeping track of line/column information.
+  // This is useful for parsers.
   function buffer(a, filename) {
-    a = toIter(a)
-
     if (filename == null) {
       filename = null
     }
-
-    var line   = 1
-      , column = 0
-
-    return makeIterator(function () {
-      var o
-      if ((o = step(a))) {
-        o = value(o)
-
-        var start = { line:   line
-                    , column: column }
-
-        var end = (o === "\n"
-                    ? { line:   ++line
-                      , column: (column = 0) }
-                    : { line:   line
-                      , column: ++column })
-
-        return result(true, {
-          value: o,
-          loc: {
-            source: filename,
-            start: start,
-            end: end
-          }
-        })
-      } else {
-        return result(false)
-      }
-    })
+    return buffer1(toCons(a), filename, 1, 0)
   }
   exports.buffer = buffer
 
-  function line(x) {
-    var r    = []
-      , s    = x.input
-      , iLen = s.length
-    while (x.index < iLen) {
-      var c = s[x.index]
-      r.push(c)
-      ++x.index
-      if (c === "\n") {
-        break
-      }
-    }
-    return r
-  }
-
-  // Takes any array-like object and returns a Reader, which has a `has`, `peek`, and `read` methods.
-  function Reader(a) {
-    this.input = a
-    this.index = 0
-  }
-  Reader.prototype.has = function () {
-    return this.index < this.input.length
-  }
-  Reader.prototype.peek = function () {
-    return this.input[this.index]
-  }
-  Reader.prototype.read = function () {
-    return this.input[this.index++]
-  }
-
-  // Buffers a string by line and keeps track of line and column information
-  // This is useful for error messages
-  // Can also be used as an iterator that moves through the string one character at a time
-  function Buffer(s, filename) {
-    if (filename == null) {
-      filename = null
-    }
-    this.input = s
-    this.filename = filename
-    // TODO uint32 for these ?
-    this.column = 0
-    this.line = 1
-    this.index = 0
-    this.text = line(this)
-  }
-  Buffer.prototype.loc = function (start, end) {
-    return {
-      source: this.filename,
-      start: start,
-      end: end
-    }
-  }
-  Buffer.prototype.position = function () {
-    return {
-      column: this.column,
-      line: this.line,
-      text: this.text.join("")
-    }
-  }
-  Buffer.prototype.has = function () {
-    return this.index < this.input.length || this.column < this.text.length
-  }
-  Buffer.prototype.peek = function () {
-    return this.text[this.column]
-  }
-  Buffer.prototype.read = function () {
-    var old = this.peek()
-    ++this.column
-        // TODO not entirely sure if this is correct or not
-    if (this.index < this.input.length && this.column >= this.text.length) {
-      this.text = line(this)
-      this.column = 0
-      ++this.line
-    }
-    return old
-  }
-  Buffer.prototype[iterator] = function () {
-    return this
-  }
-  Buffer.prototype.next = function () {
-    if (!this.has()) {
-      return { done: true }
-    } else {
-      return { value: this.read() }
-    }
-  }
-
   function BufferError(o, s) {
     var a = [s]
-    // tests that `o` is an object
-    if (Object(o) === o && o.loc != null) {
+    if (isObject(o) && o.loc != null) {
       o = o.loc
       this.fileName   = o.source
       this.lineNumber = o.start.line
       //this.start      = o.start
       //this.end        = o.end
 
-      var b1 = (o.start.text != null)
+      var b1 = (o.source !== null)
         , b2 = (o.start.line != null)
         , b3 = (o.start.column != null)
-        , b4 = (o.source != null)
-        , b5 = (o.end.line != null)
-        , b6 = (o.end.column != null)
-      if (b1 || b2 || b3 || b4) {
-        var iOffset = (function () {
-          if (b1) {
-            var a = /^ +/.exec(o.start.text)
-            if (a) {
-              return a[0].length
-            }
-          }
-          return 0
-        })()
-        a.push("\n")
+
+      if (b1 || b2 || b3) {
+        a.push(" (")
         if (b1) {
-          a.push("  ", o.start.text.replace(/(?:^ +)|(?: +$)|(?:\n+$)/g, ""))
+          a.push(o.source)
+          if (b2 || b3) {
+            a.push(" ")
+          }
         }
-        if (b2 || b3 || b4) {
-          a.push("  (")
-          if (b4) {
-            a.push(o.source)
-          }
-          if (b2) {
-            if (b4) {
-              a.push(":")
-            }
-            a.push(o.start.line)
-          }
+        if (b2) {
+          a.push(o.start.line)
           if (b3) {
-            if (b2 || b4) {
-              a.push(":")
-            }
-            a.push(o.start.column + 1)
+            a.push(":")
           }
-          a.push(")")
         }
-        if (b1 && b3 && b5 && b6) {
-          var end = (o.end.line > o.start.line
-                      ? o.start.text.length - 1
-                      : o.end.column)
-          a.push("\n ", new Array((o.start.column + 1 - iOffset) + 1).join(" "),
-                        new Array((end - o.start.column) + 1).join("^"))
+        if (b3) {
+          a.push(o.start.column)
         }
+        a.push(")")
       }
     }
     // http://stackoverflow.com/a/8460753/449477
@@ -207,5 +102,6 @@ define(function (require, exports) {
   }
   BufferError.prototype = new Error()
   //BufferError.prototype.constructor = BufferError // TODO is this needed?
-  BufferError.prototype.name = "buffer.Error"
+  BufferError.prototype.name = "Error"
+  exports.Error = BufferError
 })
