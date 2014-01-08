@@ -83,7 +83,7 @@ exports.iso = iso
 function create(x) {
   return Object.create(x)
 }
-exports.create = x
+exports.create = create
 
 function merge(x) {
   x = create(x)
