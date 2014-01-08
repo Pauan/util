@@ -19,4 +19,4 @@ Symbol1.prototype.toString = function () {
 function Symbol(s) {
   return new Symbol1(s)
 }
-Exports.Symbol = Symbol
+exports.Symbol = Symbol
