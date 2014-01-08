@@ -24,7 +24,7 @@ var isDict     = exports.isDict     = typeChecker("[object Object]")
 function isObject(x) {
   return Object(x) === x
 }
-exports.isObject = x
+exports.isObject = isObject
 
 function isArrayLike(x) {
   return (isObject(x) && "length" in x) || isString(x)
