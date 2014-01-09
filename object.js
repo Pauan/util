@@ -17,7 +17,7 @@ var isDate     = exports.isDate     = typeChecker("[object Date]")
 var isError    = exports.isError    = typeChecker("[object Error]")
 var isFunction = exports.isFunction = typeChecker("[object Function]")
 var isNumber   = exports.isNumber   = typeChecker("[object Number]")
-var isRegexp   = exports.isRegexp   = typeChecker("[object RegExp]")
+var isRegExp   = exports.isRegExp   = typeChecker("[object RegExp]")
 var isString   = exports.isString   = typeChecker("[object String]")
 var isDict     = exports.isDict     = typeChecker("[object Object]")
 

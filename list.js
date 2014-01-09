@@ -21,6 +21,9 @@ var isString    = object.isString
 //  * Simpler and more consistent (no difference between an "iterable" and an "iterator")
 //
 function Nil() {}
+Nil.prototype.toString = function () {
+  return "()"
+}
 
 // Return nil in the cdr to mean "list is done"
 var nil = new Nil()
@@ -31,7 +34,16 @@ function Cons(x, y) {
   this.cdr = y
   this.cached = false
 }
-Cons.prototype = nil
+Cons.prototype = new Nil()
+Cons.prototype.toString = function () {
+  var r = []
+    , x = this
+  while (x !== nil) {
+    r.push(car(x))
+    x = cdr(x)
+  }
+  return "(" + r.join(" ") + ")"
+}
 
 function cons(x, y) {
   if (typeof y !== "function") {
