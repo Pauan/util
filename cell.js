@@ -12,8 +12,6 @@ goog.scope(function () {
     , info   = Symbol("info")
     , saved  = Symbol("saved")
     , get    = Symbol("get")
-    , array  = Symbol("array")
-    , func   = Symbol("func")
 
   function call(a, f) {
     return f.apply(null, a.map(function (x) {
@@ -38,12 +36,7 @@ goog.scope(function () {
     }
   }
 
-  /**
-   * @this {Value}
-   */
-  function unbind() {
-    var a = this[array]
-      , f = this[func]
+  function unbind(a, f) {
     for (var i = 0, iLen = a.length; i < iLen; ++i) {
       unbind1(a[i], f)
     }
@@ -53,20 +46,17 @@ goog.scope(function () {
     for (var i = 0, iLen = a.length; i < iLen; ++i) {
       bind1(a[i], f)
     }
-    o[array] = a
-    o[func]  = f
-    o.unbind = unbind
+    o.unbind = function () {
+      unbind(a, f)
+    }
   }
 
-  /**
-   * @this {Value}
-   */
-  function set(v) {
-    this[get] = v
-    if (this[info].set != null) {
-      this[info].set(this, v)
+  function set(self, v) {
+    self[get] = v
+    if (self[info].set != null) {
+      self[info].set(self, v)
     }
-    var a = this[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
+    var a = self[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
     for (var i = 0, iLen = a.length; i < iLen; ++i) {
       a[i](v)
     }
@@ -86,7 +76,9 @@ goog.scope(function () {
   Value.prototype.get = function () {
     return this[get]
   }
-  Value.prototype.set = set
+  Value.prototype.set = function (v) {
+    set(this, v)
+  }
 
   // TODO code duplication
   /**
@@ -94,12 +86,7 @@ goog.scope(function () {
    * @extends {Value}
    */
   function Dedupe(x, obj) {
-    if (obj == null) {
-      obj = {}
-    }
-    this[get]    = x
-    this[info]   = obj
-    this[events] = []
+    Value.call(this, x, obj)
   }
   Dedupe.prototype.get = Value.prototype.get
   /**
@@ -108,7 +95,7 @@ goog.scope(function () {
   Dedupe.prototype.set = function (v) {
     // TODO object.isnt
     if (this[get] !== v) {
-      set.call(this, v)
+      set(this, v)
     }
   }
 
