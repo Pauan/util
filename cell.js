@@ -38,6 +38,9 @@ goog.scope(function () {
     }
   }
 
+  /**
+   * @this {Value}
+   */
   function unbind() {
     var a = this[array]
       , f = this[func]
@@ -55,6 +58,9 @@ goog.scope(function () {
     o.unbind = unbind
   }
 
+  /**
+   * @this {Value}
+   */
   function set(v) {
     this[get] = v
     if (this[info].set != null) {
@@ -85,6 +91,7 @@ goog.scope(function () {
   // TODO code duplication
   /**
    * @constructor
+   * @extends {Value}
    */
   function Dedupe(x, obj) {
     if (obj == null) {
@@ -95,6 +102,9 @@ goog.scope(function () {
     this[events] = []
   }
   Dedupe.prototype.get = Value.prototype.get
+  /**
+   * @override
+   */
   Dedupe.prototype.set = function (v) {
     // TODO object.isnt
     if (this[get] !== v) {

@@ -83,7 +83,7 @@ goog.scope(function () {
 
   /**
    * @constructor
-   * @extends Style
+   * @extends {Style}
    */
   function Style2() {}
   Style2.prototype = new Style()
@@ -295,7 +295,7 @@ goog.scope(function () {
 
   /**
    * @constructor
-   * @extends Box
+   * @extends {Box}
    */
   function ListItem() {}
   ListItem.prototype = new Box()
@@ -305,7 +305,7 @@ goog.scope(function () {
 
   /**
    * @constructor
-   * @extends Box
+   * @extends {Box}
    */
   function ListGroup() {}
   ListGroup.prototype = new Box()
@@ -315,7 +315,7 @@ goog.scope(function () {
 
   /**
    * @constructor
-   * @extends Box
+   * @extends {Box}
    */
   function Table() {}
   Table.prototype = new Box()
@@ -325,7 +325,7 @@ goog.scope(function () {
 
   /**
    * @constructor
-   * @extends Box
+   * @extends {Box}
    */
   function Image() {}
   Image.prototype = new Box()
@@ -338,7 +338,7 @@ goog.scope(function () {
 
   /**
    * @constructor
-   * @extends Box
+   * @extends {Box}
    */
   function IFrame() {}
   IFrame.prototype = new Box()
@@ -358,7 +358,7 @@ goog.scope(function () {
 
   /**
    * @constructor
-   * @extends Box
+   * @extends {Box}
    */
   function Link() {}
   Link.prototype = new Box()
@@ -374,7 +374,7 @@ goog.scope(function () {
 
   /**
    * @constructor
-   * @extends Box
+   * @extends {Box}
    */
   function File() {}
   File.prototype = new Box()
