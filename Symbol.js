@@ -2,25 +2,13 @@
 goog.provide("util.Symbol")
 
 goog.scope(function () {
-  var id  = 0
-    , sId = "new Symbol(0)"
-
-  /**
-   * @constructor
-   */
-  function Symbol1(s) {
-    if (s == null) {
-      this[sId] = "Symbol(" + (++id) + ")"
-    } else {
-      this[sId] = "Symbol(\"" + s + "\", " + (++id) + ")"
-    }
-    Object.freeze(this) // TODO is this a good idea ?
-  }
-  Symbol1.prototype.toString = function () {
-    return this[sId]
-  }
+  var id = 0
 
   util.Symbol = function (s) {
-    return new Symbol1(s)
+    if (s == null) {
+      return "Symbol(" + (++id) + ")"
+    } else {
+      return "Symbol(\"" + s + "\", " + (++id) + ")"
+    }
   }
 })
