@@ -1,19 +1,19 @@
 goog.provide("util.ui")
 
-goog.require("util.Key")
+goog.require("util.Symbol")
 goog.require("util.cell")
 
 goog.scope(function () {
-  var Key  = util.Key
-    , cell = util.cell
+  var Symbol = util.Symbol
+    , cell   = util.cell
 
   var styleIds = 0
 
   var highestZIndex = "2147483647" /* 32-bit signed int */
 
-  var _e       = new Key("element")
-    , _styles  = new Key("styles")
-    , bindings = new Key("bindings")
+  var _e       = Symbol("element")
+    , _styles  = Symbol("styles")
+    , bindings = Symbol("bindings")
 
   function isOver(self, e) {
     return !self.contains(e.relatedTarget)
@@ -44,7 +44,11 @@ goog.scope(function () {
     return x === y
   }
 
-  var styleProto = {
+  /**
+   * @constructor
+   */
+  function Style() {}
+  Style.prototype = {
     set: function (s, v, type) {
       var self = this
       if (Array.isArray(s)) {
@@ -77,8 +81,13 @@ goog.scope(function () {
     }
   }
 
-  var styleProto2 = Object.create(styleProto)
-  styleProto2.styles = function () {
+  /**
+   * @constructor
+   * @extends Style
+   */
+  function Style2() {}
+  Style2.prototype = new Style()
+  Style2.prototype.styles = function () {
     var a = this[_styles]
     // TODO "iter" module ?
     ;[].slice.call(arguments).forEach(function (x) {
@@ -88,7 +97,7 @@ goog.scope(function () {
 
   util.ui.style = function (f) {
     var name = "_" + (++styleIds)
-    var o = Object.create(styleProto2)
+    var o = new Style2()
     o.name = name
     o[_styles] = []
     addRule(document, "." + name, function (e) {
@@ -125,13 +134,17 @@ goog.scope(function () {
     })
   }
 
-  var Box = {
+  /**
+   * @constructor
+   */
+  function Box() {}
+  Box.prototype = {
     style: function (f) {
       // TODO remove this eventually
       if (arguments.length > 1) {
         throw new Error()
       }
-      var o = Object.create(styleProto)
+      var o = new Style()
       o[_e] = this[_e].style
       Object.freeze(o) // TODO remove this later ?
       f(o)
@@ -280,60 +293,95 @@ goog.scope(function () {
     }
   }
 
-  var ListItem = Object.create(Box)
-  ListItem.select = function () {
+  /**
+   * @constructor
+   * @extends Box
+   */
+  function ListItem() {}
+  ListItem.prototype = new Box()
+  ListItem.prototype.select = function () {
     this[_e].selected = true
   }
 
-  var ListGroup = Object.create(Box)
-  ListGroup.label = function (s) {
+  /**
+   * @constructor
+   * @extends Box
+   */
+  function ListGroup() {}
+  ListGroup.prototype = new Box()
+  ListGroup.prototype.label = function (s) {
     this[_e].label = s
   }
 
-  var Table = Object.create(Box)
-  Table.rowspan = function (s) {
+  /**
+   * @constructor
+   * @extends Box
+   */
+  function Table() {}
+  Table.prototype = new Box()
+  Table.prototype.rowspan = function (s) {
     this[_e].rowSpan = s
   }
 
-  var Image = Object.create(Box)
-  Image.alt = function (s) {
+  /**
+   * @constructor
+   * @extends Box
+   */
+  function Image() {}
+  Image.prototype = new Box()
+  Image.prototype.alt = function (s) {
     this[_e].alt = s
   }
-  Image.src = function (s) {
+  Image.prototype.src = function (s) {
     this[_e].src = s
   }
 
-  var IFrame = Object.create(Box)
-  IFrame.src = function (s) {
+  /**
+   * @constructor
+   * @extends Box
+   */
+  function IFrame() {}
+  IFrame.prototype = new Box()
+  IFrame.prototype.src = function (s) {
     this[_e].src = s
   }
-  IFrame.sandbox = function (s) {
+  IFrame.prototype.sandbox = function (s) {
     this[_e].sandbox = s || ""
   }
-  IFrame.seamless = function () {
+  IFrame.prototype.seamless = function () {
     this[_e].setAttribute("seamless", "") // TODO remove this later
     this[_e].seamless = true
   }
-  IFrame.getWindow = function () {
+  IFrame.prototype.getWindow = function () {
     return this[_e].contentWindow
   }
 
-  var Link = Object.create(Box)
-  Link.src = function (s) {
+  /**
+   * @constructor
+   * @extends Box
+   */
+  function Link() {}
+  Link.prototype = new Box()
+  Link.prototype.src = function (s) {
     this[_e].href = s
   }
-  Link.download = function (s) {
+  Link.prototype.download = function (s) {
     this[_e].download = s
   }
-  Link.click = function () {
+  Link.prototype.click = function () {
     this[_e].click()
   }
 
-  var File = Object.create(Box)
-  File.accept = function (s) {
+  /**
+   * @constructor
+   * @extends Box
+   */
+  function File() {}
+  File.prototype = new Box()
+  File.prototype.accept = function (s) {
     this[_e].accept = s
   }
-  File.click = function () {
+  File.prototype.click = function () {
     this[_e].click()
   }
 
@@ -355,7 +403,7 @@ goog.scope(function () {
   }
 
   function make(constructor, o) {
-    var e = Object.create(constructor)
+    var e       = new constructor()
     o[_e]       = e
     e[_e]       = o
     e[bindings] = []

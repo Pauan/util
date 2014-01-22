@@ -3,17 +3,17 @@
 // VERY loosely based on Elm (http://elm-lang.org/)
 goog.provide("util.cell")
 
-goog.require("util.Key")
+goog.require("util.Symbol")
 
 goog.scope(function () {
-  var Key = util.Key
+  var Symbol = util.Symbol
 
-  var events = new Key("events")
-    , info   = new Key("info")
-    , saved  = new Key("saved")
-    , get    = new Key("get")
-    , array  = new Key("array")
-    , func   = new Key("func")
+  var events = Symbol("events")
+    , info   = Symbol("info")
+    , saved  = Symbol("saved")
+    , get    = Symbol("get")
+    , array  = Symbol("array")
+    , func   = Symbol("func")
 
   function call(a, f) {
     return f.apply(null, a.map(function (x) {
@@ -66,6 +66,9 @@ goog.scope(function () {
     }
   }
 
+  /**
+   * @constructor
+   */
   function Value(x, obj) {
     if (obj == null) {
       obj = {}
@@ -80,6 +83,9 @@ goog.scope(function () {
   Value.prototype.set = set
 
   // TODO code duplication
+  /**
+   * @constructor
+   */
   function Dedupe(x, obj) {
     if (obj == null) {
       obj = {}
