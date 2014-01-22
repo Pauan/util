@@ -717,7 +717,7 @@ goog.scope(function () {
       })
     }).observe(document.body, {
       childList: true,
-      subtree: true,
+      subtree: true
     })
 
     //var o = document.createElement("div")
