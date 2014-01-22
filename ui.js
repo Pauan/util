@@ -31,7 +31,7 @@ goog.scope(function () {
   }
 
   var specialStyles = {
-    "filter": ["-webkit-filter"]
+    filter: ["-webkit-filter"]
   }
 
   function isSameStyle(x, y) {
