@@ -3,17 +3,17 @@
 // VERY loosely based on Elm (http://elm-lang.org/)
 goog.provide("util.cell")
 
-goog.require("util.Symbol")
+goog.require("util.Key")
 
 goog.scope(function () {
-  var Symbol = util.Symbol
+  var Key = util.Key
 
-  var events = Symbol("events")
-    , info   = Symbol("info")
-    , saved  = Symbol("saved")
-    , get    = Symbol("get")
-    , array  = Symbol("array")
-    , func   = Symbol("func")
+  var events = new Key("events")
+    , info   = new Key("info")
+    , saved  = new Key("saved")
+    , get    = new Key("get")
+    , array  = new Key("array")
+    , func   = new Key("func")
 
   function call(a, f) {
     return f.apply(null, a.map(function (x) {

@@ -1,19 +1,19 @@
 goog.provide("util.ui")
 
-goog.require("util.Symbol")
+goog.require("util.Key")
 goog.require("util.cell")
 
 goog.scope(function () {
-  var Symbol = util.Symbol
-    , cell   = util.cell
+  var Key  = util.Key
+    , cell = util.cell
 
   var styleIds = 0
 
   var highestZIndex = "2147483647" /* 32-bit signed int */
 
-  var _e       = Symbol("element")
-    , _styles  = Symbol("styles")
-    , bindings = Symbol("bindings")
+  var _e       = new Key("element")
+    , _styles  = new Key("styles")
+    , bindings = new Key("bindings")
 
   function isOver(self, e) {
     return !self.contains(e.relatedTarget)
