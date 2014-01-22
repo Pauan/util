@@ -2,10 +2,12 @@ goog.provide("util.ui")
 
 goog.require("util.Symbol")
 goog.require("util.cell")
+goog.require("goog.array")
 
 goog.scope(function () {
   var Symbol = util.Symbol
     , cell   = util.cell
+    , array  = goog.array
 
   var styleIds = 0
 
@@ -24,10 +26,10 @@ goog.scope(function () {
     e.type = "text/css"
     document.head.appendChild(e)
 
-    var sheet = document.styleSheets[document.styleSheets.length - 1]
+    var sheet = array.peek(document.styleSheets)
     sheet.insertRule(s + "{}", sheet.cssRules.length) //sheet.addRule(s)
 
-    return f(sheet.cssRules[sheet.cssRules.length - 1].style)
+    return f(array.peek(sheet.cssRules).style)
   }
 
   var specialStyles = {
@@ -51,9 +53,8 @@ goog.scope(function () {
   Style.prototype = {
     set: function (s, v, type) {
       var self = this
-      if (Array.isArray(s)) {
-        // TODO use "iter" module ?
-        s.forEach(function (s) {
+      if (goog.isArray(s)) {
+        array.forEach(s, function (s) {
           self.set(s, v, type)
         })
       // TODO if v is null, convert it to ""
@@ -63,13 +64,13 @@ goog.scope(function () {
         var props = (specialStyles[s] != null
                       ? specialStyles[s]
                       : [s])
-        var sOld = props.map(function (s) {
+        var sOld = array.map(props, function (s) {
           return self[_e].getPropertyValue(s)
         })
-        props.forEach(function (s) {
+        array.forEach(props, function (s) {
           self[_e].setProperty(s, v, type)
         })
-        var every = props.every(function (s, i) {
+        var every = array.every(props, function (s, i) {
           var sNew = self[_e].getPropertyValue(s)
                                      // TODO a bit hacky ?
           return sOld[i] === sNew && !isSameStyle(v, sNew)
@@ -89,8 +90,7 @@ goog.scope(function () {
   Style2.prototype = new Style()
   Style2.prototype.styles = function () {
     var a = this[_styles]
-    // TODO "iter" module ?
-    ;[].slice.call(arguments).forEach(function (x) {
+    array.forEach(arguments, function (x) {
       a.push(x)
     })
   }
@@ -109,7 +109,7 @@ goog.scope(function () {
   }
 
   function addStyleTo(r, o, a) {
-    a.forEach(function (x) {
+    array.forEach(a, function (x) {
       addStyleTo(r, o, x[_styles])
       var s = x.name
       if (o[s] == null) {
@@ -121,7 +121,7 @@ goog.scope(function () {
   }
 
   function removeStyleFrom(r, o, a) {
-    a.forEach(function (x) {
+    array.forEach(a, function (x) {
       var s = x.name
       if (o[s] != null) {
         --o[s]
@@ -153,7 +153,7 @@ goog.scope(function () {
       this[_styles] = {}
 
       var r = []
-      addStyleTo(r, this[_styles], [].slice.call(arguments))
+      addStyleTo(r, this[_styles], arguments)
 
       this[_e].className = r.join(" ")
     },
@@ -165,14 +165,14 @@ goog.scope(function () {
         if (o[s] == null) {
           var r = []
           addStyleTo(r, o, [x])
-          r.forEach(function (s) {
+          array.forEach(r, function (s) {
             self.classList.add(s)
           })
         }
       } else {
         var r = []
         removeStyleFrom(r, o, [x])
-        r.forEach(function (s) {
+        array.forEach(r, function (s) {
           self.classList.remove(s)
         })
       }
@@ -390,7 +390,7 @@ goog.scope(function () {
     if (e.removed) {
       x[_e] = null
 
-      e[bindings].forEach(function (x) {
+      array.forEach(e[bindings], function (x) {
         x.unbind()
       })
       e[_e] = null
@@ -754,9 +754,9 @@ goog.scope(function () {
     })*/
 
     new MutationObserver(function (a) {
-      a.forEach(function (x) {
+      array.forEach(a, function (x) {
         if (x.type === "childList") {
-          ;[].forEach.call(x.removedNodes, function (x) {
+          array.forEach(x.removedNodes, function (x) {
             if (_e in x) {
               remove(x)
             }
@@ -1189,13 +1189,13 @@ goog.scope(function () {
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
   util.ui.calc = function () {
-    return "calc(" + [].slice.call(arguments).join(" ") + ")"
+    return "calc(" + array.toArray(arguments).join(" ") + ")"
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
   util.ui.gradient = function (x) {
     var r = [x]
-    ;[].slice.call(arguments, 1).forEach(function (a) {
+    array.forEach(array.slice(arguments, 1), function (a) {
       r.push(a[1] + " " + a[0])
     })
     return "linear-gradient(" + r.join(",") + ")"
@@ -1204,7 +1204,7 @@ goog.scope(function () {
   // TODO multi-platform, e.g. -webkit, -moz, etc.
   util.ui.repeatingGradient = function (x) {
     var r = [x]
-    ;[].slice.call(arguments, 1).forEach(function (a) {
+    array.forEach(array.slice(arguments, 1), function (a) {
       r.push(a[1] + " " + a[0])
     })
     return "repeating-linear-gradient(" + r.join(",") + ")"

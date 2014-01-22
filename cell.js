@@ -4,9 +4,11 @@
 goog.provide("util.cell")
 
 goog.require("util.Symbol")
+goog.require("goog.array")
 
 goog.scope(function () {
   var Symbol = util.Symbol
+    , array  = goog.array
 
   var events = Symbol("events")
     , info   = Symbol("info")
@@ -14,7 +16,7 @@ goog.scope(function () {
     , get    = Symbol("get")
 
   function call(a, f) {
-    return f.apply(null, a.map(function (x) {
+    return f.apply(null, array.map(a, function (x) {
       return x.get()
     }))
   }
@@ -27,9 +29,9 @@ goog.scope(function () {
   }
 
   function unbind1(x, f) {
-    var i = x[events].indexOf(f)
+    var i = array.indexOf(x[events], f)
     if (i !== -1) {
-      x[events].splice(i, 1)
+      array.splice(x[events], i, 1)
       if (x[events].length === 0 && x[info].unbind != null) {
         x[info].unbind(x[saved])
       }
@@ -37,15 +39,15 @@ goog.scope(function () {
   }
 
   function unbind(a, f) {
-    for (var i = 0, iLen = a.length; i < iLen; ++i) {
-      unbind1(a[i], f)
-    }
+    array.forEach(a, function (x) {
+      unbind1(x, f)
+    })
   }
 
   function binder(o, a, f) {
-    for (var i = 0, iLen = a.length; i < iLen; ++i) {
-      bind1(a[i], f)
-    }
+    array.forEach(a, function (x) {
+      bind1(x, f)
+    })
     o.unbind = function () {
       unbind(a, f)
     }
@@ -56,10 +58,10 @@ goog.scope(function () {
     if (self[info].set != null) {
       self[info].set(self, v)
     }
-    var a = self[events].slice() // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
-    for (var i = 0, iLen = a.length; i < iLen; ++i) {
-      a[i](v)
-    }
+                  // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
+    array.forEach(array.clone(self[events]), function (x) {
+      x(v)
+    })
   }
 
   /**
@@ -186,25 +188,19 @@ goog.scope(function () {
 
   // Takes 1 or more signals, returns the logical OR of the values
   util.cell.or = function () {
-    return util.cell.bind([].slice.call(arguments), function () {
-      for (var i = 0, iLen = arguments.length; i < iLen; ++i) {
-        if (arguments[i]) {
-          return true
-        }
-      }
-      return false
+    return util.cell.bind(arguments, function () {
+      return array.some(arguments, function (x) {
+        return x
+      })
     })
   }
 
   // Takes 1 or more signals, returns the logical AND of the values
   util.cell.and = function () {
-    return util.cell.bind([].slice.call(arguments), function () {
-      for (var i = 0, iLen = arguments.length; i < iLen; ++i) {
-        if (!arguments[i]) {
-          return false
-        }
-      }
-      return true
+    return util.cell.bind(arguments, function () {
+      return array.every(arguments, function (x) {
+        return x
+      })
     })
   }
 })
