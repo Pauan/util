@@ -7,5 +7,11 @@ goog.scope(function () {
     }
   }
 
+  util.log.fail = function () {
+    if (goog.DEBUG) {
+      throw new Error()
+    }
+  }
+
   util.log.log = (goog.DEBUG ? goog.bind(console.log, console) : function () {})
 })
