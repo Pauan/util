@@ -3,7 +3,7 @@ goog.provide("util.log")
 goog.scope(function () {
   util.log.assert = function (x) {
     if (goog.DEBUG && !x) {
-      console.log(new Error("Assertion failed").stack)
+      console.log(new Error("Assertion failed").stack.replace(/^(.*)\n    at .*/, "$1"))
       throw new Error()
     }
   }
