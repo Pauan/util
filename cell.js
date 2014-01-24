@@ -18,7 +18,7 @@ goog.scope(function () {
     , get    = Symbol("get")
 
   /**
-   * @param {!Array.<Value>} a
+   * @param {!Array.<Signal>} a
    * @param {function(...[*]):T} f
    * @return {T}
    * @template T
@@ -30,7 +30,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Value} x
+   * @param {!Signal} x
    * @param {function(*):void} f
    */
   function bind1(x, f) {
@@ -41,7 +41,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Value} x
+   * @param {!Signal} x
    * @param {function(*):void} f
    */
   function unbind1(x, f) {
@@ -55,7 +55,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Array.<Value>} a
+   * @param {!Array.<Signal>} a
    * @param {function(*):void} f
    */
   function unbind(a, f) {
@@ -66,7 +66,7 @@ goog.scope(function () {
 
   /**
    * @param {!Object} o
-   * @param {!Array.<Value>} a
+   * @param {!Array.<Signal>} a
    * @param {function(*):void} f
    */
   function binder(o, a, f) {
@@ -79,7 +79,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Value} self
+   * @param {!Signal} self
    * @param {*} v
    */
   function set(self, v) {
@@ -99,7 +99,7 @@ goog.scope(function () {
    * @param {*} x
    * @param {Object=} obj
    */
-  function Value(x, obj) {
+  function Signal(x, obj) {
     if (obj == null) {
       obj = {}
     }
@@ -112,25 +112,26 @@ goog.scope(function () {
     this[get]    = x
     this[events] = []
   }
-  Value.prototype.get = function () {
+  Signal.prototype.get = function () {
     return this[get]
   }
-  Value.prototype.set = function (v) {
+  Signal.prototype.set = function (v) {
     set(this, v)
   }
+  util.cell.Signal = Signal
 
   /**
    * TODO more specific type for the obj parameter, using record type with optional fields
-   * TODO code duplication for the type signature with Value
+   * TODO code duplication for the type signature with Signal
    * @constructor
-   * @extends {Value}
+   * @extends {Signal}
    * @param {*} x
    * @param {Object=} obj
    */
   function Dedupe(x, obj) {
-    func.apply(Value, [this, x, obj])
+    func.apply(Signal, [this, x, obj])
   }
-  Dedupe.prototype.get = Value.prototype.get
+  Dedupe.prototype.get = Signal.prototype.get
   /**
    * @override
    */
@@ -147,19 +148,19 @@ goog.scope(function () {
    * use the set method to set the current value
    *
    * TODO more specific type for the obj parameter, using record type with optional fields
-   * TODO code duplication for the type signature with Value
+   * TODO code duplication for the type signature with Signal
    * @param {*} x
    * @param {Object=} obj
    */
   util.cell.value = function (x, obj) {
-    return new Value(x, obj)
+    return new Signal(x, obj)
   }
 
   /**
    * Same as value, except it ignores duplicates
    *
    * TODO more specific type for the obj parameter, using record type with optional fields
-   * TODO code duplication for the type signature with Value
+   * TODO code duplication for the type signature with Signal
    * @param {*} x
    * @param {Object=} obj
    */
@@ -171,7 +172,7 @@ goog.scope(function () {
    * Takes an array of signals and a function
    * When any of the signals change, the function is called with the value of the signals
    *
-   * @param {!Array.<Value>} a
+   * @param {!Array.<Signal>} a
    * @param {function(...[*]):void} f
    * @return {{ unbind: function():void }}
    */
@@ -188,9 +189,9 @@ goog.scope(function () {
    * Initially, and when any of the signals change,
    * the function is called with the value of the signals
    *
-   * @param {!Array.<Value>} a
+   * @param {!Array.<Signal>} a
    * @param {function(...[*]):*} f
-   * @return {!Value}
+   * @return {!Signal}
    */
   util.cell.bind = function (a, f) {
     var x = call(a, f)
@@ -203,15 +204,15 @@ goog.scope(function () {
 
   /**
    * TODO remove this ?
-   * TODO can I do something like @return {!Value.<T>} ?
+   * TODO can I do something like @return {!Signal.<T>} ?
    * Takes an initial JavaScript value, a signal, and a function; returns a signal
    * When the input signal changes, it will call the input function with the previous
    * value and the current value of the input signal
    *
    * @param {*} init
-   * @param {!Value} x
+   * @param {!Signal} x
    * @param {function(*, *):*} f
-   * @return {!Value}
+   * @return {!Signal}
    */
   util.cell.fold = function (init, x, f) {
     var o = util.cell.value(init)
@@ -228,9 +229,9 @@ goog.scope(function () {
    * If it returns true, the returned signal is updated
    *
    * @param {*} init
-   * @param {!Value} x
+   * @param {!Signal} x
    * @param {function(*):boolean} f
-   * @return {!Value}
+   * @return {!Signal}
    */
   util.cell.filter = function (init, x, f) {
     var o = util.cell.value(init)
@@ -247,7 +248,7 @@ goog.scope(function () {
    * When the signal has a truthy value,
    * the function is called with the value of the signal
    *
-   * @param {!Value} x
+   * @param {!Signal} x
    * @param {function(*=):void} f
    */
   util.cell.when = function (x, f) {
@@ -270,9 +271,9 @@ goog.scope(function () {
    * Takes a signal and function; returns a signal
    * Maps the function over the input signal
    *
-   * @param {!Value} x
+   * @param {!Signal} x
    * @param {function(*):*} f
-   * @return {!Value}
+   * @return {!Signal}
    */
   util.cell.map = function (x, f) {
     return util.cell.bind([x], f)
@@ -281,8 +282,8 @@ goog.scope(function () {
   /**
    * Takes 1 or more signals, returns the logical OR of the values
    *
-   * @param {...!Value} var_args
-   * @return {!Value}
+   * @param {...!Signal} var_args
+   * @return {!Signal}
    */
   util.cell.or = function (var_args) {
     return util.cell.bind(arguments, function () {
@@ -295,8 +296,8 @@ goog.scope(function () {
   /**
    * Takes 1 or more signals, returns the logical AND of the values
    *
-   * @param {...!Value} var_args
-   * @return {!Value}
+   * @param {...!Signal} var_args
+   * @return {!Signal}
    */
   util.cell.and = function (var_args) {
     return util.cell.bind(arguments, function () {
