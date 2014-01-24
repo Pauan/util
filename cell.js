@@ -296,7 +296,7 @@ goog.scope(function () {
    * @param {...!Value} var_args
    * @return {!Value}
    */
-  util.cell.and = function () {
+  util.cell.and = function (var_args) {
     return util.cell.bind(arguments, function () {
       return array.every(arguments, function (x) {
         return x
