@@ -1,6 +1,10 @@
 goog.provide("util.log")
 
+goog.require("util.func")
+
 goog.scope(function () {
+  var func = util.func
+
   util.log.assert = function (x, s) {
     if (goog.DEBUG && !x) {
       // Shows the stack trace, with the call to util.log.assert stripped out
@@ -19,5 +23,5 @@ goog.scope(function () {
     util.log.assert(false)
   }
 
-  util.log.log = (goog.DEBUG ? goog.bind(console.log, console) : function () {})
+  util.log.log = (goog.DEBUG ? func.bind(console.log, console) : function () {})
 })
