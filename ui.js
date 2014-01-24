@@ -50,7 +50,7 @@ goog.scope(function () {
    * @constructor
    */
   function Style() {}
-  Style.prototype = {
+  Style["prototype"] = {
     set: function (s, v, type) {
       var self = this
       if (goog.isArray(s)) {
@@ -87,8 +87,8 @@ goog.scope(function () {
    * @extends {Style}
    */
   function Style2() {}
-  Style2.prototype = new Style()
-  Style2.prototype.styles = function () {
+  Style2["prototype"] = new Style()
+  Style2["prototype"].styles = function () {
     var a = this[_styles]
     array.each(arguments, function (x) {
       array.push(a, x)
@@ -138,7 +138,7 @@ goog.scope(function () {
    * @constructor
    */
   function Box() {}
-  Box.prototype = {
+  Box["prototype"] = {
     style: function (f) {
       // TODO remove this eventually
       if (array.len(arguments) > 1) {
@@ -298,8 +298,8 @@ goog.scope(function () {
    * @extends {Box}
    */
   function ListItem() {}
-  ListItem.prototype = new Box()
-  ListItem.prototype.select = function () {
+  ListItem["prototype"] = new Box()
+  ListItem["prototype"].select = function () {
     this[_e].selected = true
   }
 
@@ -308,8 +308,8 @@ goog.scope(function () {
    * @extends {Box}
    */
   function ListGroup() {}
-  ListGroup.prototype = new Box()
-  ListGroup.prototype.label = function (s) {
+  ListGroup["prototype"] = new Box()
+  ListGroup["prototype"].label = function (s) {
     this[_e].label = s
   }
 
@@ -318,8 +318,8 @@ goog.scope(function () {
    * @extends {Box}
    */
   function Table() {}
-  Table.prototype = new Box()
-  Table.prototype.rowspan = function (s) {
+  Table["prototype"] = new Box()
+  Table["prototype"].rowspan = function (s) {
     this[_e].rowSpan = s
   }
 
@@ -328,11 +328,11 @@ goog.scope(function () {
    * @extends {Box}
    */
   function Image() {}
-  Image.prototype = new Box()
-  Image.prototype.alt = function (s) {
+  Image["prototype"] = new Box()
+  Image["prototype"].alt = function (s) {
     this[_e].alt = s
   }
-  Image.prototype.src = function (s) {
+  Image["prototype"].src = function (s) {
     this[_e].src = s
   }
 
@@ -341,18 +341,18 @@ goog.scope(function () {
    * @extends {Box}
    */
   function IFrame() {}
-  IFrame.prototype = new Box()
-  IFrame.prototype.src = function (s) {
+  IFrame["prototype"] = new Box()
+  IFrame["prototype"].src = function (s) {
     this[_e].src = s
   }
-  IFrame.prototype.sandbox = function (s) {
+  IFrame["prototype"].sandbox = function (s) {
     this[_e].sandbox = s || ""
   }
-  IFrame.prototype.seamless = function () {
+  IFrame["prototype"].seamless = function () {
     this[_e].setAttribute("seamless", "") // TODO remove this later
     this[_e].seamless = true
   }
-  IFrame.prototype.getWindow = function () {
+  IFrame["prototype"].getWindow = function () {
     return this[_e].contentWindow
   }
 
@@ -361,14 +361,14 @@ goog.scope(function () {
    * @extends {Box}
    */
   function Link() {}
-  Link.prototype = new Box()
-  Link.prototype.src = function (s) {
+  Link["prototype"] = new Box()
+  Link["prototype"].src = function (s) {
     this[_e].href = s
   }
-  Link.prototype.download = function (s) {
+  Link["prototype"].download = function (s) {
     this[_e].download = s
   }
-  Link.prototype.click = function () {
+  Link["prototype"].click = function () {
     this[_e].click()
   }
 
@@ -377,11 +377,11 @@ goog.scope(function () {
    * @extends {Box}
    */
   function File() {}
-  File.prototype = new Box()
-  File.prototype.accept = function (s) {
+  File["prototype"] = new Box()
+  File["prototype"].accept = function (s) {
     this[_e].accept = s
   }
-  File.prototype.click = function () {
+  File["prototype"].click = function () {
     this[_e].click()
   }
 
