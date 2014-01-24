@@ -112,10 +112,10 @@ goog.scope(function () {
     this[get]    = x
     this[events] = []
   }
-  Value["prototype"].get = function () {
+  Value.prototype.get = function () {
     return this[get]
   }
-  Value["prototype"].set = function (v) {
+  Value.prototype.set = function (v) {
     set(this, v)
   }
 
@@ -130,11 +130,11 @@ goog.scope(function () {
   function Dedupe(x, obj) {
     func.apply(Value, [this, x, obj])
   }
-  Dedupe["prototype"].get = Value["prototype"].get
+  Dedupe.prototype.get = Value.prototype.get
   /**
    * @override
    */
-  Dedupe["prototype"].set = function (v) {
+  Dedupe.prototype.set = function (v) {
     // TODO object.isnt
     if (this[get] !== v) {
       set(this, v)

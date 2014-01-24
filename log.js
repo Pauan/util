@@ -23,5 +23,5 @@ goog.scope(function () {
     util.log.assert(false)
   }
 
-  util.log.log = (goog.DEBUG ? func.bind(console.log, console) : function () {})
+  util.log.log = (goog.DEBUG ? func.bind(console["log"], console) : function () {})
 })
