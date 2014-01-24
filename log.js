@@ -3,14 +3,13 @@ goog.provide("util.log")
 goog.scope(function () {
   util.log.assert = function (x) {
     if (goog.DEBUG && !x) {
-      throw new Error()
+      console.error("Assertion failed")
+      throw new Error("quitting")
     }
   }
 
   util.log.fail = function () {
-    if (goog.DEBUG) {
-      throw new Error()
-    }
+    util.log.assert(false)
   }
 
   util.log.log = (goog.DEBUG ? goog.bind(console.log, console) : function () {})
