@@ -1,6 +1,10 @@
 goog.provide("util.array")
 
+goog.require("util.func")
+
 goog.scope(function () {
+  var func = util.func
+
   util.array.insertAt = function (a, index, x) {
     []["splice"]["call"](a, index, 0, x)
   }

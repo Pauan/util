@@ -7,11 +7,15 @@ goog.scope(function () {
    */
   var iMax = null
 
+  util.time.now = function () {
+    return Date["now"]()
+  }
+
   /**
    * @return {number}
    */
   util.time.timestamp = function () {
-    var x = goog.now()
+    var x = util.time.now()
     if (iMax === null || x > iMax) {
       iMax = x
     } else {

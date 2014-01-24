@@ -5,10 +5,12 @@ goog.provide("util.cell")
 
 goog.require("util.Symbol")
 goog.require("util.array")
+goog.require("util.func")
 
 goog.scope(function () {
   var Symbol = util.Symbol
-    , array  = goog.array
+    , array  = util.array
+    , func   = util.func
 
   var events = Symbol("events")
     , info   = Symbol("info")
@@ -22,7 +24,7 @@ goog.scope(function () {
    * @template T
    */
   function call(a, f) {
-    return f.apply(null, array.map(a, function (x) {
+    return func.apply(f, null, array.map(a, function (x) {
       return x.get()
     }))
   }
@@ -126,7 +128,7 @@ goog.scope(function () {
    * @param {Object=} obj
    */
   function Dedupe(x, obj) {
-    Value.call(this, x, obj)
+    func.apply(Value, [this, x, obj])
   }
   Dedupe.prototype.get = Value.prototype.get
   /**
