@@ -4,8 +4,9 @@ goog.scope(function () {
   util.log.assert = function (x) {
     if (goog.DEBUG && !x) {
       // Shows the stack trace, with the call to util.log.assert stripped out
-      //console.log(new Error("Assertion failed").stack.replace(/^(.*)\n    at .*/, "$1"))
+      console.log(new Error("Assertion failed").stack.replace(/^(.*)\n    at .*/, "$1"))
       console.error("Assertion failed")
+      console.trace("Assertion failed")
       throw new Error()
     }
   }
