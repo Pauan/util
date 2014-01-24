@@ -3,8 +3,8 @@ goog.provide("util.log")
 goog.scope(function () {
   util.log.assert = function (x) {
     if (goog.DEBUG && !x) {
-      console.error("Assertion failed")
-      throw new Error("quitting")
+      console.log(new Error("Assertion failed").stack)
+      throw new Error()
     }
   }
 
