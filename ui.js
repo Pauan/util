@@ -2,12 +2,12 @@ goog.provide("util.ui")
 
 goog.require("util.Symbol")
 goog.require("util.cell")
-goog.require("goog.array")
+goog.require("util.array")
 
 goog.scope(function () {
   var Symbol = util.Symbol
     , cell   = util.cell
-    , array  = goog.array
+    , array  = util.array
 
   var styleIds = 0
 
@@ -26,10 +26,10 @@ goog.scope(function () {
     e.type = "text/css"
     document.head.appendChild(e)
 
-    var sheet = array.peek(document.styleSheets)
-    sheet.insertRule(s + "{}", sheet.cssRules.length) //sheet.addRule(s)
+    var sheet = array.last(document.styleSheets)
+    sheet.insertRule(s + "{}", array.len(sheet.cssRules)) //sheet.addRule(s)
 
-    return f(array.peek(sheet.cssRules).style)
+    return f(array.last(sheet.cssRules).style)
   }
 
   var specialStyles = {
@@ -54,7 +54,7 @@ goog.scope(function () {
     set: function (s, v, type) {
       var self = this
       if (goog.isArray(s)) {
-        array.forEach(s, function (s) {
+        array.each(s, function (s) {
           self.set(s, v, type)
         })
       // TODO if v is null, convert it to ""
@@ -67,7 +67,7 @@ goog.scope(function () {
         var sOld = array.map(props, function (s) {
           return self[_e].getPropertyValue(s)
         })
-        array.forEach(props, function (s) {
+        array.each(props, function (s) {
           self[_e].setProperty(s, v, type)
         })
         var every = array.every(props, function (s, i) {
@@ -90,8 +90,8 @@ goog.scope(function () {
   Style2.prototype = new Style()
   Style2.prototype.styles = function () {
     var a = this[_styles]
-    array.forEach(arguments, function (x) {
-      a.push(x)
+    array.each(arguments, function (x) {
+      array.push(a, x)
     })
   }
 
@@ -109,25 +109,25 @@ goog.scope(function () {
   }
 
   function addStyleTo(r, o, a) {
-    array.forEach(a, function (x) {
+    array.each(a, function (x) {
       addStyleTo(r, o, x[_styles])
       var s = x.name
       if (o[s] == null) {
         o[s] = 0
-        r.push(s)
+        array.push(r, s)
       }
       ++o[s]
     })
   }
 
   function removeStyleFrom(r, o, a) {
-    array.forEach(a, function (x) {
+    array.each(a, function (x) {
       var s = x.name
       if (o[s] != null) {
         --o[s]
         if (o[s] === 0) {
           delete o[s]
-          r.push(s)
+          array.push(r, s)
         }
         removeStyleFrom(r, o, x[_styles])
       }
@@ -141,7 +141,7 @@ goog.scope(function () {
   Box.prototype = {
     style: function (f) {
       // TODO remove this eventually
-      if (arguments.length > 1) {
+      if (array.len(arguments) > 1) {
         throw new Error()
       }
       var o = new Style()
@@ -165,14 +165,14 @@ goog.scope(function () {
         if (o[s] == null) {
           var r = []
           addStyleTo(r, o, [x])
-          array.forEach(r, function (s) {
+          array.each(r, function (s) {
             self.classList.add(s)
           })
         }
       } else {
         var r = []
         removeStyleFrom(r, o, [x])
-        array.forEach(r, function (s) {
+        array.each(r, function (s) {
           self.classList.remove(s)
         })
       }
@@ -264,12 +264,12 @@ goog.scope(function () {
     },
     bind: function (a, f) {
       var o = cell.bind(a, f)
-      this[bindings].push(o)
+      array.push(this[bindings], o)
       return o
     },
     event: function (a, f) {
       var o = cell.event(a, f)
-      this[bindings].push(o)
+      array.push(this[bindings], o)
       return o
     },
     title: function (s) {
@@ -390,7 +390,7 @@ goog.scope(function () {
     if (e.removed) {
       x[_e] = null
 
-      array.forEach(e[bindings], function (x) {
+      array.each(e[bindings], function (x) {
         x.unbind()
       })
       e[_e] = null
@@ -754,18 +754,18 @@ goog.scope(function () {
     })*/
 
     new MutationObserver(function (a) {
-      array.forEach(a, function (x) {
-        if (x.type === "childList") {
-          array.forEach(x.removedNodes, function (x) {
+      array.each(a, function (x) {
+        if (x["type"] === "childList") {
+          array.each(x["removedNodes"], function (x) {
             if (_e in x) {
               remove(x)
             }
           })
         }
       })
-    }).observe(document.body, {
-      childList: true,
-      subtree: true
+    })["observe"](document.body, {
+      "childList": true,
+      "subtree": true
     })
 
     //var o = document.createElement("div")
@@ -1195,8 +1195,8 @@ goog.scope(function () {
   // TODO multi-platform, e.g. -webkit, -moz, etc.
   util.ui.gradient = function (x) {
     var r = [x]
-    array.forEach(array.slice(arguments, 1), function (a) {
-      r.push(a[1] + " " + a[0])
+    array.each(array.slice(arguments, 1), function (a) {
+      array.push(r, a[1] + " " + a[0])
     })
     return "linear-gradient(" + r.join(",") + ")"
   }
@@ -1204,8 +1204,8 @@ goog.scope(function () {
   // TODO multi-platform, e.g. -webkit, -moz, etc.
   util.ui.repeatingGradient = function (x) {
     var r = [x]
-    array.forEach(array.slice(arguments, 1), function (a) {
-      r.push(a[1] + " " + a[0])
+    array.each(array.slice(arguments, 1), function (a) {
+      array.push(r, a[1] + " " + a[0])
     })
     return "repeating-linear-gradient(" + r.join(",") + ")"
   }

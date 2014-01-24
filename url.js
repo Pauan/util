@@ -1,6 +1,10 @@
 goog.provide("util.url")
 
+goog.require("util.array")
+
 goog.scope(function () {
+  var array = util.array
+
   // http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
   var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*):(?:\/\/(?:([^\@]+)\@)?([^\/\?\#\:]+)(?:\:([0-9]+))?)?([^\?\#]*)?(?:\?([^\#]+))?(?:\#(.+))?$/
 
@@ -45,35 +49,35 @@ goog.scope(function () {
   util.url.printURI = function (o) {
     var s = []
     if (o.scheme) {
-      s.push(o.scheme)
-      s.push(":")
+      array.push(s, o.scheme)
+      array.push(s, ":")
     }
     if (o.authority || o.hostname || o.port) {
       if (o.scheme) {
-        s.push("//")
+        array.push(s, "//")
       }
       if (o.authority) {
-        s.push(o.authority)
-        s.push("@")
+        array.push(s, o.authority)
+        array.push(s, "@")
       }
       if (o.hostname) {
-        s.push(o.hostname)
+        array.push(s, o.hostname)
       }
       if (o.port) {
-        s.push(":")
-        s.push(o.port)
+        array.push(s, ":")
+        array.push(s, o.port)
       }
     }
     if (o.path) {
-      s.push(o.path.join("/"))
+      array.push(s, o.path.join("/"))
     }
     if (o.query) {
-      s.push("?")
-      s.push(o.query)
+      array.push(s, "?")
+      array.push(s, o.query)
     }
     if (o.fragment) {
-      s.push("#")
-      s.push(o.fragment)
+      array.push(s, "#")
+      array.push(s, o.fragment)
     }
     return s.join("")
   }

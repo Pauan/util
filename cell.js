@@ -4,7 +4,7 @@
 goog.provide("util.cell")
 
 goog.require("util.Symbol")
-goog.require("goog.array")
+goog.require("util.array")
 
 goog.scope(function () {
   var Symbol = util.Symbol
@@ -32,10 +32,10 @@ goog.scope(function () {
    * @param {function(*):void} f
    */
   function bind1(x, f) {
-    if (x[events].length === 0 && x[info].bind != null) {
+    if (array.len(x[events]) === 0 && x[info].bind != null) {
       x[saved] = x[info].bind(x)
     }
-    x[events].push(f)
+    array.push(x[events], f)
   }
 
   /**
@@ -45,8 +45,8 @@ goog.scope(function () {
   function unbind1(x, f) {
     var i = array.indexOf(x[events], f)
     if (i !== -1) {
-      array.splice(x[events], i, 1)
-      if (x[events].length === 0 && x[info].unbind != null) {
+      array.removeAt(x[events], i)
+      if (array.len(x[events]) === 0 && x[info].unbind != null) {
         x[info].unbind(x[saved])
       }
     }
@@ -57,7 +57,7 @@ goog.scope(function () {
    * @param {function(*):void} f
    */
   function unbind(a, f) {
-    array.forEach(a, function (x) {
+    array.each(a, function (x) {
       unbind1(x, f)
     })
   }
@@ -68,7 +68,7 @@ goog.scope(function () {
    * @param {function(*):void} f
    */
   function binder(o, a, f) {
-    array.forEach(a, function (x) {
+    array.each(a, function (x) {
       bind1(x, f)
     })
     o.unbind = function () {
@@ -86,7 +86,7 @@ goog.scope(function () {
       self[info].set(self, v)
     }
                   // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
-    array.forEach(array.clone(self[events]), function (f) {
+    array.each(array.clone(self[events]), function (f) {
       f(v)
     })
   }
