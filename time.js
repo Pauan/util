@@ -1,9 +1,15 @@
 goog.provide("util.time")
 
 goog.scope(function () {
-  // TODO this probably isn't super-robust, but it should work for common cases
+  /**
+   * TODO this probably isn't super-robust, but it should work for common cases
+   * @type {null|number}
+   */
   var iMax = null
 
+  /**
+   * @return {number}
+   */
   util.time.timestamp = function () {
     var x = goog.now()
     if (iMax === null || x > iMax) {
@@ -14,6 +20,11 @@ goog.scope(function () {
     return x
   }
 
+  /**
+   * @param {function()} f
+   * @param {number=} duration
+   * @return {{ iterations: number, milliseconds: number, memory: !Object }}
+   */
   util.time.benchmark = function (f, duration) {
     if (duration == null) {
       duration = 10000

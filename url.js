@@ -4,6 +4,21 @@ goog.scope(function () {
   // http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
   var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*):(?:\/\/(?:([^\@]+)\@)?([^\/\?\#\:]+)(?:\:([0-9]+))?)?([^\?\#]*)?(?:\?([^\#]+))?(?:\#(.+))?$/
 
+  /**
+   * @typedef {{ scheme:    (string|null),
+   *             authority: (string|null),
+   *             hostname:  (string|null),
+   *             port:      (number|null),
+   *             path:      (Array.<string>|null),
+   *             query:     (string|null),
+   *             fragment:  (string|null) }}
+   */
+  var uriObject
+
+  /**
+   * @param {string} s
+   * @return {uriObject}
+   */
   util.url.parseURI = function (s) {
     var a = reUri.exec(s)
     if (a) {
@@ -23,6 +38,10 @@ goog.scope(function () {
     }
   }
 
+  /**
+   * @param {uriObject} o
+   * @return {string}
+   */
   util.url.printURI = function (o) {
     var s = []
     if (o.scheme) {
@@ -59,6 +78,10 @@ goog.scope(function () {
     return s.join("")
   }
 
+  /**
+   * @param {uriObject} x
+   * @return {uriObject}
+   */
   util.url.simplify = function (x) {
     var y = {}
 

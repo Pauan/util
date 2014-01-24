@@ -2,8 +2,15 @@
 goog.provide("util.Symbol")
 
 goog.scope(function () {
+  /**
+   * @type {number}
+   */
   var id = 0
 
+  /**
+   * @param {string=} s
+   * @return {string}
+   */
   util.Symbol = function (s) {
     if (s == null) {
       return "Symbol(" + (++id) + ")"
