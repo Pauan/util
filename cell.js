@@ -19,7 +19,7 @@ goog.scope(function () {
 
   /**
    * @param {!Array.<Value>} a
-   * @param {function(...*):T} f
+   * @param {function(...[*]):T} f
    * @return {T}
    * @template T
    */
@@ -172,7 +172,7 @@ goog.scope(function () {
    * When any of the signals change, the function is called with the value of the signals
    *
    * @param {!Array.<Value>} a
-   * @param {function(...*):void} f
+   * @param {function(...[*]):void} f
    * @return {{ unbind: function():void }}
    */
   util.cell.event = function (a, f) {
@@ -189,7 +189,7 @@ goog.scope(function () {
    * the function is called with the value of the signals
    *
    * @param {!Array.<Value>} a
-   * @param {function(...*):*} f
+   * @param {function(...[*]):*} f
    * @return {!Value}
    */
   util.cell.bind = function (a, f) {

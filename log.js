@@ -5,6 +5,10 @@ goog.require("util.func")
 goog.scope(function () {
   var func = util.func
 
+  /**
+   * @param {boolean} x
+   * @param {string=} s
+   */
   util.log.assert = function (x, s) {
     if (goog.DEBUG && !x) {
       // Shows the stack trace, with the call to util.log.assert stripped out
@@ -23,5 +27,8 @@ goog.scope(function () {
     util.log.assert(false)
   }
 
-  util.log.log = (goog.DEBUG ? func.bind(console["log"], console) : function () {})
+  /**
+   * @param {...[*]} var_args
+   */
+  util.log.log = (goog.DEBUG ? func.bind(console["log"], console) : function (var_args) {})
 })
