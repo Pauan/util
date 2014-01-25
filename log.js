@@ -28,7 +28,7 @@ goog.scope(function () {
   }
 
   /**
-   * @type {function(...[*]):void}
+   * @type {Function}
    */
   util.log.log = (goog.DEBUG ? func.bind(console["log"], console) : function () {})
 })

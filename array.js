@@ -6,7 +6,7 @@ goog.scope(function () {
   var func = util.func
 
   /**
-   * @param {Array} a
+   * @param {*} a
    * @param {number} index
    * @param {*} x
    */
@@ -15,7 +15,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {Array} a
+   * @param {*} a
    * @param {number} index
    */
   util.array.removeAt = function (a, index) {
@@ -23,7 +23,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {Array} a
+   * @param {*} a
    * @return {number}
    */
   util.array.len = function (a) {
@@ -31,7 +31,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {Array} a
+   * @param {*} a
    * @param {*} x
    * @return {number}
    */
@@ -40,19 +40,18 @@ goog.scope(function () {
   }
 
   /**
-   * @param {Array} a
+   * @param {*} a
    * @param {number=} start
    * @param {number=} end
-   * @return {Array}
+   * @return {!Array}
    */
   util.array.slice = function (a, start, end) {
     return []["slice"]["call"](a, start, end)
   }
 
   /**
-   * @param {Array.<T>} a
-   * @param {function(T,number=):boolean} f
-   * @template T
+   * @param {*} a
+   * @param {function(*,number=):boolean} f
    */
   util.array.some = function (a, f) {
     for (var i = 0, iLen = util.array.len(a); i < iLen; ++i) {
@@ -64,7 +63,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {Array} a
+   * @param {*} a
    * @return {*}
    */
   util.array.last = function (a) {
@@ -72,9 +71,8 @@ goog.scope(function () {
   }
 
   /**
-   * @param {Array.<T>} a
-   * @param {function(T,number=):void} f
-   * @template T
+   * @param {*} a
+   * @param {function(*,number=):void} f
    */
   util.array.each = function (a, f) {
     for (var i = 0, iLen = util.array.len(a); i < iLen; ++i) {
@@ -83,7 +81,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {Array} a
+   * @param {*} a
    * @param {*} x
    * @return {number}
    */
@@ -97,10 +95,10 @@ goog.scope(function () {
   }
 
   /**
-   * @param {Array.<T>} a
-   * @param {function(T,number=):R} f
-   * @return {Array.<R>}
-   * @template T, R
+   * @param {*} a
+   * @param {function(*,number=):R} f
+   * @return {!Array.<R>}
+   * @template R
    */
   util.array.map = function (a, f) {
     var r = []
@@ -111,8 +109,8 @@ goog.scope(function () {
   }
 
   /**
-   * @param {Array} a
-   * @return {Array}
+   * @param {*} a
+   * @return {!Array}
    */
   util.array.toArray = function (a) {
     return util.array.map(a, function (x) {
@@ -123,9 +121,8 @@ goog.scope(function () {
   util.array.clone = util.array.toArray
 
   /**
-   * @param {Array.<T>} a
-   * @param {function(T,number=):boolean} f
-   * @template T
+   * @param {*} a
+   * @param {function(*,number=):boolean} f
    */
   util.array.every = function (a, f) {
     return !util.array.some(a, function (x, i) {

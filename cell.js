@@ -19,7 +19,7 @@ goog.scope(function () {
     , get    = Symbol("get")
 
   /**
-   * @param {!Array.<Signal>} a
+   * @param {!Array.<!Signal>} a
    * @param {function(...[*]):T} f
    * @return {T}
    * @template T
@@ -56,7 +56,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Array.<Signal>} a
+   * @param {!Array.<!Signal>} a
    * @param {function(*):void} f
    */
   function unbind(a, f) {
@@ -67,7 +67,7 @@ goog.scope(function () {
 
   /**
    * @param {!Object} o
-   * @param {!Array.<Signal>} a
+   * @param {!Array.<!Signal>} a
    * @param {function(*):void} f
    */
   function binder(o, a, f) {
@@ -95,10 +95,15 @@ goog.scope(function () {
   }
 
   /**
+   * @typedef {{ set: (), get: (), bind: (), unbind: () }}
+   */
+  var type_opt
+
+  /**
    * TODO more specific type for the obj parameter, using record type with optional fields
    * @constructor
    * @param {*} x
-   * @param {Object=} obj
+   * @param {type_opt=} obj
    */
   function Signal(x, obj) {
     if (obj == null) {
@@ -175,7 +180,7 @@ goog.scope(function () {
    * Takes an array of signals and a function
    * When any of the signals change, the function is called with the value of the signals
    *
-   * @param {!Array.<Signal>} a
+   * @param {!Array.<!Signal>} a
    * @param {function(...[*]):void} f
    * @return {{ unbind: function():void }}
    */
@@ -192,7 +197,7 @@ goog.scope(function () {
    * Initially, and when any of the signals change,
    * the function is called with the value of the signals
    *
-   * @param {!Array.<Signal>} a
+   * @param {!Array.<!Signal>} a
    * @param {function(...[*]):*} f
    * @return {!Signal}
    */
