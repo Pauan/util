@@ -2,6 +2,7 @@
 // Event dispatch is handled synchronously: no concurrency or parallelism
 // VERY loosely based on Elm (http://elm-lang.org/)
 goog.provide("util.cell")
+goog.provide("util.cell.Signal")
 
 goog.require("util.Symbol")
 goog.require("util.array")
