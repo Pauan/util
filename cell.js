@@ -110,10 +110,8 @@ goog.scope(function () {
    * @param {*} x
    * @param {!type_opt=} obj
    */
-  function Signal(x, obj) {
-    if (obj == null) {
-      obj = {}
-    }
+  function Signal(x, o) {
+    var obj = (o != null ? o : {})
 
     /**
      * @type {!Object}
