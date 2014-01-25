@@ -74,6 +74,9 @@ goog.scope(function () {
     array.each(a, function (x) {
       bind1(x, f)
     })
+    /**
+     * @type {function ():void}
+     */
     o.unbind = function () {
       unbind(a, f)
     }
@@ -95,7 +98,9 @@ goog.scope(function () {
   }
 
   /**
-   * @typedef {{ set: (), get: (), bind: (), unbind: () }}
+   * @typedef {{ set: ((function(!Signal,*):void)|undefined),
+   *             bind: ((function(!Signal):!Object)|undefined),
+   *             unbind: ((function(!Object):void)|undefined) }}
    */
   var type_opt
 
@@ -135,7 +140,7 @@ goog.scope(function () {
    * @param {Object=} obj
    */
   function Dedupe(x, obj) {
-    func.apply(Signal, [this, x, obj])
+    func.apply(Signal, this, [x, obj])
   }
   Dedupe.prototype.get = Signal.prototype.get
   /**
