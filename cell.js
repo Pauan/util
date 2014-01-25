@@ -108,7 +108,7 @@ goog.scope(function () {
    * TODO more specific type for the obj parameter, using record type with optional fields
    * @constructor
    * @param {*} x
-   * @param {type_opt=} obj
+   * @param {!type_opt=} obj
    */
   function Signal(x, obj) {
     if (obj == null) {
@@ -137,7 +137,7 @@ goog.scope(function () {
    * @constructor
    * @extends {Signal}
    * @param {*} x
-   * @param {Object=} obj
+   * @param {!type_opt=} obj
    */
   function Dedupe(x, obj) {
     func.apply(Signal, this, [x, obj])
@@ -161,7 +161,7 @@ goog.scope(function () {
    * TODO more specific type for the obj parameter, using record type with optional fields
    * TODO code duplication for the type signature with Signal
    * @param {*} x
-   * @param {Object=} obj
+   * @param {!type_opt=} obj
    * @return {!Signal}
    */
   util.cell.value = function (x, obj) {
@@ -174,7 +174,7 @@ goog.scope(function () {
    * TODO more specific type for the obj parameter, using record type with optional fields
    * TODO code duplication for the type signature with Signal
    * @param {*} x
-   * @param {Object=} obj
+   * @param {!type_opt=} obj
    * @return {!Signal}
    */
   util.cell.dedupe = function (x, obj) {
