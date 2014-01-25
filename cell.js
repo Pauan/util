@@ -108,16 +108,10 @@ goog.scope(function () {
    * TODO more specific type for the obj parameter, using record type with optional fields
    * @constructor
    * @param {*} x
-   * @param {!type_opt=} obj
+   * @param {!type_opt=} o
    */
-  function Signal(x, o) {
-    var obj = (o != null ? o : {})
-
-    /**
-     * @type {!Object}
-     */
-    this[info]   = obj
-
+  function Signal(x, obj) {
+    this[info]   = (obj != null ? obj : {})
     this[get]    = x
     this[events] = []
   }
@@ -188,6 +182,9 @@ goog.scope(function () {
    * @return {{ unbind: function():void }}
    */
   util.cell.event = function (a, f) {
+    /**
+     * @type {!Object}
+     */
     var o = {}
     binder(o, a, function () {
       call(a, f)
