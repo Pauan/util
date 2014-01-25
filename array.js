@@ -8,10 +8,10 @@ goog.scope(function () {
   /**
    * @typedef {!Array|!Arguments|string}
    */
-  var ArrayLike
+  util.array.ArrayLike
 
   /**
-   * @param {!ArrayLike} a
+   * @param {!util.array.ArrayLike} a
    * @param {number} index
    * @param {*} x
    */
@@ -20,7 +20,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike} a
+   * @param {!util.array.ArrayLike} a
    * @param {number} index
    */
   util.array.removeAt = function (a, index) {
@@ -28,7 +28,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike} a
+   * @param {!util.array.ArrayLike} a
    * @return {number}
    */
   util.array.len = function (a) {
@@ -36,7 +36,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike} a
+   * @param {!util.array.ArrayLike} a
    * @param {*} x
    * @return {number}
    */
@@ -45,7 +45,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike} a
+   * @param {!util.array.ArrayLike} a
    * @param {number=} start
    * @param {number=} end
    * @return {!Array}
@@ -55,7 +55,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike} a
+   * @param {!util.array.ArrayLike} a
    * @param {function(*,number=):boolean} f
    */
   util.array.some = function (a, f) {
@@ -68,7 +68,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike} a
+   * @param {!util.array.ArrayLike} a
    * @return {*}
    */
   util.array.last = function (a) {
@@ -76,7 +76,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike.<T>} a
+   * @param {!util.array.ArrayLike.<T>} a
    * @param {function(T,number=):void} f
    * @template T
    */
@@ -87,7 +87,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike} a
+   * @param {!util.array.ArrayLike} a
    * @param {*} x
    * @return {number}
    */
@@ -101,7 +101,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike.<T>} a
+   * @param {!util.array.ArrayLike.<T>} a
    * @param {function(T,number=):R} f
    * @return {!Array.<R>}
    * @template T, R
@@ -115,7 +115,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!ArrayLike} a
+   * @param {!util.array.ArrayLike} a
    * @return {!Array}
    */
   util.array.toArray = function (a) {
@@ -127,7 +127,7 @@ goog.scope(function () {
   util.array.clone = util.array.toArray
 
   /**
-   * @param {!ArrayLike.<T>} a
+   * @param {!util.array.ArrayLike.<T>} a
    * @param {function(T,number=):boolean} f
    * @template T
    */

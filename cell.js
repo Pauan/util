@@ -19,7 +19,7 @@ goog.scope(function () {
     , get    = Symbol("get")
 
   /**
-   * @param {!Array.<!Signal>} a
+   * @param {!util.array.ArrayLike.<!Signal>} a
    * @param {function(...*):T} f
    * @return {T}
    * @template T
@@ -56,7 +56,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Array.<!Signal>} a
+   * @param {!util.array.ArrayLike.<!Signal>} a
    * @param {function(*):void} f
    */
   function unbind(a, f) {
@@ -67,7 +67,7 @@ goog.scope(function () {
 
   /**
    * @param {!Object} o
-   * @param {!Array.<!Signal>} a
+   * @param {!util.array.ArrayLike.<!Signal>} a
    * @param {function(*):void} f
    */
   function binder(o, a, f) {
@@ -180,7 +180,7 @@ goog.scope(function () {
    * Takes an array of signals and a function
    * When any of the signals change, the function is called with the value of the signals
    *
-   * @param {!Array.<!Signal>} a
+   * @param {!util.array.ArrayLike.<!Signal>} a
    * @param {function(...*):void} f
    * @return {{ unbind: function():void }}
    */
@@ -197,7 +197,7 @@ goog.scope(function () {
    * Initially, and when any of the signals change,
    * the function is called with the value of the signals
    *
-   * @param {!Array.<!Signal>} a
+   * @param {!util.array.ArrayLike.<!Signal>} a
    * @param {function(...*):*} f
    * @return {!Signal}
    */
@@ -296,7 +296,7 @@ goog.scope(function () {
   util.cell.or = function (var_args) {
     return util.cell.bind(arguments, function () {
       return array.some(arguments, function (x) {
-        return x
+        return !!x
       })
     })
   }
@@ -310,7 +310,7 @@ goog.scope(function () {
   util.cell.and = function (var_args) {
     return util.cell.bind(arguments, function () {
       return array.every(arguments, function (x) {
-        return x
+        return !!x
       })
     })
   }
