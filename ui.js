@@ -3,11 +3,13 @@ goog.provide("util.ui")
 goog.require("util.Symbol")
 goog.require("util.cell")
 goog.require("util.array")
+goog.require("util.type")
 
 goog.scope(function () {
   var Symbol = util.Symbol
     , cell   = util.cell
     , array  = util.array
+    , type   = util.type
 
   var styleIds = 0
 
@@ -51,9 +53,9 @@ goog.scope(function () {
    */
   function Style() {}
   Style.prototype = {
-    set: function (s, v, type) {
+    set: function (s, v, important) {
       var self = this
-      if (goog.isArray(s)) {
+      if (type.isArray(s)) {
         array.each(s, function (s) {
           self.set(s, v, type)
         })
@@ -68,7 +70,7 @@ goog.scope(function () {
           return self[_e].getPropertyValue(s)
         })
         array.each(props, function (s) {
-          self[_e].setProperty(s, v, type)
+          self[_e].setProperty(s, v, important)
         })
         var every = array.every(props, function (s, i) {
           var sNew = self[_e].getPropertyValue(s)
