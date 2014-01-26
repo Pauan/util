@@ -2,7 +2,7 @@ goog.provide("util.type")
 
 goog.scope(function () {
   /**
-   * @type {function(*):string}
+   * @type {function():string}
    */
   var type = {}.toString
 
