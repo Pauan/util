@@ -42,7 +42,7 @@ goog.scope(function () {
   /**
    * @type {function(number):number}
    */
-  util.math.sqrt = Math.sqrt
+  util.math.sqrt = Math["sqrt"]
 
   /**
    * http://www.johndcook.com/blog/2010/06/02/whats-so-hard-about-finding-a-hypotenuse/
