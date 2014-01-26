@@ -39,21 +39,21 @@ goog.scope(function () {
       , mem = {}
 
     // TODO check this
-    for (var s in t.memory) {
-      mem[s] = t.memory[s]
+    for (var s in t["memory"]) {
+      mem[s] = t["memory"][s]
     }
 
-    var start = t.now()
+    var start = t["now"]()
       , end   = start + duration
       , curr
 
-    while ((curr = t.now()) < end) {
+    while ((curr = t["now"]()) < end) {
       f()
       ++i
     }
 
-    for (var s in t.memory) {
-      mem[s] = t.memory[s] - mem[s]
+    for (var s in t["memory"]) {
+      mem[s] = t["memory"][s] - mem[s]
     }
 
     return {

@@ -1,6 +1,10 @@
 goog.provide("util.object")
 
+goog.require("util.array")
+
 goog.scope(function () {
+  var array = util.array
+
   /**
    * @type {function(string):boolean}
    */
@@ -25,7 +29,7 @@ goog.scope(function () {
     var r = []
     for (var s in x) {
       if (hasOwn["call"](x, s)) {
-        r.push(s)
+        array.push(r, s)
       }
     }
     return r
