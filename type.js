@@ -4,7 +4,7 @@ goog.scope(function () {
   /**
    * @type {function():string}
    */
-  var type = {}.toString
+  var type = {}["toString"]
 
   /**
    * @param {string} s
@@ -12,7 +12,7 @@ goog.scope(function () {
    */
   function typer(s) {
     return function (x) {
-      return type.call(x) === s
+      return type["call"](x) === s
     }
   }
 
