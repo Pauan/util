@@ -108,7 +108,7 @@ goog.scope(function () {
    * TODO more specific type for the obj parameter, using record type with optional fields
    * @constructor
    * @param {*} x
-   * @param {!type_opt=} o
+   * @param {!type_opt=} obj
    */
   function Signal(x, obj) {
     this[info]   = (obj != null ? obj : {})
