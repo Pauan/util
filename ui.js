@@ -20,18 +20,18 @@ goog.scope(function () {
     , bindings = Symbol("bindings")
 
   function isOver(self, e) {
-    return !self.contains(e.relatedTarget)
+    return !self["contains"](e["relatedTarget"])
   }
 
   function addRule(document, s, f) {
-    var e = document.createElement("style")
-    e.type = "text/css"
-    document.head.appendChild(e)
+    var e = document["createElement"]("style")
+    e["type"] = "text/css"
+    document["head"]["appendChild"](e)
 
-    var sheet = array.last(document.styleSheets)
-    sheet.insertRule(s + "{}", array.len(sheet.cssRules)) //sheet.addRule(s)
+    var sheet = array.last(document["styleSheets"])
+    sheet["insertRule"](s + "{}", array.len(sheet["cssRules"])) //sheet.addRule(s)
 
-    return f(array.last(sheet.cssRules).style)
+    return f(array.last(sheet["cssRules"])["style"])
   }
 
   var specialStyles = {
@@ -67,13 +67,13 @@ goog.scope(function () {
                       ? specialStyles[s]
                       : [s])
         var sOld = array.map(props, function (s) {
-          return self[_e].getPropertyValue(s)
+          return self[_e]["getPropertyValue"](s)
         })
         array.each(props, function (s) {
-          self[_e].setProperty(s, v, important)
+          self[_e]["setProperty"](s, v, important)
         })
         var every = array.every(props, function (s, i) {
-          var sNew = self[_e].getPropertyValue(s)
+          var sNew = self[_e]["getPropertyValue"](s)
                                      // TODO a bit hacky ?
           return sOld[i] === sNew && !isSameStyle(v, sNew)
         })
@@ -147,7 +147,7 @@ goog.scope(function () {
         throw new Error()
       }
       var o = new Style()
-      o[_e] = this[_e].style
+      o[_e] = this[_e]["style"]
       Object.freeze(o) // TODO remove this later ?
       f(o)
     },
@@ -157,7 +157,7 @@ goog.scope(function () {
       var r = []
       addStyleTo(r, this[_styles], arguments)
 
-      this[_e].className = r.join(" ")
+      this[_e]["className"] = array.join(r, " ")
     },
     styleWhen: function (x, b) {
       var self = this[_e]
@@ -168,14 +168,14 @@ goog.scope(function () {
           var r = []
           addStyleTo(r, o, [x])
           array.each(r, function (s) {
-            self.classList.add(s)
+            self["classList"]["add"](s)
           })
         }
       } else {
         var r = []
         removeStyleFrom(r, o, [x])
         array.each(r, function (s) {
-          self.classList.remove(s)
+          self["classList"]["remove"](s)
         })
       }
     },
@@ -192,10 +192,10 @@ goog.scope(function () {
       }
     },
     name: function (s) {
-      this[_e].name = s
+      this[_e]["name"] = s
     },
     addText: function (s) {
-      this[_e].appendChild(document.createTextNode(s || ""))
+      this[_e]["appendChild"](document["createTextNode"](s || ""))
     },
     /*previous: function () {
       var e = this[_e].previousSibling
@@ -230,24 +230,24 @@ goog.scope(function () {
     },
     // TODO test the false version
     autofocus: function (b) {
-      this[_e].autofocus = b
+      this[_e]["autofocus"] = b
     },
     stopDragging: function () {
-      this[_e].addEventListener("selectstart", function (e) {
-        if (e.target.localName !== "input") { // && !e.target.draggable
-          e.preventDefault()
+      this[_e]["addEventListener"]("selectstart", function (e) {
+        if (e["target"]["localName"] !== "input") { // && !e.target.draggable
+          e["preventDefault"]()
         }
       }, true)
     },
     move: function (e) {
-      e[_e].appendChild(this[_e])
+      e[_e]["appendChild"](this[_e])
       return this
     },
     moveBefore: function (e, x) {
       if (x) {
-        e[_e].insertBefore(this[_e], x[_e])
+        e[_e]["insertBefore"](this[_e], x[_e])
       } else {
-        e[_e].appendChild(this[_e])
+        e[_e]["appendChild"](this[_e])
       }
     },
     /*replace: function (e) {
@@ -255,13 +255,13 @@ goog.scope(function () {
     },*/
 
     text: function (s) {
-      this[_e].textContent = s || ""
+      this[_e]["textContent"] = s || ""
     },
     remove: function () {
       this.removed = true
-      var self = this[_e]
-      if (self.parentNode) {
-        self.parentNode.removeChild(self)
+      var parent = this[_e]["parentNode"]
+      if (parent) {
+        parent["removeChild"](self)
       }
     },
     bind: function (a, f) {
@@ -275,23 +275,23 @@ goog.scope(function () {
       return o
     },
     title: function (s) {
-      this[_e].title = s
+      this[_e]["title"] = s
     },
     isHidden: function () {
-      return !!this[_e].hidden
+      return !!this[_e]["hidden"]
     },
     hide: function () {
-      this[_e].hidden = true
+      this[_e]["hidden"] = true
     },
     show: function () {
-      this[_e].hidden = false
+      this[_e]["hidden"] = false
     },
     getPosition: function () {
-      return this[_e].getBoundingClientRect()
+      return this[_e]["getBoundingClientRect"]()
     },
     // TODO this should only apply to certain things, like radio buttons and <option>s
     value: function (s) {
-      this[_e].value = s
+      this[_e]["value"] = s
     }
   }
 
@@ -302,7 +302,7 @@ goog.scope(function () {
   function ListItem() {}
   ListItem.prototype = new Box()
   ListItem.prototype.select = function () {
-    this[_e].selected = true
+    this[_e]["selected"] = true
   }
 
   /**
@@ -312,7 +312,7 @@ goog.scope(function () {
   function ListGroup() {}
   ListGroup.prototype = new Box()
   ListGroup.prototype.label = function (s) {
-    this[_e].label = s
+    this[_e]["label"] = s
   }
 
   /**
@@ -322,7 +322,7 @@ goog.scope(function () {
   function Table() {}
   Table.prototype = new Box()
   Table.prototype.rowspan = function (s) {
-    this[_e].rowSpan = s
+    this[_e]["rowSpan"] = s
   }
 
   /**
@@ -332,10 +332,10 @@ goog.scope(function () {
   function Image() {}
   Image.prototype = new Box()
   Image.prototype.alt = function (s) {
-    this[_e].alt = s
+    this[_e]["alt"] = s
   }
   Image.prototype.src = function (s) {
-    this[_e].src = s
+    this[_e]["src"] = s
   }
 
   /**
@@ -344,18 +344,16 @@ goog.scope(function () {
    */
   function IFrame() {}
   IFrame.prototype = new Box()
-  IFrame.prototype.src = function (s) {
-    this[_e].src = s
-  }
+  IFrame.prototype.src = Image.prototype.src
   IFrame.prototype.sandbox = function (s) {
-    this[_e].sandbox = s || ""
+    this[_e]["sandbox"] = s || ""
   }
   IFrame.prototype.seamless = function () {
-    this[_e].setAttribute("seamless", "") // TODO remove this later
-    this[_e].seamless = true
+    this[_e]["setAttribute"]("seamless", "") // TODO remove this later
+    this[_e]["seamless"] = true
   }
   IFrame.prototype.getWindow = function () {
-    return this[_e].contentWindow
+    return this[_e]["contentWindow"]
   }
 
   /**
@@ -365,13 +363,13 @@ goog.scope(function () {
   function Link() {}
   Link.prototype = new Box()
   Link.prototype.src = function (s) {
-    this[_e].href = s
+    this[_e]["href"] = s
   }
   Link.prototype.download = function (s) {
-    this[_e].download = s
+    this[_e]["download"] = s
   }
   Link.prototype.click = function () {
-    this[_e].click()
+    this[_e]["click"]()
   }
 
   /**
@@ -381,10 +379,10 @@ goog.scope(function () {
   function File() {}
   File.prototype = new Box()
   File.prototype.accept = function (s) {
-    this[_e].accept = s
+    this[_e]["accept"] = s
   }
   File.prototype.click = function () {
-    this[_e].click()
+    this[_e]["click"]()
   }
 
   function remove(x) {
@@ -397,6 +395,7 @@ goog.scope(function () {
       })
       e[_e] = null
       e[bindings] = null
+      // TODO I probably need to null out everything ?
       e.mouseclick = null
       e.mousedown = null
       e.mouseover = null
@@ -415,18 +414,18 @@ goog.scope(function () {
     // TODO if the window loses focus and refocuses, it doesn't update properly
     e.focused = cell.dedupe(false, {
       bind: function (self) {
-        o.tabIndex = -1
+        o["tabIndex"] = -1
 
         function focus() {
-          self.set(document.hasFocus())
+          self.set(document["hasFocus"]())
         }
 
         function blur() {
           self.set(false)
         }
 
-        o.addEventListener("focus", focus, true)
-        o.addEventListener("blur", blur, true)
+        o["addEventListener"]("focus", focus, true)
+        o["addEventListener"]("blur", blur, true)
 
         return {
           focus: focus,
@@ -434,15 +433,15 @@ goog.scope(function () {
         }
       },
       unbind: function (e) {
-        o.tabIndex = ""
-        o.removeEventListener("focus", e.focus, true)
-        o.removeEventListener("blur", e.blur, true)
+        o["tabIndex"] = ""
+        o["removeEventListener"]("focus", e.focus, true)
+        o["removeEventListener"]("blur", e.blur, true)
       },
       set: function (self, b) {
         if (b) {
-          o.focus()
+          o["focus"]()
         } else {
-          o.blur()
+          o["blur"]()
         }
       }
     })
@@ -451,35 +450,35 @@ goog.scope(function () {
     e.mouseclick = cell.dedupe(undefined, {
       bind: function (self) {
         function click(e) {
-          e.preventDefault()
-          var oEvent = { left:   (e.button === 0)
-                       , middle: (e.button === 1)
+          e["preventDefault"]()
+          var oEvent = { left:   (e["button"] === 0)
+                       , middle: (e["button"] === 1)
                        , right:  false
-                       , mouseX: e.clientX
-                       , mouseY: e.clientY
-                       , shift:  e.shiftKey
-                       , ctrl:   (e.ctrlKey || e.metaKey)
-                       , alt:    e.altKey }
-          oEvent[_e] = e.target
+                       , mouseX: e["clientX"]
+                       , mouseY: e["clientY"]
+                       , shift:  e["shiftKey"]
+                       , ctrl:   (e["ctrlKey"] || e["metaKey"])
+                       , alt:    e["altKey"] }
+          oEvent[_e] = e["target"]
           self.set(oEvent)
         }
 
         function contextmenu(e) {
-          e.preventDefault()
+          e["preventDefault"]()
           var oEvent = { left:   false
                        , middle: false
                        , right:  true
-                       , mouseX: e.clientX
-                       , mouseY: e.clientY
-                       , shift:  e.shiftKey
-                       , ctrl:   (e.ctrlKey || e.metaKey)
-                       , alt:    e.altKey }
+                       , mouseX: e["clientX"]
+                       , mouseY: e["clientY"]
+                       , shift:  e["shiftKey"]
+                       , ctrl:   (e["ctrlKey"] || e["metaKey"])
+                       , alt:    e["altKey"] }
           oEvent[_e] = e.target
           self.set(oEvent)
         }
 
-        o.addEventListener("click", click, true)
-        o.addEventListener("contextmenu", contextmenu, true)
+        o["addEventListener"]("click", click, true)
+        o["addEventListener"]("contextmenu", contextmenu, true)
 
         return {
           click: click,
@@ -487,8 +486,8 @@ goog.scope(function () {
         }
       },
       unbind: function (e) {
-        o.removeEventListener("click", e.click, true)
-        o.removeEventListener("contextmenu", e.contextmenu, true)
+        o["removeEventListener"]("click", e.click, true)
+        o["removeEventListener"]("contextmenu", e.contextmenu, true)
       }
     })
 
@@ -506,37 +505,37 @@ goog.scope(function () {
     e.mousedown = cell.dedupe(makeSeen(seen, o), {
       bind: function (self) {
         function contextmenu(e) {
-          e.preventDefault()
+          e["preventDefault"]()
         }
 
         function mousedown(e) {
-          if (e.button === 0) {
+          if (e["button"] === 0) {
             seen.left = true
-          } else if (e.button === 1) {
+          } else if (e["button"] === 1) {
             seen.middle = true
-          } else if (e.button === 2) {
+          } else if (e["button"] === 2) {
             seen.right = true
           }
-          self.set(makeSeen(seen, e.target))
+          self.set(makeSeen(seen, e["target"]))
 
           addEventListener("mouseup", function anon(f) {
-            if (f.button === e.button) {
+            if (f["button"] === e["button"]) {
               removeEventListener("mouseup", anon, true)
-              if (e.button === 0) {
+              if (e["button"] === 0) {
                 seen.left = false
-              } else if (e.button === 1) {
+              } else if (e["button"] === 1) {
                 seen.middle = false
-              } else if (e.button === 2) {
+              } else if (e["button"] === 2) {
                 seen.right = false
               }
-              self.set(makeSeen(seen, e.target))
+              self.set(makeSeen(seen, e["target"]))
             }
           }, true)
         }
 
         // TODO blur
-        o.addEventListener("contextmenu", contextmenu, true)
-        o.addEventListener("mousedown", mousedown, true)
+        o["addEventListener"]("contextmenu", contextmenu, true)
+        o["addEventListener"]("mousedown", mousedown, true)
 
         return {
           contextmenu: contextmenu,
@@ -544,8 +543,8 @@ goog.scope(function () {
         }
       },
       unbind: function (e) {
-        o.removeEventListener("contextmenu", e.contextmenu, true)
-        o.removeEventListener("mousedown", e.mousedown, true)
+        o["removeEventListener"]("contextmenu", e.contextmenu, true)
+        o["removeEventListener"]("mousedown", e.mousedown, true)
       }
     })
 
@@ -553,8 +552,8 @@ goog.scope(function () {
       bind: function (self) {
         function mouseover(e) {
           if (isOver(o, e)) {
-            var oEvent = { mouseX: e.clientX, mouseY: e.clientY }
-            oEvent[_e] = e.target // TODO why is this here?
+            var oEvent = { mouseX: e["clientX"], mouseY: e["clientY"] }
+            oEvent[_e] = e["target"] // TODO why is this here?
             self.set(oEvent)
           }
         }
@@ -566,8 +565,8 @@ goog.scope(function () {
         }
 
         // TODO blur
-        o.addEventListener("mouseover", mouseover, true)
-        o.addEventListener("mouseout", mouseout, true)
+        o["addEventListener"]("mouseover", mouseover, true)
+        o["addEventListener"]("mouseout", mouseout, true)
 
         return {
           mouseover: mouseover,
@@ -575,8 +574,8 @@ goog.scope(function () {
         }
       },
       unbind: function (e) {
-        o.removeEventListener("mouseover", e.mouseover, true)
-        o.removeEventListener("mouseout", e.mouseout, true)
+        o["removeEventListener"]("mouseover", e.mouseover, true)
+        o["removeEventListener"]("mouseout", e.mouseout, true)
       }
     })
 
@@ -591,7 +590,7 @@ goog.scope(function () {
   }
 
   addRule(document, "[hidden]", function (o) {
-    o.setProperty("display", "none", "important")
+    o["setProperty"]("display", "none", "important")
   })
 
   /*addRule(document, ".clip *", function (o) {
@@ -599,36 +598,37 @@ goog.scope(function () {
     o.textOverflow = "ellipsis"
   })*/
 
+  // TODO replace these with util.ui.style ?
   addRule(document, "[data-box]", function (o) {
-    o.MozBoxSizing = "border-box" // TODO
-    o.boxSizing = "border-box"
+    o["MozBoxSizing"] = "border-box" // TODO
+    o["boxSizing"] = "border-box"
 
-    o.margin = "0px"
-    o.padding = "0px"
+    o["margin"] = "0px"
+    o["padding"] = "0px"
 
     //o.whiteSpace = "pre-wrap" // TODO
 
-    o.backgroundColor = "transparent"
+    o["backgroundColor"] = "transparent"
 
     // TODO I wish there was a way to get rid of these two
-    o.borderWidth = "0px"
-    o.borderColor = "transparent"
-    o.borderStyle = "solid"
+    o["borderWidth"] = "0px"
+    o["borderColor"] = "transparent"
+    o["borderStyle"] = "solid"
 
-    o.outlineWidth = "0px"
-    o.outlineStyle = "solid"
+    o["outlineWidth"] = "0px"
+    o["outlineStyle"] = "solid"
 
-    o.flexGrow = "0"
-    o.flexShrink = "0" // "1"
-    o.flexBasis = "auto" // TODO try out other stuff like min-content once it becomes available
+    o["flexGrow"] = "0"
+    o["flexShrink"] = "0" // "1"
+    o["flexBasis"] = "auto" // TODO try out other stuff like min-content once it becomes available
 
-    o.position = "relative"
+    o["position"] = "relative"
 
-    o.backgroundSize = "100% 100%"
+    o["backgroundSize"] = "100% 100%"
 
-    o.cursor = "inherit"
+    o["cursor"] = "inherit"
 
-    o.verticalAlign = "middle" // TODO I can probably get rid of this
+    o["verticalAlign"] = "middle" // TODO I can probably get rid of this
 
     //o.verticalAlign = "top" // TODO needed in Firefox
     //o.tableLayout = "fixed"
@@ -650,48 +650,48 @@ goog.scope(function () {
   })*/
 
   addRule(document, "[data-body]", function (o) {
-    o.cursor = "default"
+    o["cursor"] = "default"
   })
 
   addRule(document, "[data-separator]", function (o) {
-    o.height = "1px"
-    o.marginTop = o.marginBottom = "0.5em"
-    o.backgroundColor = "rgb(238, 238, 238)"
+    o["height"] = "1px"
+    o["marginTop"] = o["marginBottom"] = "0.5em"
+    o["backgroundColor"] = "rgb(238, 238, 238)"
   })
 
   addRule(document, "[data-button]", function (o) {
-    o.outline = "none"
-    o.cursor = "pointer"
+    o["outline"] = "none"
+    o["cursor"] = "pointer"
   })
 
   // TODO code duplication with horiz
   addRule(document, "[data-label]", function (o) {
-    o.display = "flex"
-    o.flexDirection = "row"
-    o.alignItems = "center"
+    o["display"] = "flex"
+    o["flexDirection"] = "row"
+    o["alignItems"] = "center"
   })
 
   addRule(document, "[data-list]", function (o) {
-    o.outline = "none"
+    o["outline"] = "none"
     //o.display = "block"
     /*o.position = "relative"
     o.top = "-2px"*/
   })
 
   addRule(document, "[data-table]", function (o) {
-    o.borderSpacing = "0px"
+    o["borderSpacing"] = "0px"
   })
 
   addRule(document, "[data-text]", function (o) {
-    o.cursor = "auto"
+    o["cursor"] = "auto"
   })
 
   addRule(document, "[data-search]", function (o) {
-    o.border = "none"
-    o.outline = "none"
+    o["border"] = "none"
+    o["outline"] = "none"
     //o.margin = "0px"
 
-    o.cursor = "auto"
+    o["cursor"] = "auto"
 
     //o.backgroundColor = "white"
     //o.color = "black"
@@ -736,13 +736,13 @@ goog.scope(function () {
   })
 
   util.ui.normalize = function (f) {
-    document.body.dataset["box"] = ""
-    document.body.dataset["body"] = ""
+    document["body"]["dataset"]["box"] = ""
+    document["body"]["dataset"]["body"] = ""
 
     addRule(document, "html, body", function (o) {
       //o.margin = "0px"
-      o.width = "100%"
-      o.height = "100%"
+      o["width"] = "100%"
+      o["height"] = "100%"
     })
 
     /*addRule(document, "*", function (o) {
@@ -765,7 +765,7 @@ goog.scope(function () {
           })
         }
       })
-    })["observe"](document.body, {
+    })["observe"](document["body"], {
       "childList": true,
       "subtree": true
     })
@@ -774,7 +774,7 @@ goog.scope(function () {
     //o.className = "vert"
     //o.style.width = o.style.height = "100%"
     //document.body.appendChild(o)
-    return call(f, make(Box, document.body))
+    return call(f, make(Box, document["body"]))
   }
 
   /*function calculate(x) {
@@ -807,37 +807,37 @@ goog.scope(function () {
   }*/
 
   util.ui.box = function (f) {
-    var o = document.createElement("div")
-    o.dataset["box"] = ""
+    var o = document["createElement"]("div")
+    o["dataset"]["box"] = ""
     //calculate(x)
     return call(f, make(Box, o))
   }
 
   // TODO remove this ?
   util.ui.element = function (s, f) {
-    var o = document.createElement(s)
-    o.dataset["box"] = ""
+    var o = document["createElement"](s)
+    o["dataset"]["box"] = ""
     return call(f, make(Box, o))
   }
 
   util.ui.label = function (f) {
-    var o = document.createElement("label")
-    o.dataset["box"] = ""
-    o.dataset["label"] = ""
+    var o = document["createElement"]("label")
+    o["dataset"]["box"] = ""
+    o["dataset"]["label"] = ""
     return call(f, make(Box, o))
   }
 
   util.ui.separator = function (f) {
-    var o = document.createElement("hr")
-    o.dataset["box"] = ""
-    o.dataset["separator"] = ""
+    var o = document["createElement"]("hr")
+    o["dataset"]["box"] = ""
+    o["dataset"]["separator"] = ""
     return call(f, make(Box, o))
   }
 
   util.ui.checkbox = function (f) {
-    var o = document.createElement("input")
-    o.dataset["box"] = ""
-    o.type = "checkbox"
+    var o = document["createElement"]("input")
+    o["dataset"]["box"] = ""
+    o["type"] = "checkbox"
 
     var e = make(Box, o)
 
@@ -845,17 +845,17 @@ goog.scope(function () {
     e.changed = cell.value(undefined, {
       bind: function (self) {
         function change() {
-          self.set(o.checked)
+          self.set(o["checked"])
         }
 
-        o.addEventListener("change", change, true)
+        o["addEventListener"]("change", change, true)
 
         return {
           change: change
         }
       },
       unbind: function (e) {
-        o.removeEventListener("change", e.change, true)
+        o["removeEventListener"]("change", e.change, true)
       }
     })
 
@@ -863,11 +863,11 @@ goog.scope(function () {
     // TODO closure
     // TODO should <cell>.get() trigger <cell>bind() ?
     // TODO maybe this can ignore duplicates ?
-    e.checked = cell.value(o.indeterminate ? null : o.checked, {
+    e.checked = cell.value(o["indeterminate"] ? null : o["checked"], {
       bind: function (self) {
         // TODO is this correct; does it leak; is it inefficient; can it be replaced with cell.map ?
         return e.event([e.changed], function (b) {
-          self.set(o.indeterminate ? null : b)
+          self.set(o["indeterminate"] ? null : b)
         })
       },
       unbind: function (e) {
@@ -875,11 +875,11 @@ goog.scope(function () {
       },
       set: function (self, x) {
         if (x === null) {
-          o.checked = false
-          o.indeterminate = true
+          o["checked"] = false
+          o["indeterminate"] = true
         } else {
-          o.checked = x
-          o.indeterminate = false
+          o["checked"] = x
+          o["indeterminate"] = false
         }
       }
     })
@@ -888,9 +888,9 @@ goog.scope(function () {
   }
 
   util.ui.radio = function (f) {
-    var o = document.createElement("input")
-    o.dataset["box"] = ""
-    o.type = "radio"
+    var o = document["createElement"]("input")
+    o["dataset"]["box"] = ""
+    o["type"] = "radio"
 
     var e = make(Box, o)
 
@@ -898,17 +898,17 @@ goog.scope(function () {
     e.changed = cell.value(undefined, {
       bind: function (self) {
         function change() {
-          self.set(o.checked)
+          self.set(o["checked"])
         }
 
-        o.addEventListener("change", change, true)
+        o["addEventListener"]("change", change, true)
 
         return {
           change: change
         }
       },
       unbind: function (e) {
-        o.removeEventListener("change", e.change, true)
+        o["removeEventListener"]("change", e.change, true)
       }
     })
 
@@ -917,11 +917,11 @@ goog.scope(function () {
     // TODO closure
     // TODO should <cell>.get() trigger <cell>bind() ?
     // TODO maybe this can ignore duplicates ?
-    e.checked = cell.value(o.indeterminate ? null : o.checked, {
+    e.checked = cell.value(o["indeterminate"] ? null : o["checked"], {
       bind: function (self) {
         // TODO is this correct; does it leak; is it inefficient; can it be replaced with cell.map ?
         return e.event([e.changed], function (b) {
-          self.set(o.indeterminate ? null : b)
+          self.set(o["indeterminate"] ? null : b)
         })
       },
       unbind: function (e) {
@@ -929,11 +929,11 @@ goog.scope(function () {
       },
       set: function (self, x) {
         if (x === null) {
-          o.checked = false
-          o.indeterminate = true
+          o["checked"] = false
+          o["indeterminate"] = true
         } else {
-          o.checked = x
-          o.indeterminate = false
+          o["checked"] = x
+          o["indeterminate"] = false
         }
       }
     })
@@ -942,9 +942,9 @@ goog.scope(function () {
   }
 
   util.ui.list = function (f) {
-    var o = document.createElement("select")
-    o.dataset["box"] = ""
-    o.dataset["list"] = ""
+    var o = document["createElement"]("select")
+    o["dataset"]["box"] = ""
+    o["dataset"]["list"] = ""
 
     var e = make(Box, o)
 
@@ -954,17 +954,17 @@ goog.scope(function () {
       bind: function (self) {
         function change() {
           //var x = o.options[o.selectedIndex]
-          self.set(o.value)
+          self.set(o["value"])
         }
 
-        o.addEventListener("change", change, true)
+        o["addEventListener"]("change", change, true)
 
         return {
           change: change
         }
       },
       unbind: function (e) {
-        o.removeEventListener("change", e.change, true)
+        o["removeEventListener"]("change", e.change, true)
       }
     })
 
@@ -972,50 +972,48 @@ goog.scope(function () {
   }
 
   util.ui.listItem = function (f) {
-    var o = document.createElement("option")
-    o.dataset["box"] = ""
+    var o = document["createElement"]("option")
+    o["dataset"]["box"] = ""
     return call(f, make(ListItem, o))
   }
 
   util.ui.listGroup = function (f) {
-    var o = document.createElement("optgroup")
-    o.dataset["box"] = ""
+    var o = document["createElement"]("optgroup")
+    o["dataset"]["box"] = ""
     return call(f, make(ListGroup, o))
   }
 
   util.ui.search = function (f) {
-    var o = document.createElement("input")
-    o.dataset["box"] = ""
-    o.dataset["search"] = ""
-    o.type = "search"
-    o.incremental = true
-    o.autocomplete = "off"
-    o.placeholder = "Search"
-    o.setAttribute("results", "")
+    var o = document["createElement"]("input")
+    o["dataset"]["box"] = ""
+    o["dataset"]["search"] = ""
+    o["type"] = "search"
+    o["incremental"] = true
+    o["autocomplete"] = "off"
+    o["placeholder"] = "Search"
+    o["setAttribute"]("results", "")
     //calculate(x)
 
     var e = make(Box, o)
 
     // TODO closure
-    e.value = cell.dedupe(o.value, {
+    e.value = cell.dedupe(o["value"], {
       bind: function (self) {
-        console.log("HIYA")
-
         function search() {
-          self.set(o.value)
+          self.set(o["value"])
         }
 
-        o.addEventListener("search", search, true)
+        o["addEventListener"]("search", search, true)
 
         return {
           search: search
         }
       },
       unbind: function (e) {
-        o.removeEventListener("search", e.search, true)
+        o["removeEventListener"]("search", e.search, true)
       },
       set: function (self, x) {
-        o.value = x
+        o["value"] = x
       }
     })
 
@@ -1023,10 +1021,10 @@ goog.scope(function () {
   }
 
   util.ui.textbox = function (f) {
-    var o = document.createElement("input")
-    o.dataset["box"] = ""
-    o.dataset["text"] = ""
-    o.type = "text"
+    var o = document["createElement"]("input")
+    o["dataset"]["box"] = ""
+    o["dataset"]["text"] = ""
+    o["type"] = "text"
 
     var e = make(Box, o)
 
@@ -1035,25 +1033,25 @@ goog.scope(function () {
     e.changed = cell.value(undefined, {
       bind: function (self) {
         function change() {
-          e.value.set(o.value)
-          self.set(o.value)
+          e.value.set(o["value"]) // TODO why is this here ?
+          self.set(o["value"])
         }
 
-        o.addEventListener("change", change, true)
+        o["addEventListener"]("change", change, true)
 
         return {
           change: change
         }
       },
       unbind: function (e) {
-        o.removeEventListener("change", e.change, true)
+        o["removeEventListener"]("change", e.change, true)
       }
     })
 
     // TODO closure
     // TODO code duplication
     // TODO should <cell>.get() trigger <cell>bind() ?
-    e.value = cell.dedupe(o.value, {
+    e.value = cell.dedupe(o["value"], {
       // TODO is all this stuff necessary ?
       bind: function (self) {
         // TODO is this correct; does it leak; is it inefficient; can it be replaced with cell.map ?
@@ -1065,7 +1063,7 @@ goog.scope(function () {
         e.unbind()
       },
       set: function (self, x) {
-        o.value = x
+        o["value"] = x
       }
     })
 
@@ -1073,30 +1071,30 @@ goog.scope(function () {
   }
 
   util.ui.textarea = function (f) {
-    var o = document.createElement("textarea")
-    o.dataset["box"] = ""
+    var o = document["createElement"]("textarea")
+    o["dataset"]["box"] = ""
 
     var e = make(Box, o)
 
     // TODO closure
     // TODO code duplication
-    e.value = cell.dedupe(o.value, {
+    e.value = cell.dedupe(o["value"], {
       bind: function (self) {
         function input() {
-          self.set(o.value)
+          self.set(o["value"])
         }
 
-        o.addEventListener("input", input, true)
+        o["addEventListener"]("input", input, true)
 
         return {
           input: input
         }
       },
       unbind: function (e) {
-        o.removeEventListener("input", e.input, true)
+        o["removeEventListener"]("input", e.input, true)
       },
       set: function (self, x) {
-        o.value = x
+        o["value"] = x
       }
     })
 
@@ -1104,25 +1102,26 @@ goog.scope(function () {
   }
 
   util.ui.link = function (f) {
-    var o = document.createElement("a")
-    o.dataset["box"] = ""
+    var o = document["createElement"]("a")
+    o["dataset"]["box"] = ""
     return call(f, make(Link, o))
   }
 
   util.ui.iframe = function (f) {
-    var o = document.createElement("iframe")
-    o.dataset["box"] = ""
+    var o = document["createElement"]("iframe")
+    o["dataset"]["box"] = ""
     return call(f, make(IFrame, o))
   }
 
   util.ui.file = function (f) {
-    var o = document.createElement("input")
-    o.dataset["box"] = ""
-    o.type = "file"
+    var o = document["createElement"]("input")
+    o["dataset"]["box"] = ""
+    o["type"] = "file"
 
-    o.addEventListener("error", function (e) {
-      console.log(e)
-      alert("Error: " + JSON.stringify(e))
+    o["addEventListener"]("error", function (e) {
+      log(e)
+      // TODO
+      alert("Error: " + JSON["stringify"](e))
     }, true)
 
     var e = make(File, o)
@@ -1132,24 +1131,25 @@ goog.scope(function () {
       bind: function (self) {
         function change(e) {
           var x = new FileReader()
-          x.onerror = x.onabort = function (e) {
-            console.log(e)
-            alert("Error: " + JSON.stringify(e))
+          x["onerror"] = x["onabort"] = function (e) {
+            log(e)
+            // TODO
+            alert("Error: " + JSON["stringify"](e))
           }
-          x.onload = function (e) {
-            self.set(e.target.result)
+          x["onload"] = function (e) {
+            self.set(e["target"]["result"])
           }
-          x.readAsText(e.target.files[0])
+          x["readAsText"](e["target"]["files"][0])
         }
 
-        o.addEventListener("change", change, true)
+        o["addEventListener"]("change", change, true)
 
         return {
           change: change
         }
       },
       unbind: function (e) {
-        o.removeEventListener("change", e.change, true)
+        o["removeEventListener"]("change", e.change, true)
       }
     })
 
@@ -1157,41 +1157,41 @@ goog.scope(function () {
   }
 
   util.ui.image = function (f) {
-    var o = document.createElement("img")
-    o.dataset["box"] = ""
+    var o = document["createElement"]("img")
+    o["dataset"]["box"] = ""
     //calculate(x)
     return call(f, make(Image, o))
   }
 
   util.ui.button = function (f) {
-    var o = document.createElement("button")
-    o.dataset["box"] = ""
-    o.dataset["button"] = ""
+    var o = document["createElement"]("button")
+    o["dataset"]["box"] = ""
+    o["dataset"]["button"] = ""
     return call(f, make(Box, o))
   }
 
   util.ui.table = function (f) {
-    var o = document.createElement("table")
-    o.dataset["box"] = ""
-    o.dataset["table"] = ""
+    var o = document["createElement"]("table")
+    o["dataset"]["box"] = ""
+    o["dataset"]["table"] = ""
     return call(f, make(Box, o))
   }
 
   util.ui.row = function (f) {
-    var o = document.createElement("tr")
-    o.dataset["box"] = ""
+    var o = document["createElement"]("tr")
+    o["dataset"]["box"] = ""
     return call(f, make(Box, o))
   }
 
   util.ui.cell = function (f) {
-    var o = document.createElement("td")
-    o.dataset["box"] = ""
+    var o = document["createElement"]("td")
+    o["dataset"]["box"] = ""
     return call(f, make(Table, o))
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
   util.ui.calc = function () {
-    return "calc(" + array.toArray(arguments).join(" ") + ")"
+    return "calc(" + array.join(arguments, " ") + ")"
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
@@ -1200,7 +1200,7 @@ goog.scope(function () {
     array.each(array.slice(arguments, 1), function (a) {
       array.push(r, a[1] + " " + a[0])
     })
-    return "linear-gradient(" + r.join(",") + ")"
+    return "linear-gradient(" + array.join(r, ",") + ")"
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
@@ -1209,7 +1209,7 @@ goog.scope(function () {
     array.each(array.slice(arguments, 1), function (a) {
       array.push(r, a[1] + " " + a[0])
     })
-    return "repeating-linear-gradient(" + r.join(",") + ")"
+    return "repeating-linear-gradient(" + array.join(r, ",") + ")"
   }
 
   util.ui.hsl = function (hue, sat, light, alpha) {
@@ -1224,24 +1224,24 @@ goog.scope(function () {
   }
 
   util.ui.textStroke = function (color, blur) {
-    return ["-1px -1px " + blur + " " + color,
-            "-1px  1px " + blur + " " + color,
-            " 1px -1px " + blur + " " + color,
-            " 1px  1px " + blur + " " + color].join(",")
+    return array.join(["-1px -1px " + blur + " " + color,
+                       "-1px  1px " + blur + " " + color,
+                       " 1px -1px " + blur + " " + color,
+                       " 1px  1px " + blur + " " + color], ",")
   }
 
   // TODO not completely ideal, but it's the best I've come up with so far...
   util.ui.exclude = function (x, e) {
     return cell.filter(x.get(), x, function (x) {
-      return !x || !e[_e].contains(x[_e])
+      return !x || !e[_e]["contains"](x[_e])
     })
   }
 
   util.ui.width = function () {
-    return document.documentElement.offsetWidth
+    return document["documentElement"]["offsetWidth"]
   }
 
   util.ui.height = function () {
-    return document.documentElement.offsetHeight
+    return document["documentElement"]["offsetHeight"]
   }
 })

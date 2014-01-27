@@ -12,6 +12,16 @@ goog.scope(function () {
 
   /**
    * @param {!util.array.ArrayLike} a
+   * @param {string} s
+   * @return {string}
+   */
+  util.array.join = function (a, s) {
+    return []["join"]["call"](a, s)
+  }
+
+  /**
+   * TODO doesn't work on strings
+   * @param {!util.array.ArrayLike} a
    * @param {number} index
    * @param {*} x
    */
@@ -20,6 +30,7 @@ goog.scope(function () {
   }
 
   /**
+   * TODO doesn't work on strings
    * @param {!util.array.ArrayLike} a
    * @param {number} index
    */
@@ -36,6 +47,7 @@ goog.scope(function () {
   }
 
   /**
+   * TODO doesn't work on strings
    * @param {!util.array.ArrayLike} a
    * @param {*} x
    * @return {number}
@@ -98,6 +110,20 @@ goog.scope(function () {
       }
     }
     return -1
+  }
+
+  /**
+   * @param {...!util.array.ArrayLike} var_args
+   * @return {!Array}
+   */
+  util.array.concat = function (var_args) {
+    var r = []
+    array.each(arguments, function (x) {
+      array.each(x, function (x) {
+        array.push(r, x)
+      })
+    })
+    return r
   }
 
   /**
