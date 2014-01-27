@@ -118,9 +118,9 @@ goog.scope(function () {
    */
   util.array.concat = function (var_args) {
     var r = []
-    array.each(arguments, function (x) {
-      array.each(x, function (x) {
-        array.push(r, x)
+    util.array.each(arguments, function (x) {
+      util.array.each(x, function (x) {
+        util.array.push(r, x)
       })
     })
     return r
