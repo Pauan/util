@@ -4,12 +4,14 @@ goog.require("util.Symbol")
 goog.require("util.cell")
 goog.require("util.array")
 goog.require("util.type")
+goog.require("util.log")
 
 goog.scope(function () {
   var Symbol = util.Symbol
     , cell   = util.cell
     , array  = util.array
     , type   = util.type
+    , log    = util.log.log
 
   var styleIds = 0
 
@@ -104,7 +106,7 @@ goog.scope(function () {
     o[_styles] = []
     addRule(document, "." + name, function (e) {
       o[_e] = e
-      Object.freeze(o) // TODO remove this later ?
+      Object["freeze"](o) // TODO remove this later ?
       f(o)
     })
     return o
@@ -261,7 +263,7 @@ goog.scope(function () {
       this.removed = true
       var parent = this[_e]["parentNode"]
       if (parent) {
-        parent["removeChild"](self)
+        parent["removeChild"](this[_e])
       }
     },
     bind: function (a, f) {
@@ -481,7 +483,7 @@ goog.scope(function () {
                        , shift:  e["shiftKey"]
                        , ctrl:   (e["ctrlKey"] || e["metaKey"])
                        , alt:    e["altKey"] }
-          oEvent[_e] = e.target
+          oEvent[_e] = e["target"]
           self.set(oEvent)
         }
 
