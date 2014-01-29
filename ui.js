@@ -150,7 +150,7 @@ goog.scope(function () {
       }
       var o = new Style()
       o[_e] = this[_e]["style"]
-      Object.freeze(o) // TODO remove this later ?
+      Object["freeze"](o) // TODO remove this later ?
       f(o)
     },
     styles: function () {
