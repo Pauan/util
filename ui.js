@@ -1243,6 +1243,10 @@ goog.scope(function () {
     })
   }
 
+  util.ui.title = function (s) {
+    document["title"] = s
+  }
+
   util.ui.width = function () {
     return document["documentElement"]["offsetWidth"]
   }

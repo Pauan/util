@@ -20,22 +20,24 @@ goog.scope(function () {
   }
 
   /**
-   * TODO doesn't work on strings
-   * @param {!util.array.ArrayLike} a
+   * @param {!Array} a
    * @param {number} index
    * @param {*} x
+   * @return {number}
    */
   util.array.insertAt = function (a, index, x) {
     []["splice"]["call"](a, index, 0, x)
+    return index
   }
 
   /**
-   * TODO doesn't work on strings
-   * @param {!util.array.ArrayLike} a
+   * @param {!Array} a
    * @param {number} index
+   * @return {number}
    */
   util.array.removeAt = function (a, index) {
     []["splice"]["call"](a, index, 1)
+    return index
   }
 
   /**
@@ -47,8 +49,7 @@ goog.scope(function () {
   }
 
   /**
-   * TODO doesn't work on strings
-   * @param {!util.array.ArrayLike} a
+   * @param {!Array} a
    * @param {*} x
    * @return {number}
    */
@@ -64,6 +65,72 @@ goog.scope(function () {
    */
   util.array.slice = function (a, start, end) {
     return []["slice"]["call"](a, start, end)
+  }
+
+  /**
+   * @param {!util.array.ArrayLike} a
+   * @param {number} i
+   * @return {boolean}
+   */
+  util.array.indexInRange = function (a, i) {
+    return i >= 0 && i < util.array.len(a)
+  }
+
+  /**
+   * @param {!util.array.ArrayLike} a
+   * @param {*} x
+   * @param {function(*, *):boolean} sort
+   * @return {boolean}
+   */
+  util.array.isElementSorted = function (a, x, sort) {
+    var i = util.array.indexOf(a, x)
+    if (i === -1) {
+      return false
+    } else {
+      var prev = i - 1
+        , next = i + 1
+      return (!util.array.indexInRange(a, prev) || sort(a[prev], x)) &&
+             (!util.array.indexInRange(a, next) || sort(x, a[next]))
+    }
+  }
+
+  /**
+   * @param {!Array} a
+   * @param {*} x
+   * @param {function(*, *):boolean} sort
+   * @return {number}
+   */
+  util.array.insertSorted = function (a, x, sort) {
+    var y
+    for (var i = 0, iLen = util.array.len(a); i < iLen; ++i) {
+      y = a[i]
+      if (x === y) {
+        throw new Error("sorted array cannot have duplicates")
+        /*
+        // TODO test this
+        if (i + 1 === iLen || sort(x, a[i + 1])) {
+          return i
+        } else {
+          a.splice(i, 1)
+          console.log("HIYAAAAAA")
+          --i
+        }*/
+      } else if (sort(x, y)) {
+        return util.array.insertAt(a, i, x)
+      }
+    }
+    return util.array.push(a, x)
+  }
+
+  /**
+   * @param {!Array} a
+   * @param {*} x
+   */
+  util.array.remove = function (a, x) {
+    var i = util.array.indexOf(a, x)
+    if (i !== -1) {
+      util.array.removeAt(a, i)
+    }
   }
 
   /**
