@@ -1129,9 +1129,7 @@ goog.scope(function () {
     o["type"] = "file"
 
     o["addEventListener"]("error", function (e) {
-      log(e)
-      // TODO
-      alert("Error: " + JSON["stringify"](e))
+      assert(false, e)
     }, true)
 
     var e = make(File, o)
@@ -1142,9 +1140,7 @@ goog.scope(function () {
         function change(e) {
           var x = new FileReader()
           x["onerror"] = x["onabort"] = function (e) {
-            log(e)
-            // TODO
-            alert("Error: " + JSON["stringify"](e))
+            assert(false, e)
           }
           x["onload"] = function (e) {
             self.set(e["target"]["result"])
