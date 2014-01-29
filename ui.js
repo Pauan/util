@@ -287,7 +287,15 @@ goog.scope(function () {
       this[_e]["hidden"] = false
     },
     getPosition: function () {
-      return this[_e]["getBoundingClientRect"]()
+      var o = this[_e]["getBoundingClientRect"]()
+        , r = {}
+      r.bottom = o["bottom"]
+      r.height = o["height"]
+      r.left   = o["left"]
+      r.right  = o["right"]
+      r.top    = o["top"]
+      r.width  = o["width"]
+      return r
     },
     // TODO this should only apply to certain things, like radio buttons and <option>s
     value: function (s) {

@@ -44,6 +44,8 @@ goog.scope(function () {
    */
   util.math.sqrt = Math["sqrt"]
 
+  util.math.floor = Math["floor"]
+
   /**
    * http://www.johndcook.com/blog/2010/06/02/whats-so-hard-about-finding-a-hypotenuse/
    * @param {number} x
