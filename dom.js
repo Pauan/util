@@ -1,4 +1,4 @@
-goog.provide("util.ui")
+goog.provide("util.dom")
 
 goog.require("util.Symbol")
 goog.require("util.cell")
@@ -99,7 +99,7 @@ goog.scope(function () {
     })
   }
 
-  util.ui.style = function (f) {
+  util.dom.style = function (f) {
     var name = "_" + (++styleIds)
     var o = new Style2()
     o.name = name
@@ -608,7 +608,7 @@ goog.scope(function () {
     o.textOverflow = "ellipsis"
   })*/
 
-  // TODO replace these with util.ui.style ?
+  // TODO replace these with util.dom.style ?
   addRule(document, "[data-box]", function (o) {
     o["MozBoxSizing"] = "border-box" // TODO
     o["boxSizing"] = "border-box"
@@ -707,45 +707,45 @@ goog.scope(function () {
     //o.color = "black"
   })
 
-  util.ui.horiz = util.ui.style(function (e) {
+  util.dom.horiz = util.dom.style(function (e) {
     e.set("display", "flex")
     e.set("flex-direction", "row")
     e.set("align-items", "center")
   })
 
-  util.ui.vert = util.ui.style(function (e) {
+  util.dom.vert = util.dom.style(function (e) {
     e.set("display", "flex")
     e.set("flex-direction", "column")
   })
 
-  util.ui.panel = util.ui.style(function (e) {
+  util.dom.panel = util.dom.style(function (e) {
     e.set("position", "absolute")
     e.set("z-index", highestZIndex)
   })
 
-  util.ui.fixedPanel = util.ui.style(function (e) {
+  util.dom.fixedPanel = util.dom.style(function (e) {
     e.set("position", "fixed")
     e.set("z-index", highestZIndex)
   })
 
-  util.ui.shrink = util.ui.style(function (e) {
+  util.dom.shrink = util.dom.style(function (e) {
     // e.set("display", "inline-block")
     e.set("flex-shrink", "1")
   })
 
-  util.ui.clip = util.ui.style(function (e) {
+  util.dom.clip = util.dom.style(function (e) {
     e.set("flex-shrink", "1")
     e.set("overflow", "hidden")
     e.set("text-overflow", "ellipsis")
   })
 
-  util.ui.stretch = util.ui.style(function (e) {
+  util.dom.stretch = util.dom.style(function (e) {
     e.set("flex-shrink", "1")
     e.set("flex-grow", "1")
     e.set("flex-basis", "0%")
   })
 
-  util.ui.normalize = function (f) {
+  util.dom.normalize = function (f) {
     document["body"]["dataset"]["box"] = ""
     document["body"]["dataset"]["body"] = ""
 
@@ -816,7 +816,7 @@ goog.scope(function () {
     })
   }*/
 
-  util.ui.box = function (f) {
+  util.dom.box = function (f) {
     var o = document["createElement"]("div")
     o["dataset"]["box"] = ""
     //calculate(x)
@@ -824,27 +824,27 @@ goog.scope(function () {
   }
 
   // TODO remove this ?
-  util.ui.element = function (s, f) {
+  util.dom.element = function (s, f) {
     var o = document["createElement"](s)
     o["dataset"]["box"] = ""
     return call(f, make(Box, o))
   }
 
-  util.ui.label = function (f) {
+  util.dom.label = function (f) {
     var o = document["createElement"]("label")
     o["dataset"]["box"] = ""
     o["dataset"]["label"] = ""
     return call(f, make(Box, o))
   }
 
-  util.ui.separator = function (f) {
+  util.dom.separator = function (f) {
     var o = document["createElement"]("hr")
     o["dataset"]["box"] = ""
     o["dataset"]["separator"] = ""
     return call(f, make(Box, o))
   }
 
-  util.ui.checkbox = function (f) {
+  util.dom.checkbox = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
     o["type"] = "checkbox"
@@ -897,7 +897,7 @@ goog.scope(function () {
     return call(f, e)
   }
 
-  util.ui.radio = function (f) {
+  util.dom.radio = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
     o["type"] = "radio"
@@ -951,7 +951,7 @@ goog.scope(function () {
     return call(f, e)
   }
 
-  util.ui.list = function (f) {
+  util.dom.list = function (f) {
     var o = document["createElement"]("select")
     o["dataset"]["box"] = ""
     o["dataset"]["list"] = ""
@@ -981,19 +981,19 @@ goog.scope(function () {
     return call(f, e)
   }
 
-  util.ui.listItem = function (f) {
+  util.dom.listItem = function (f) {
     var o = document["createElement"]("option")
     o["dataset"]["box"] = ""
     return call(f, make(ListItem, o))
   }
 
-  util.ui.listGroup = function (f) {
+  util.dom.listGroup = function (f) {
     var o = document["createElement"]("optgroup")
     o["dataset"]["box"] = ""
     return call(f, make(ListGroup, o))
   }
 
-  util.ui.search = function (f) {
+  util.dom.search = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
     o["dataset"]["search"] = ""
@@ -1030,7 +1030,7 @@ goog.scope(function () {
     return call(f, e)
   }
 
-  util.ui.textbox = function (f) {
+  util.dom.textbox = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
     o["dataset"]["text"] = ""
@@ -1080,7 +1080,7 @@ goog.scope(function () {
     return call(f, e)
   }
 
-  util.ui.textarea = function (f) {
+  util.dom.textarea = function (f) {
     var o = document["createElement"]("textarea")
     o["dataset"]["box"] = ""
 
@@ -1111,19 +1111,19 @@ goog.scope(function () {
     return call(f, e)
   }
 
-  util.ui.link = function (f) {
+  util.dom.link = function (f) {
     var o = document["createElement"]("a")
     o["dataset"]["box"] = ""
     return call(f, make(Link, o))
   }
 
-  util.ui.iframe = function (f) {
+  util.dom.iframe = function (f) {
     var o = document["createElement"]("iframe")
     o["dataset"]["box"] = ""
     return call(f, make(IFrame, o))
   }
 
-  util.ui.file = function (f) {
+  util.dom.file = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
     o["type"] = "file"
@@ -1162,46 +1162,46 @@ goog.scope(function () {
     return call(f, e)
   }
 
-  util.ui.image = function (f) {
+  util.dom.image = function (f) {
     var o = document["createElement"]("img")
     o["dataset"]["box"] = ""
     //calculate(x)
     return call(f, make(Image, o))
   }
 
-  util.ui.button = function (f) {
+  util.dom.button = function (f) {
     var o = document["createElement"]("button")
     o["dataset"]["box"] = ""
     o["dataset"]["button"] = ""
     return call(f, make(Box, o))
   }
 
-  util.ui.table = function (f) {
+  util.dom.table = function (f) {
     var o = document["createElement"]("table")
     o["dataset"]["box"] = ""
     o["dataset"]["table"] = ""
     return call(f, make(Box, o))
   }
 
-  util.ui.row = function (f) {
+  util.dom.row = function (f) {
     var o = document["createElement"]("tr")
     o["dataset"]["box"] = ""
     return call(f, make(Box, o))
   }
 
-  util.ui.cell = function (f) {
+  util.dom.cell = function (f) {
     var o = document["createElement"]("td")
     o["dataset"]["box"] = ""
     return call(f, make(Table, o))
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
-  util.ui.calc = function () {
+  util.dom.calc = function () {
     return "calc(" + array.join(arguments, " ") + ")"
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
-  util.ui.gradient = function (x) {
+  util.dom.gradient = function (x) {
     var r = [x]
     array.each(array.slice(arguments, 1), function (a) {
       array.push(r, a[1] + " " + a[0])
@@ -1210,7 +1210,7 @@ goog.scope(function () {
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
-  util.ui.repeatingGradient = function (x) {
+  util.dom.repeatingGradient = function (x) {
     var r = [x]
     array.each(array.slice(arguments, 1), function (a) {
       array.push(r, a[1] + " " + a[0])
@@ -1218,7 +1218,7 @@ goog.scope(function () {
     return "repeating-linear-gradient(" + array.join(r, ",") + ")"
   }
 
-  util.ui.hsl = function (hue, sat, light, alpha) {
+  util.dom.hsl = function (hue, sat, light, alpha) {
     if (alpha == null) {
       alpha = 1
     }
@@ -1229,7 +1229,7 @@ goog.scope(function () {
     }
   }
 
-  util.ui.textStroke = function (color, blur) {
+  util.dom.textStroke = function (color, blur) {
     return array.join(["-1px -1px " + blur + " " + color,
                        "-1px  1px " + blur + " " + color,
                        " 1px -1px " + blur + " " + color,
@@ -1237,21 +1237,21 @@ goog.scope(function () {
   }
 
   // TODO not completely ideal, but it's the best I've come up with so far...
-  util.ui.exclude = function (x, e) {
+  util.dom.exclude = function (x, e) {
     return cell.filter(x.get(), x, function (x) {
       return !x || !e[_e]["contains"](x[_e])
     })
   }
 
-  util.ui.title = function (s) {
+  util.dom.title = function (s) {
     document["title"] = s
   }
 
-  util.ui.width = function () {
+  util.dom.width = function () {
     return document["documentElement"]["offsetWidth"]
   }
 
-  util.ui.height = function () {
+  util.dom.height = function () {
     return document["documentElement"]["offsetHeight"]
   }
 })
