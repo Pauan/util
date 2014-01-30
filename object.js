@@ -10,6 +10,15 @@ goog.scope(function () {
    */
   var hasOwn = {}["hasOwnProperty"]
 
+  /**
+   * @param {!Object} o
+   * @param {string} s
+   * @return {boolean}
+   */
+  util.object.hasOwn = function (o, s) {
+    return hasOwn["call"](o, s)
+  }
+
   // TODO should this iterate over the prototype or not?
   /**
    * @param {!Object} x
@@ -28,7 +37,7 @@ goog.scope(function () {
   util.object.keys = function (x) {
     var r = []
     for (var s in x) {
-      if (hasOwn["call"](x, s)) {
+      if (util.object.hasOwn(x, s)) {
         array.push(r, s)
       }
     }

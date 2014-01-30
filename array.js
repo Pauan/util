@@ -20,6 +20,14 @@ goog.scope(function () {
   }
 
   /**
+   * @param {!util.array.ArrayLike} a
+   * @param {function(*, *):number} f
+   */
+  util.array.sort = function (a, f) {
+    []["sort"]["call"](a, f)
+  }
+
+  /**
    * @param {!Array} a
    * @param {number} index
    * @param {*} x

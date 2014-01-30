@@ -352,6 +352,22 @@ goog.scope(function () {
    * @constructor
    * @extends {Box}
    */
+  function Text() {}
+  Text.prototype = new Box()
+  Text.prototype.sync = function (oCell) {
+    var self = this
+    self.bind([oCell], function (x) {
+      self.value.set(x)
+    })
+    self.event([self.value], function (x) {
+      oCell.set(x)
+    })
+  }
+
+  /**
+   * @constructor
+   * @extends {Box}
+   */
   function IFrame() {}
   IFrame.prototype = new Box()
   IFrame.prototype.src = Image.prototype.src
@@ -745,7 +761,7 @@ goog.scope(function () {
     e.set("flex-basis", "0%")
   })
 
-  util.dom.normalize = function (f) {
+  util.dom.initialize = function (f) {
     document["body"]["dataset"]["box"] = ""
     document["body"]["dataset"]["body"] = ""
 
@@ -1004,7 +1020,7 @@ goog.scope(function () {
     o["setAttribute"]("results", "")
     //calculate(x)
 
-    var e = make(Box, o)
+    var e = make(Text, o)
 
     // TODO closure
     e.value = cell.dedupe(o["value"], {
@@ -1036,7 +1052,7 @@ goog.scope(function () {
     o["dataset"]["text"] = ""
     o["type"] = "text"
 
-    var e = make(Box, o)
+    var e = make(Text, o)
 
     // TODO closure
     // TODO code duplication
@@ -1084,7 +1100,7 @@ goog.scope(function () {
     var o = document["createElement"]("textarea")
     o["dataset"]["box"] = ""
 
-    var e = make(Box, o)
+    var e = make(Text, o)
 
     // TODO closure
     // TODO code duplication
