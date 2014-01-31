@@ -1221,7 +1221,11 @@ goog.scope(function () {
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
-  util.dom.gradient = function (x) {
+  /**
+   * @param {string} x
+   * @param {...!Array.<string>} var_args
+   */
+  util.dom.gradient = function (x, var_args) {
     var r = [x]
     array.each(array.slice(arguments, 1), function (a) {
       array.push(r, a[1] + " " + a[0])
@@ -1230,6 +1234,10 @@ goog.scope(function () {
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
+  /**
+   * @param {string} x
+   * @param {...!Array.<string>} var_args
+   */
   util.dom.repeatingGradient = function (x) {
     var r = [x]
     array.each(array.slice(arguments, 1), function (a) {
