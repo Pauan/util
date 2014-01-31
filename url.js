@@ -29,7 +29,8 @@ goog.scope(function () {
     var a = re.exec(s, reUri)
     if (a) {
       return {
-        scheme:    a[1].toLowerCase(),
+                   // TODO util.string
+        scheme:    a[1]["toLowerCase"](),
         authority: a[2] || null,
         hostname:  a[3] || null,
         port:      (+a[4] || null),
