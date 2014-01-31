@@ -1238,7 +1238,7 @@ goog.scope(function () {
    * @param {string} x
    * @param {...!Array.<string>} var_args
    */
-  util.dom.repeatingGradient = function (x) {
+  util.dom.repeatingGradient = function (x, var_args) {
     var r = [x]
     array.each(array.slice(arguments, 1), function (a) {
       array.push(r, a[1] + " " + a[0])

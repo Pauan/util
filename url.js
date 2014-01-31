@@ -1,9 +1,11 @@
 goog.provide("util.url")
 
 goog.require("util.array")
+goog.require("util.re")
 
 goog.scope(function () {
   var array = util.array
+    , re    = util.re
 
   // http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
   var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*):(?:\/\/(?:([^\@]+)\@)?([^\/\?\#\:]+)(?:\:([0-9]+))?)?([^\?\#]*)?(?:\?([^\#]+))?(?:\#(.+))?$/
@@ -24,7 +26,7 @@ goog.scope(function () {
    * @return {uriObject}
    */
   util.url.parseURI = function (s) {
-    var a = reUri.exec(s)
+    var a = re.exec(s, reUri)
     if (a) {
       return {
         scheme:    a[1].toLowerCase(),
@@ -69,7 +71,7 @@ goog.scope(function () {
       }
     }
     if (o.path) {
-      array.push(s, o.path.join("/"))
+      array.push(s, array.join(o.path, "/"))
     }
     if (o.query) {
       array.push(s, "?")
@@ -79,7 +81,7 @@ goog.scope(function () {
       array.push(s, "#")
       array.push(s, o.fragment)
     }
-    return s.join("")
+    return array.join(s, "")
   }
 
   /**
@@ -100,10 +102,10 @@ goog.scope(function () {
     }
     if (x.hostname) {
       // http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
-      y.hostname = x.hostname.replace(/^www\.|\.\w\w$/g, "") // .co.uk
-                             .replace(/\.(?:aero|asia|biz|cat|com|co|coop|info|int|jobs|mobi|museum|name|net|org|pro|tel|travel|xxx|edu|gov|mil)$/, "")
-                             // TODO: is this needed?
-                             .replace(/\.\w\w$/, "") // .ac.edu
+      y.hostname = re.replace(re.replace(re.replace(x.hostname, /^www\.|\.\w\w$/g, ""), // .co.uk
+                                                                /\.(?:aero|asia|biz|cat|com|co|coop|info|int|jobs|mobi|museum|name|net|org|pro|tel|travel|xxx|edu|gov|mil)$/, ""),
+                                                                // TODO: is this needed?
+                                                                /\.\w\w$/, "") // .ac.edu
     }
     if (x.port) {
       y.port = x.port
