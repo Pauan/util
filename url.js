@@ -15,7 +15,7 @@ goog.scope(function () {
    *             authority: (string|null),
    *             hostname:  (string|null),
    *             port:      (number|null),
-   *             path:      (Array.<string>|null),
+   *             path:      (!Array.<string>|null),
    *             query:     (string|null),
    *             fragment:  (string|null) }}
    */
@@ -34,7 +34,7 @@ goog.scope(function () {
         hostname:  a[3] || null,
         port:      (+a[4] || null),
         path:      (a[5]
-                     ? a[5].split(/\//g)
+                     ? re.split(a[5], /\//g)
                      : null),
         query:     a[6] || null,
         fragment:  a[7] || null

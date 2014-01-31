@@ -225,6 +225,22 @@ goog.scope(function () {
   }
 
   /**
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {function(T,number=):R} f
+   * @return {!Array.<R>}
+   * @template T, R
+   */
+  util.array.filter = function (a, f) {
+    var r = []
+    util.array.each(a, function (x, i) {
+      if (f(x, i)) {
+        util.array.push(r, x)
+      }
+    })
+    return r
+  }
+
+  /**
    * @param {!util.array.ArrayLike} a
    * @return {!Array}
    */

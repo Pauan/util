@@ -11,6 +11,7 @@ goog.scope(function () {
     , cell   = util.cell
     , array  = util.array
     , type   = util.type
+    , assert = util.log.assert
     , log    = util.log.log
 
   var styleIds = 0
