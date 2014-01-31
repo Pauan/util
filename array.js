@@ -24,27 +24,27 @@ goog.scope(function () {
    * @param {function(*, *):number} f
    */
   util.array.sort = function (a, f) {
-    []["sort"]["call"](a, f)
+    ;[]["sort"]["call"](a, f)
   }
 
   /**
-   * @param {!Array} a
+   * @param {!util.array.ArrayLike} a
    * @param {number} index
    * @param {*} x
    * @return {number}
    */
   util.array.insertAt = function (a, index, x) {
-    []["splice"]["call"](a, index, 0, x)
+    ;[]["splice"]["call"](a, index, 0, x)
     return index
   }
 
   /**
-   * @param {!Array} a
+   * @param {!util.array.ArrayLike} a
    * @param {number} index
    * @return {number}
    */
   util.array.removeAt = function (a, index) {
-    []["splice"]["call"](a, index, 1)
+    ;[]["splice"]["call"](a, index, 1)
     return index
   }
 
@@ -57,12 +57,21 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Array} a
+   * @param {!util.array.ArrayLike} a
    * @param {*} x
    * @return {number}
    */
   util.array.push = function (a, x) {
-    return a["push"](x) - 1
+    return []["push"]["call"](a, x) - 1
+  }
+
+  /**
+   * @param {!util.array.ArrayLike} a
+   * @return {number}
+   */
+  util.array.pop = function (a) {
+    ;[]["pop"]["call"](a)
+    return util.array.len(a)
   }
 
   /**
@@ -103,7 +112,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Array} a
+   * @param {!util.array.ArrayLike} a
    * @param {*} x
    * @param {function(*, *):boolean} sort
    * @return {number}
@@ -131,7 +140,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Array} a
+   * @param {!util.array.ArrayLike} a
    * @param {*} x
    */
   util.array.remove = function (a, x) {
