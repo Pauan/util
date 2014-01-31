@@ -1212,7 +1212,11 @@ goog.scope(function () {
   }
 
   // TODO multi-platform, e.g. -webkit, -moz, etc.
-  util.dom.calc = function () {
+  /**
+   * @param {...(number|string)} var_args
+   * @return {string}
+   */
+  util.dom.calc = function (var_args) {
     return "calc(" + array.join(arguments, " ") + ")"
   }
 
@@ -1234,6 +1238,13 @@ goog.scope(function () {
     return "repeating-linear-gradient(" + array.join(r, ",") + ")"
   }
 
+  /**
+   * @param {number} hue
+   * @param {number} sat
+   * @param {number} light
+   * @param {number=} alpha
+   * @return {string}
+   */
   util.dom.hsl = function (hue, sat, light, alpha) {
     if (alpha == null) {
       alpha = 1
