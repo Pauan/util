@@ -8,7 +8,7 @@ goog.scope(function () {
     , re    = util.re
 
   // http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
-  var reUri = /^(?:([a-zA-Z][a-zA-Z0-9\+\.\-]*):)?(?:\/\/(?:([^\@]+)\@)?([^\/\?\#\:]+)(?:\:([0-9]+))?)?([^\?\#]*)?(?:\?([^\#]+))?(?:\#(.+))?$/
+  var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*):(?:\/\/(?:([^\@]+)\@)?([^\/\?\#\:]+)(?:\:([0-9]+))?)?([^\?\#]*)?(?:\?([^\#]+))?(?:\#(.+))?$/
 
   /**
    * @typedef {{ scheme:    (string|null),
@@ -30,9 +30,7 @@ goog.scope(function () {
     if (a) {
       return {
                    // TODO util.string
-        scheme:    (a[1]
-                     ? a[1]["toLowerCase"]()
-                     : null),
+        scheme:    a[1]["toLowerCase"](),
         authority: a[2] || null,
         hostname:  a[3] || null,
         port:      (+a[4] || null),
