@@ -1290,4 +1290,9 @@ goog.scope(function () {
   util.dom.height = function () {
     return document["documentElement"]["offsetHeight"]
   }
+
+  util.dom.screen = {
+    width: screen["width"],
+    height: screen["height"]
+  }
 })
