@@ -10,6 +10,8 @@ goog.scope(function () {
    */
   var hasOwn = {}["hasOwnProperty"]
 
+  util.object.create = Object["create"]
+
   /**
    * @param {!Object} o
    * @param {string} s
