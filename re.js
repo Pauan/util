@@ -4,6 +4,18 @@ goog.provide("util.re")
 goog.scope(function () {
   var top = /(?:)/
 
+  // http://www.regular-expressions.info/characters.html
+  // \ ^ $ . | ? * + ( ) [ {
+  var reEscape = /[\\\^\$\.\|\?\*\+\(\)\[\{]/g
+
+  util.re.escape = function (s) {
+    return util.re.replace(s, reEscape, "\\$&")
+  }
+
+  util.re.make = function (s, flags) {
+    return new RegExp(s, flags)
+  }
+
   /**
    * @param {string} str
    * @param {!RegExp} re

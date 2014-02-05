@@ -1,9 +1,11 @@
 goog.provide("util.array")
 
 goog.require("util.func")
+goog.require("util.log")
 
 goog.scope(function () {
-  var func = util.func
+  var func   = util.func
+    , assert = util.log.assert
 
   /**
    * @typedef {!Array|!Arguments|string}
@@ -222,6 +224,35 @@ goog.scope(function () {
       util.array.push(r, f(x, i))
     })
     return r
+  }
+
+  /**
+   * @param {I} init
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {function(I, T):R} f
+   * @return {R}
+   * @template I, T, R
+   */
+  util.array.foldl = function (init, a, f) {
+    util.array.each(a, function (x) {
+      init = f(init, x)
+    })
+    return init
+  }
+
+  /**
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {function(T, T):R} f
+   * @return {R}
+   * @template T, R
+   */
+  util.array.foldl1 = function (a, f) {
+    assert(util.array.len(a) > 0)
+    var init = a[0]
+    for (var i = 1, iLen = util.array.len(a); i < iLen; ++i) {
+      init = f(init, a[i])
+    }
+    return init
   }
 
   /**
