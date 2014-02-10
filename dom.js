@@ -280,15 +280,6 @@ goog.scope(function () {
     title: function (s) {
       this[_e]["title"] = s
     },
-    isHidden: function () {
-      return !!this[_e]["hidden"]
-    },
-    hide: function () {
-      this[_e]["hidden"] = true
-    },
-    show: function () {
-      this[_e]["hidden"] = false
-    },
     getPosition: function () {
       var o = this[_e]["getBoundingClientRect"]()
         , r = {}
@@ -436,6 +427,12 @@ goog.scope(function () {
     e[_e]       = o
     e[bindings] = []
     e[_styles]  = {}
+
+    e.visible = cell.dedupe(true, {
+      set: function (self, b) {
+        o["hidden"] = !b
+      }
+    })
 
     // TODO maybe needs to bind the events even if the cell isn't bound
     // TODO if the window loses focus and refocuses, it doesn't update properly
