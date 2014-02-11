@@ -12,6 +12,11 @@ goog.scope(function () {
     return util.re.replace(s, reEscape, "\\$&")
   }
 
+  /**
+   * @param {string} s
+   * @param {string=} flags
+   * @return {!RegExp}
+   */
   util.re.make = function (s, flags) {
     return new RegExp(s, flags)
   }
