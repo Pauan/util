@@ -475,27 +475,29 @@ goog.scope(function () {
       bind: function (self) {
         var seen = {}
 
-        function mousedown(o) {
-          if (o["button"] === 0) {
+        function mousedown(p) {
+          if (p["button"] === 0) {
             o["style"]["pointerEvents"] = "none"
             addEventListener("mousemove", mousemove, true)
             addEventListener("mouseup", mouseup, true)
 
             // TODO make it functional, so it returns a new object every time ?
-            seen.initialX = o["clientX"]
-            seen.initialY = o["clientY"]
+            seen.initialX = p["clientX"]
+            seen.initialY = p["clientY"]
+
             var pos = e.getPosition()
             seen.relativeX = seen.initialX - pos.left
             seen.relativeY = seen.initialY - pos.top
+
             seen.mouseX = seen.initialX
             seen.mouseY = seen.initialY
+
             self.set(seen)
           }
         }
 
         function mousemove(e) {
           if (e["button"] === 0) {
-            log(e)
             seen.mouseX = e["clientX"]
             seen.mouseY = e["clientY"]
             self.set(seen)
