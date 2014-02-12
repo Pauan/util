@@ -481,8 +481,8 @@ goog.scope(function () {
             seen.initialX = o["clientX"]
             seen.initialY = o["clientY"]
             var pos = e.getPosition()
-            seen.relativeX = pos.left - seen.initialX
-            seen.relativeY = pos.top  - seen.initialY
+            seen.relativeX = seen.initialX - pos.left
+            seen.relativeY = seen.initialY - pos.top
             seen.mouseX = seen.initialX
             seen.mouseY = seen.initialY
             addEventListener("mousemove", mousemove, true)
