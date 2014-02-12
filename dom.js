@@ -478,7 +478,7 @@ goog.scope(function () {
     e.drag = function (info) {
       function mousedown(e) {
         if (e["button"] === 0) {
-          //o["style"]["pointerEvents"] = "none"
+          o["style"]["pointerEvents"] = "none"
           addEventListener("mousemove", mousemove, true)
           addEventListener("mouseup", mouseup, true)
 
@@ -520,7 +520,7 @@ goog.scope(function () {
 
       function mouseup(e) {
         if (e["button"] === 0) {
-          //o["style"]["pointerEvents"] = ""
+          o["style"]["pointerEvents"] = ""
           removeEventListener("mousemove", mousemove, true)
           removeEventListener("mouseup", mouseup, true)
 
