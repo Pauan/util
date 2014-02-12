@@ -617,7 +617,7 @@ goog.scope(function () {
             if (f["button"] === e["button"]) {
               removeEventListener("mouseup", anon, true)
               // TODO is this correct ?
-              if (!dragState.dragging) {
+              //if (!dragState.dragging) {
                 if (e["button"] === 0) {
                   seen.left = false
                 } else if (e["button"] === 1) {
@@ -626,7 +626,7 @@ goog.scope(function () {
                   seen.right = false
                 }
                 self.set(makeSeen(seen, e["target"]))
-              }
+              //}
             }
           }, true)
         }
