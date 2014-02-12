@@ -484,6 +484,11 @@ goog.scope(function () {
             // TODO make it functional, so it returns a new object every time ?
             seen.initialX = p["clientX"]
             seen.initialY = p["clientY"]
+            if (_e in p["target"]) {
+              seen.target = p["target"][_e]
+            } else {
+              seen.target = false
+            }
 
             var pos = e.getPosition()
             seen.relativeX = seen.initialX - pos.left
@@ -500,6 +505,11 @@ goog.scope(function () {
           if (e["button"] === 0) {
             seen.mouseX = e["clientX"]
             seen.mouseY = e["clientY"]
+            if (_e in e["target"]) {
+              seen.target = e["target"][_e]
+            } else {
+              seen.target = false
+            }
             self.set(seen)
           }
         }
