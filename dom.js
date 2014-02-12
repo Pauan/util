@@ -529,14 +529,15 @@ goog.scope(function () {
           delete dragState.initialY
 
           if (dragState.dragging) {
-            delete dragState.dragging
-            o["style"]["pointerEvents"] = ""
             if (info.end != null) {
               info.end({
                 mouseX: p["clientX"],
                 mouseY: p["clientY"]
               })
             }
+
+            delete dragState.dragging
+            o["style"]["pointerEvents"] = ""
           }
 
           // TODO hacky
