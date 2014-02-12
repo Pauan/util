@@ -519,8 +519,8 @@ goog.scope(function () {
         }
       }
 
-      function mouseup(e) {
-        if (e["button"] === 0) {
+      function mouseup(p) {
+        if (p["button"] === 0) {
           removeEventListener("mousemove", mousemove, true)
           removeEventListener("mouseup", mouseup, true)
 
@@ -533,13 +533,13 @@ goog.scope(function () {
             o["style"]["pointerEvents"] = ""
             if (info.end != null) {
               info.end({
-                mouseX: e["clientX"],
-                mouseY: e["clientY"]
+                mouseX: p["clientX"],
+                mouseY: p["clientY"]
               })
             }
           }
 
-          log(o["contains"](document["elementFromPoint"](e["clientX"], e["clientY"])))
+          log(o["contains"](document["elementFromPoint"](p["clientX"], p["clientY"])))
 
           e.mouseover.set(false)
         }
