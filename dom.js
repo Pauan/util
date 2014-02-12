@@ -477,6 +477,10 @@ goog.scope(function () {
 
         function mousedown(o) {
           if (o["button"] === 0) {
+            o["style"]["pointerEvents"] = "none"
+            addEventListener("mousemove", mousemove, true)
+            addEventListener("mouseup", mouseup, true)
+
             // TODO make it functional, so it returns a new object every time ?
             seen.initialX = o["clientX"]
             seen.initialY = o["clientY"]
@@ -485,8 +489,6 @@ goog.scope(function () {
             seen.relativeY = seen.initialY - pos.top
             seen.mouseX = seen.initialX
             seen.mouseY = seen.initialY
-            addEventListener("mousemove", mousemove, true)
-            addEventListener("mouseup", mouseup, true)
             self.set(seen)
           }
         }
@@ -502,8 +504,10 @@ goog.scope(function () {
 
         function mouseup(e) {
           if (e["button"] === 0) {
+            o["style"]["pointerEvents"] = ""
             removeEventListener("mousemove", mousemove, true)
             removeEventListener("mouseup", mouseup, true)
+
             self.set(false)
           }
         }
@@ -517,6 +521,7 @@ goog.scope(function () {
         }
       },
       unbind: function (e) {
+        o["style"]["pointerEvents"] = ""
         o["removeEventListener"]("mousedown", e.mousedown, true)
         removeEventListener("mousemove", e.mousemove, true)
         removeEventListener("mouseup", e.mouseup, true)
