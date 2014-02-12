@@ -498,6 +498,8 @@ goog.scope(function () {
             var pos = e.getPosition()
             dragState.relativeX = dragState.initialX - pos.left
             dragState.relativeY = dragState.initialY - pos.top
+            dragState.halfX = math.round(pos.width  / 2)
+            dragState.halfY = math.round(pos.height / 2)
 
             var mousedown = e.mousedown.get()
             if (mousedown.left) {
@@ -509,6 +511,8 @@ goog.scope(function () {
               info.start({
                 mouseX: dragState.initialX,
                 mouseY: dragState.initialY,
+                halfX: dragState.halfX,
+                halfY: dragState.halfY,
                 relativeX: dragState.relativeX,
                 relativeY: dragState.relativeY
               })
@@ -519,6 +523,8 @@ goog.scope(function () {
               info.move({
                 mouseX: p["clientX"],
                 mouseY: p["clientY"],
+                halfX: dragState.halfX,
+                halfY: dragState.halfY,
                 relativeX: dragState.relativeX,
                 relativeY: dragState.relativeY
               })
@@ -538,6 +544,8 @@ goog.scope(function () {
 
           if (dragState.dragging) {
             delete dragState.dragging
+            delete dragState.halfX
+            delete dragState.halfY
             delete dragState.relativeX
             delete dragState.relativeY
             o["style"]["pointerEvents"] = ""
