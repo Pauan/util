@@ -539,9 +539,10 @@ goog.scope(function () {
             }
           }
 
-          log(o["contains"](document["elementFromPoint"](p["clientX"], p["clientY"])))
-
-          e.mouseover.set(false)
+          // TODO hacky
+          if (!o["contains"](document["elementFromPoint"](p["clientX"], p["clientY"]))) {
+            e.mouseover.set(false)
+          }
         }
       }
 
