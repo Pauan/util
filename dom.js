@@ -495,6 +495,10 @@ goog.scope(function () {
             dragState.dragging = true
             o["style"]["pointerEvents"] = "none"
 
+            var pos = e.getPosition()
+            dragState.relativeX = dragState.initialX - pos.left
+            dragState.relativeY = dragState.initialY - pos.top
+
             var mousedown = e.mousedown.get()
             if (mousedown.left) {
               mousedown.left = false
@@ -504,7 +508,9 @@ goog.scope(function () {
             if (info.start != null) {
               info.start({
                 mouseX: dragState.initialX,
-                mouseY: dragState.initialY
+                mouseY: dragState.initialY,
+                relativeX: dragState.relativeX,
+                relativeY: dragState.relativeY
               })
             }
           }
@@ -512,7 +518,9 @@ goog.scope(function () {
             if (info.move != null) {
               info.move({
                 mouseX: p["clientX"],
-                mouseY: p["clientY"]
+                mouseY: p["clientY"],
+                relativeX: dragState.relativeX,
+                relativeY: dragState.relativeY
               })
             }
           }
@@ -529,15 +537,17 @@ goog.scope(function () {
           delete dragState.initialY
 
           if (dragState.dragging) {
+            delete dragState.dragging
+            delete dragState.relativeX
+            delete dragState.relativeY
+            o["style"]["pointerEvents"] = ""
+
             if (info.end != null) {
               info.end({
                 mouseX: p["clientX"],
                 mouseY: p["clientY"]
               })
             }
-
-            delete dragState.dragging
-            o["style"]["pointerEvents"] = ""
           }
 
           // TODO hacky
