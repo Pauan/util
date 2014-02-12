@@ -478,7 +478,6 @@ goog.scope(function () {
     e.drag = function (info) {
       function mousedown(e) {
         if (e["button"] === 0) {
-          o["style"]["pointerEvents"] = "none"
           addEventListener("mousemove", mousemove, true)
           addEventListener("mouseup", mouseup, true)
 
@@ -493,6 +492,7 @@ goog.scope(function () {
           if (!dragState.dragging && math.hypot(dragState.initialX - p["clientX"],
                                                 dragState.initialY - p["clientY"]) >= info.threshold) {
             dragState.dragging = true
+            o["style"]["pointerEvents"] = "none"
 
             var mousedown = e.mousedown.get()
             if (mousedown.left) {
@@ -520,7 +520,6 @@ goog.scope(function () {
 
       function mouseup(e) {
         if (e["button"] === 0) {
-          o["style"]["pointerEvents"] = ""
           removeEventListener("mousemove", mousemove, true)
           removeEventListener("mouseup", mouseup, true)
 
@@ -528,6 +527,7 @@ goog.scope(function () {
             delete dragState.dragging
             delete dragState.initialX
             delete dragState.initialY
+            o["style"]["pointerEvents"] = ""
             if (info.end != null) {
               info.end({
                 mouseX: e["clientX"],
