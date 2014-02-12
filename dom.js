@@ -472,35 +472,35 @@ goog.scope(function () {
       }
     })
 
+    var dragState = {}
+
     // TODO blur
     e.drag = function (info) {
-      var state = {}
-
       function mousedown(e) {
         if (e["button"] === 0) {
           //o["style"]["pointerEvents"] = "none"
           addEventListener("mousemove", mousemove, true)
           addEventListener("mouseup", mouseup, true)
 
-          state.initialX = e["clientX"]
-          state.initialY = e["clientY"]
+          dragState.initialX = e["clientX"]
+          dragState.initialY = e["clientY"]
           mousemove(e)
         }
       }
 
       function mousemove(e) {
         if (e["button"] === 0) {
-          if (!state.dragging && math.hypot(state.initialX - e["clientX"],
-                                            state.initialY - e["clientY"]) >= info.threshold) {
-            state.dragging = true
+          if (!dragState.dragging && math.hypot(dragState.initialX - e["clientX"],
+                                                dragState.initialY - e["clientY"]) >= info.threshold) {
+            dragState.dragging = true
             if (info.start != null) {
               info.start({
-                mouseX: state.initialX,
-                mouseY: state.initialY
+                mouseX: dragState.initialX,
+                mouseY: dragState.initialY
               })
             }
           }
-          if (state.dragging) {
+          if (dragState.dragging) {
             if (info.move != null) {
               info.move({
                 mouseX: e["clientX"],
@@ -517,10 +517,10 @@ goog.scope(function () {
           removeEventListener("mousemove", mousemove, true)
           removeEventListener("mouseup", mouseup, true)
 
-          if (state.dragging) {
-            delete state.dragging
-            delete state.initialX
-            delete state.initialY
+          if (dragState.dragging) {
+            delete dragState.dragging
+            delete dragState.initialX
+            delete dragState.initialY
             if (info.end != null) {
               info.end({
                 mouseX: e["clientX"],
@@ -597,26 +597,30 @@ goog.scope(function () {
         }
 
         function mousedown(e) {
-          if (e["button"] === 0) {
-            seen.left = true
-          } else if (e["button"] === 1) {
-            seen.middle = true
-          } else if (e["button"] === 2) {
-            seen.right = true
+          if (!dragState.dragging) {
+            if (e["button"] === 0) {
+              seen.left = true
+            } else if (e["button"] === 1) {
+              seen.middle = true
+            } else if (e["button"] === 2) {
+              seen.right = true
+            }
+            self.set(makeSeen(seen, e["target"]))
           }
-          self.set(makeSeen(seen, e["target"]))
 
           addEventListener("mouseup", function anon(f) {
             if (f["button"] === e["button"]) {
               removeEventListener("mouseup", anon, true)
-              if (e["button"] === 0) {
-                seen.left = false
-              } else if (e["button"] === 1) {
-                seen.middle = false
-              } else if (e["button"] === 2) {
-                seen.right = false
+              if (!dragState.dragging) {
+                if (e["button"] === 0) {
+                  seen.left = false
+                } else if (e["button"] === 1) {
+                  seen.middle = false
+                } else if (e["button"] === 2) {
+                  seen.right = false
+                }
+                self.set(makeSeen(seen, e["target"]))
               }
-              self.set(makeSeen(seen, e["target"]))
             }
           }, true)
         }
