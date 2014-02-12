@@ -493,6 +493,13 @@ goog.scope(function () {
           if (!dragState.dragging && math.hypot(dragState.initialX - e["clientX"],
                                                 dragState.initialY - e["clientY"]) >= info.threshold) {
             dragState.dragging = true
+
+            var mousedown = e.mousedown.get()
+            if (mousedown.left) {
+              mousedown.left = false
+              e.mousedown.set(mousedown)
+            }
+
             if (info.start != null) {
               info.start({
                 mouseX: dragState.initialX,
@@ -589,8 +596,8 @@ goog.scope(function () {
     }
 
     var seen = { left: false, middle: false, right: false }
-                              // TODO is this correct?
-    e.mousedown = cell.dedupe(makeSeen(seen, o), {
+                             // TODO is this correct?
+    e.mousedown = cell.value(makeSeen(seen, o), {
       bind: function (self) {
         function contextmenu(e) {
           e["preventDefault"]()
