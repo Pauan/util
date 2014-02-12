@@ -5,6 +5,7 @@ goog.require("util.cell")
 goog.require("util.array")
 goog.require("util.type")
 goog.require("util.log")
+goog.require("util.math")
 
 goog.scope(function () {
   var Symbol = util.Symbol
@@ -13,6 +14,7 @@ goog.scope(function () {
     , type   = util.type
     , assert = util.log.assert
     , log    = util.log.log
+    , math   = util.math
 
   var styleIds = 0
 
@@ -471,61 +473,66 @@ goog.scope(function () {
     })
 
     // TODO blur
-    e.drag = cell.dedupe(undefined, {
-      bind: function (self) {
-        function mousedown(p) {
-          if (p["button"] === 0) {
-            //o["style"]["pointerEvents"] = "none"
-            addEventListener("mousemove", mousemove, true)
-            addEventListener("mouseup", mouseup, true)
+    e.drag = function (info) {
+      var state = {}
 
-            self.set({
-              type: "start",
-              mouseX: p["clientX"],
-              mouseY: p["clientY"]
-            })
-          }
+      function mousedown(e) {
+        if (e["button"] === 0) {
+          //o["style"]["pointerEvents"] = "none"
+          addEventListener("mousemove", mousemove, true)
+          addEventListener("mouseup", mouseup, true)
+
+          state.initialX = e["clientX"]
+          state.initialY = e["clientY"]
+          mousemove(e)
         }
-
-        function mousemove(e) {
-          if (e["button"] === 0) {
-            self.set({
-              type: "move",
-              mouseX: e["clientX"],
-              mouseY: e["clientY"]
-            })
-          }
-        }
-
-        function mouseup(e) {
-          if (e["button"] === 0) {
-            //o["style"]["pointerEvents"] = ""
-            removeEventListener("mousemove", mousemove, true)
-            removeEventListener("mouseup", mouseup, true)
-
-            self.set({
-              type: "end",
-              mouseX: e["clientX"],
-              mouseY: e["clientY"]
-            })
-          }
-        }
-
-        o["addEventListener"]("mousedown", mousedown, true)
-
-        return {
-          mousedown: mousedown,
-          mousemove: mousemove,
-          mouseup: mouseup
-        }
-      },
-      unbind: function (e) {
-        //o["style"]["pointerEvents"] = ""
-        o["removeEventListener"]("mousedown", e.mousedown, true)
-        removeEventListener("mousemove", e.mousemove, true)
-        removeEventListener("mouseup", e.mouseup, true)
       }
-    })
+
+      function mousemove(e) {
+        if (e["button"] === 0) {
+          if (!state.dragging && math.hypot(state.initialX - e["clientX"],
+                                            state.initialY - e["clientY"]) >= info.threshold) {
+            state.dragging = true
+            if (info.start != null) {
+              info.start({
+                mouseX: state.initialX,
+                mouseY: state.initialY
+              })
+            }
+          }
+          if (state.dragging) {
+            if (info.move != null) {
+              info.move({
+                mouseX: e["clientX"],
+                mouseY: e["clientY"]
+              })
+            }
+          }
+        }
+      }
+
+      function mouseup(e) {
+        if (e["button"] === 0) {
+          //o["style"]["pointerEvents"] = ""
+          removeEventListener("mousemove", mousemove, true)
+          removeEventListener("mouseup", mouseup, true)
+
+          if (state.dragging) {
+            delete state.dragging
+            delete state.initialX
+            delete state.initialY
+            if (info.end != null) {
+              info.end({
+                mouseX: e["clientX"],
+                mouseY: e["clientY"]
+              })
+            }
+          }
+        }
+      }
+
+      o["addEventListener"]("mousedown", mousedown, true)
+    }
 
     // TODO closures
     e.mouseclick = cell.dedupe(undefined, {

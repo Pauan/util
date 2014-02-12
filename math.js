@@ -47,6 +47,7 @@ goog.scope(function () {
   util.math.floor = Math["floor"]
   util.math.round = Math["round"]
 
+  // TODO needs to handle 0 properly
   /**
    * http://www.johndcook.com/blog/2010/06/02/whats-so-hard-about-finding-a-hypotenuse/
    * @param {number} x
