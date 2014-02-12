@@ -540,6 +540,8 @@ goog.scope(function () {
           }
 
           log(o["contains"](document["elementFromPoint"](e["clientX"], e["clientY"])))
+
+          e.mouseover.set(false)
         }
       }
 
