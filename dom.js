@@ -854,7 +854,7 @@ goog.scope(function () {
   })
 
   util.dom.initialize = function (f) {
-    document["addEventListener"]("selectstart", function (e) {
+    addEventListener("selectstart", function (e) {
       if (e["target"]["localName"] !== "input") { // && !e.target.draggable
         e["preventDefault"]()
       }
