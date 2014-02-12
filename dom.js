@@ -471,7 +471,6 @@ goog.scope(function () {
     })
 
     // TODO blur
-    // TODO if bound after e.mouseover or e.mousedown, it causes conflicts
     e.drag = cell.dedupe(undefined, {
       bind: function (self) {
         function mousedown(p) {
@@ -521,7 +520,7 @@ goog.scope(function () {
         }
       },
       unbind: function (e) {
-        o["style"]["pointerEvents"] = ""
+        //o["style"]["pointerEvents"] = ""
         o["removeEventListener"]("mousedown", e.mousedown, true)
         removeEventListener("mousemove", e.mousemove, true)
         removeEventListener("mouseup", e.mouseup, true)
