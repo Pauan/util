@@ -528,8 +528,6 @@ goog.scope(function () {
           delete dragState.initialX
           delete dragState.initialY
 
-          log(document["elementFromPoint"](e["clientX"], e["clientY"]))
-
           if (dragState.dragging) {
             delete dragState.dragging
             o["style"]["pointerEvents"] = ""
@@ -540,6 +538,8 @@ goog.scope(function () {
               })
             }
           }
+
+          log(document["elementFromPoint"](e["clientX"], e["clientY"]))
         }
       }
 
