@@ -60,6 +60,14 @@ goog.scope(function () {
 
   /**
    * @param {!util.array.ArrayLike} a
+   * @param {number} i
+   */
+  util.array.resize = function (a, i) {
+    a["length"] = i
+  }
+
+  /**
+   * @param {!util.array.ArrayLike} a
    * @param {*} x
    * @return {number}
    */
