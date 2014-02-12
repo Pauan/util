@@ -237,13 +237,6 @@ goog.scope(function () {
     autofocus: function (b) {
       this[_e]["autofocus"] = b
     },
-    stopDragging: function () {
-      this[_e]["addEventListener"]("selectstart", function (e) {
-        if (e["target"]["localName"] !== "input") { // && !e.target.draggable
-          e["preventDefault"]()
-        }
-      }, true)
-    },
     move: function (e) {
       e[_e]["appendChild"](this[_e])
       return this
@@ -861,6 +854,12 @@ goog.scope(function () {
   })
 
   util.dom.initialize = function (f) {
+    document["addEventListener"]("selectstart", function (e) {
+      if (e["target"]["localName"] !== "input") { // && !e.target.draggable
+        e["preventDefault"]()
+      }
+    }, true)
+
     document["body"]["dataset"]["box"] = ""
     document["body"]["dataset"]["body"] = ""
 
