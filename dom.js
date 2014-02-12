@@ -488,10 +488,10 @@ goog.scope(function () {
         }
       }
 
-      function mousemove(e) {
-        if (e["button"] === 0) {
-          if (!dragState.dragging && math.hypot(dragState.initialX - e["clientX"],
-                                                dragState.initialY - e["clientY"]) >= info.threshold) {
+      function mousemove(p) {
+        if (p["button"] === 0) {
+          if (!dragState.dragging && math.hypot(dragState.initialX - p["clientX"],
+                                                dragState.initialY - p["clientY"]) >= info.threshold) {
             dragState.dragging = true
 
             var mousedown = e.mousedown.get()
@@ -510,8 +510,8 @@ goog.scope(function () {
           if (dragState.dragging) {
             if (info.move != null) {
               info.move({
-                mouseX: e["clientX"],
-                mouseY: e["clientY"]
+                mouseX: p["clientX"],
+                mouseY: p["clientY"]
               })
             }
           }
