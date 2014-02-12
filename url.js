@@ -1,6 +1,7 @@
 goog.provide("util.url")
 
 goog.require("util.array")
+goog.require("util.string")
 goog.require("util.re")
 
 goog.scope(function () {
@@ -29,8 +30,7 @@ goog.scope(function () {
     var a = re.exec(s, reUri)
     if (a) {
       return {
-                   // TODO util.string
-        scheme:    a[1]["toLowerCase"](),
+        scheme:    util.string.lower(a[1]),
         authority: a[2] || null,
         hostname:  a[3] || null,
         port:      (+a[4] || null),
