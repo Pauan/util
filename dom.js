@@ -661,7 +661,7 @@ goog.scope(function () {
 
         function mouseout(e) {
               // TODO is this correct ?
-          if (!dragState.dragging && isOver(o, e)) {
+          if (isOver(o, e)) {
             self.set(false)
           }
         }
