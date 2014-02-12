@@ -470,6 +470,54 @@ goog.scope(function () {
       }
     })
 
+    // TODO blur
+    e.dragging = cell.value(false, {
+      bind: function (self) {
+        var seen = {}
+
+        function mousedown(e) {
+          if (e["button"] === 0) {
+            // TODO make it functional, so it returns a new object every time ?
+            seen.initialX = e["clientX"]
+            seen.initialY = e["clientY"]
+            seen.mouseX = seen.initialX
+            seen.mouseY = seen.initialY
+            addEventListener("mousemove", mousemove, true)
+            addEventListener("mouseup", mouseup, true)
+            self.set(seen)
+          }
+        }
+
+        function mousemove(e) {
+          log(e)
+          seen.mouseX = e["clientX"]
+          seen.mouseY = e["clientY"]
+          self.set(seen)
+        }
+
+        function mouseup(e) {
+          if (e["button"] === 0) {
+            removeEventListener("mousemove", mousemove, true)
+            removeEventListener("mouseup", mouseup, true)
+            self.set(false)
+          }
+        }
+
+        o["addEventListener"]("mousedown", mousedown, true)
+
+        return {
+          mousedown: mousedown,
+          mousemove: mousemove,
+          mouseup: mouseup
+        }
+      },
+      unbind: function (e) {
+        o["removeEventListener"]("mousedown", e.mousedown, true)
+        removeEventListener("mousemove", e.mousemove, true)
+        removeEventListener("mouseup", e.mouseup, true)
+      }
+    })
+
     // TODO closures
     e.mouseclick = cell.dedupe(undefined, {
       bind: function (self) {
