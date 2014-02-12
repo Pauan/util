@@ -649,7 +649,7 @@ goog.scope(function () {
     e.mouseover = cell.dedupe(false, {
       bind: function (self) {
         function mouseover(e) {
-          if (isOver(o, e)) {
+          if (isOver(o, e) && !dragState.dragging) {
             var oEvent = { mouseX: e["clientX"], mouseY: e["clientY"] }
             oEvent[_e] = e["target"] // TODO why is this here?
             self.set(oEvent)
@@ -657,7 +657,7 @@ goog.scope(function () {
         }
 
         function mouseout(e) {
-          if (isOver(o, e)) {
+          if (isOver(o, e) && !dragState.dragging) {
             self.set(false)
           }
         }
