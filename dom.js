@@ -471,46 +471,29 @@ goog.scope(function () {
     })
 
     // TODO blur
-    e.dragging = cell.value(false, {
+    e.drag = cell.dedupe(undefined, {
       bind: function (self) {
-        var seen = {}
-
         function mousedown(p) {
           if (p["button"] === 0) {
             o["style"]["pointerEvents"] = "none"
             addEventListener("mousemove", mousemove, true)
             addEventListener("mouseup", mouseup, true)
 
-            // TODO make it functional, so it returns a new object every time ?
-            seen.initialX = p["clientX"]
-            seen.initialY = p["clientY"]
-            if (_e in p["target"]) {
-              seen.target = p["target"][_e]
-            } else {
-              seen.target = false
-            }
-
-            var pos = e.getPosition()
-            seen.relativeX = seen.initialX - pos.left
-            seen.relativeY = seen.initialY - pos.top
-
-            seen.mouseX = seen.initialX
-            seen.mouseY = seen.initialY
-
-            self.set(seen)
+            self.set({
+              type: "start",
+              mouseX: p["clientX"],
+              mouseY: p["clientY"]
+            })
           }
         }
 
         function mousemove(e) {
           if (e["button"] === 0) {
-            seen.mouseX = e["clientX"]
-            seen.mouseY = e["clientY"]
-            if (_e in e["target"]) {
-              seen.target = e["target"][_e]
-            } else {
-              seen.target = false
-            }
-            self.set(seen)
+            self.set({
+              type: "move",
+              mouseX: e["clientX"],
+              mouseY: e["clientY"]
+            })
           }
         }
 
@@ -520,7 +503,11 @@ goog.scope(function () {
             removeEventListener("mousemove", mousemove, true)
             removeEventListener("mouseup", mouseup, true)
 
-            self.set(false)
+            self.set({
+              type: "end",
+              mouseX: e["clientX"],
+              mouseY: e["clientY"]
+            })
           }
         }
 
