@@ -13,6 +13,7 @@ goog.scope(function () {
     , array  = util.array
     , type   = util.type
     , assert = util.log.assert
+    , fail   = util.log.fail
     , log    = util.log.log
     , math   = util.math
 
@@ -289,6 +290,23 @@ goog.scope(function () {
     // TODO this should only apply to certain things, like radio buttons and <option>s
     value: function (s) {
       this[_e]["value"] = s
+    },
+    // https://developer.mozilla.org/en-US/docs/Web/API/Node.compareDocumentPosition
+    compare: function (e) {
+      var x = e[_e]["compareDocumentPosition"](this[_e])
+      if (x === 0) {
+        return "equal"
+      } else if (x & Node["DOCUMENT_POSITION_CONTAINS"]) {
+        return "parent"
+      } else if (x & Node["DOCUMENT_POSITION_CONTAINED_BY"]) {
+        return "child"
+      } else if (x & Node["DOCUMENT_POSITION_PRECEDING"]) {
+        return "before"
+      } else if (x & Node["DOCUMENT_POSITION_FOLLOWING"]) {
+        return "after"
+      } else {
+        fail()
+      }
     }
   }
 
@@ -467,6 +485,7 @@ goog.scope(function () {
 
     var dragState = {}
 
+    // TODO try to move this to Box.prototype.drag
     // TODO blur
     e.drag = function (info) {
       function mousedown(e) {
