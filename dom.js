@@ -1394,5 +1394,5 @@ goog.scope(function () {
     height: screen["height"]
   }
 
-  util.dom.highestZIndex = highestZIndex
+  //util.dom.highestZIndex = highestZIndex
 })
