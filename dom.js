@@ -1393,4 +1393,6 @@ goog.scope(function () {
     width: screen["width"],
     height: screen["height"]
   }
+
+  util.dom.highestZIndex = highestZIndex
 })
