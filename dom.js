@@ -243,8 +243,16 @@ goog.scope(function () {
       return this
     },
     moveBefore: function (e, x) {
+      // TODO is this correct ...?
       if (x) {
         e[_e]["insertBefore"](this[_e], x[_e])
+      } else {
+        e[_e]["appendChild"](this[_e])
+      }
+    },
+    moveAfter: function (e, x) {
+      if (x) {
+        e[_e]["insertBefore"](this[_e], x[_e]["nextSibling"])
       } else {
         e[_e]["appendChild"](this[_e])
       }
@@ -252,6 +260,12 @@ goog.scope(function () {
     /*replace: function (e) {
       e[_e].parentNode.replaceChild(this[_e], e[_e])
     },*/
+
+    parent: function () {
+      var parent = this[_e]["parentNode"]
+      assert(_e in parent)
+      return parent[_e]
+    },
 
     text: function (s) {
       this[_e]["textContent"] = s || ""
