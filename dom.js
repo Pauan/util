@@ -483,8 +483,10 @@ goog.scope(function () {
 
       function mousemove(p) {
         if (p["button"] === 0) {
-          if (!dragState.dragging && math.hypot(dragState.initialX - p["clientX"],
-                                                dragState.initialY - p["clientY"]) >= info.threshold) {
+          if (!dragState.dragging &&
+              (info.when == null || info.when()) &&
+              math.hypot(dragState.initialX - p["clientX"],
+                         dragState.initialY - p["clientY"]) >= info.threshold) {
             dragState.dragging = true
             o["style"]["pointerEvents"] = "none"
 
