@@ -488,6 +488,7 @@ goog.scope(function () {
                          dragState.initialY - p["clientY"]) >= info.threshold) {
             dragState.dragging = true
             o["style"]["pointerEvents"] = "none"
+            o["style"]["zIndex"] = highestZIndex
 
             var pos = e.getPosition()
             dragState.relativeX = dragState.initialX - pos.left
@@ -543,6 +544,7 @@ goog.scope(function () {
             delete dragState.relativeX
             delete dragState.relativeY
             o["style"]["pointerEvents"] = ""
+            o["style"]["zIndex"] = ""
 
             if (info.end != null) {
               info.end({
