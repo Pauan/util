@@ -470,7 +470,7 @@ goog.scope(function () {
     // TODO blur
     e.drag = function (info) {
       function mousedown(e) {
-        if (e["button"] === 0) {
+        if (e["button"] === 0 && (info.when == null || info.when())) {
           addEventListener("mousemove", mousemove, true)
           addEventListener("mouseup", mouseup, true)
 
@@ -484,7 +484,6 @@ goog.scope(function () {
       function mousemove(p) {
         if (p["button"] === 0) {
           if (!dragState.dragging &&
-              (info.when == null || info.when()) &&
               math.hypot(dragState.initialX - p["clientX"],
                          dragState.initialY - p["clientY"]) >= info.threshold) {
             dragState.dragging = true
