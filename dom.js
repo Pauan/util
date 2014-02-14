@@ -242,30 +242,23 @@ goog.scope(function () {
       e[_e]["appendChild"](this[_e])
       return this
     },
-    moveBefore: function (e, x) {
-      // TODO is this correct ...?
-      if (x) {
-        e[_e]["insertBefore"](this[_e], x[_e])
-      } else {
-        e[_e]["appendChild"](this[_e])
-      }
+    moveBefore: function (e) {
+      e[_e]["parentNode"]["insertBefore"](this[_e], e[_e])
+      return this
     },
-    moveAfter: function (e, x) {
-      if (x) {
-        e[_e]["insertBefore"](this[_e], x[_e]["nextSibling"])
-      } else {
-        e[_e]["appendChild"](this[_e])
-      }
+    moveAfter: function (e) {
+      e[_e]["parentNode"]["insertBefore"](this[_e], e[_e]["nextSibling"])
+      return this
     },
     replaceWith: function (e) {
       this[_e]["parentNode"]["replaceChild"](e[_e], this[_e])
     },
 
-    parent: function () {
+    /*parent: function () {
       var parent = this[_e]["parentNode"]
       assert(_e in parent)
       return parent[_e]
-    },
+    },*/
 
     text: function (s) {
       this[_e]["textContent"] = s || ""
@@ -529,6 +522,7 @@ goog.scope(function () {
             dragState.halfX = math.round(pos.width  / 2)
             dragState.halfY = math.round(pos.height / 2)
 
+            // TODO probably get rid of this ?
             var mousedown = e.mousedown.get()
             if (mousedown.left) {
               mousedown.left = false
