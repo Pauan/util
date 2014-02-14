@@ -257,9 +257,9 @@ goog.scope(function () {
         e[_e]["appendChild"](this[_e])
       }
     },
-    /*replace: function (e) {
-      e[_e].parentNode.replaceChild(this[_e], e[_e])
-    },*/
+    replaceWith: function (e) {
+      this[_e]["parentNode"]["replaceChild"](e[_e], this[_e])
+    },
 
     parent: function () {
       var parent = this[_e]["parentNode"]
