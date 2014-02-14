@@ -883,6 +883,10 @@ goog.scope(function () {
     e.set("flex-basis", "0%")
   })
 
+  util.dom.noMouse = util.dom.style(function (e) {
+    e.set("pointer-events", "none")
+  })
+
   util.dom.initialize = function (f) {
     addEventListener("selectstart", function (e) {
       if (e["target"]["localName"] !== "input") { // && !e.target.draggable
