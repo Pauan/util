@@ -500,7 +500,7 @@ goog.scope(function () {
           addEventListener("mousemove", mousemove, true)
           addEventListener("mouseup", mouseup, true)
 
-          dragState.dragStart = true
+          //dragState.dragStart = true
           dragState.initialX = e["clientX"]
           dragState.initialY = e["clientY"]
           mousemove(e)
@@ -513,8 +513,8 @@ goog.scope(function () {
               math.hypot(dragState.initialX - p["clientX"],
                          dragState.initialY - p["clientY"]) >= info.threshold) {
             dragState.dragging = true
-            o["style"]["pointerEvents"] = "none"
-            o["style"]["zIndex"] = highestZIndex
+            //o["style"]["pointerEvents"] = "none"
+            //o["style"]["zIndex"] = highestZIndex
 
             var pos = e.getPosition()
             dragState.relativeX = dragState.initialX - pos.left
@@ -523,11 +523,11 @@ goog.scope(function () {
             dragState.halfY = math.round(pos.height / 2)
 
             // TODO probably get rid of this ?
-            var mousedown = e.mousedown.get()
+            /*var mousedown = e.mousedown.get()
             if (mousedown.left) {
               mousedown.left = false
               e.mousedown.set(mousedown)
-            }
+            }*/
 
             if (info.start != null) {
               info.start({
@@ -560,7 +560,7 @@ goog.scope(function () {
           removeEventListener("mousemove", mousemove, true)
           removeEventListener("mouseup", mouseup, true)
 
-          delete dragState.dragStart
+          //delete dragState.dragStart
           delete dragState.initialX
           delete dragState.initialY
 
@@ -570,8 +570,8 @@ goog.scope(function () {
             delete dragState.halfY
             delete dragState.relativeX
             delete dragState.relativeY
-            o["style"]["pointerEvents"] = ""
-            o["style"]["zIndex"] = ""
+            //o["style"]["pointerEvents"] = ""
+            //o["style"]["zIndex"] = ""
 
             if (info.end != null) {
               info.end({
@@ -582,9 +582,9 @@ goog.scope(function () {
           }
 
           // TODO hacky
-          if (!o["contains"](document["elementFromPoint"](p["clientX"], p["clientY"]))) {
+          /*if (!o["contains"](document["elementFromPoint"](p["clientX"], p["clientY"]))) {
             e.mouseover.set(false)
-          }
+          }*/
         }
       }
 
@@ -667,16 +667,16 @@ goog.scope(function () {
             if (f["button"] === e["button"]) {
               removeEventListener("mouseup", anon, true)
               // TODO is this correct ?
-              if (!dragState.dragging) {
-                if (e["button"] === 0) {
-                  seen.left = false
-                } else if (e["button"] === 1) {
-                  seen.middle = false
-                } else if (e["button"] === 2) {
-                  seen.right = false
-                }
-                self.set(makeSeen(seen, e["target"]))
+              //if (!dragState.dragging) {
+              if (e["button"] === 0) {
+                seen.left = false
+              } else if (e["button"] === 1) {
+                seen.middle = false
+              } else if (e["button"] === 2) {
+                seen.right = false
               }
+              self.set(makeSeen(seen, e["target"]))
+              //}
             }
           }, true)
         }
@@ -699,7 +699,7 @@ goog.scope(function () {
     e.mouseover = cell.dedupe(false, {
       bind: function (self) {
         function mouseover(e) {
-          if (!dragState.dragStart && isOver(o, e)) {
+          if (/*!dragState.dragStart && */isOver(o, e)) {
             var oEvent = { mouseX: e["clientX"], mouseY: e["clientY"] }
             oEvent[_e] = e["target"] // TODO why is this here?
             self.set(oEvent)
@@ -707,7 +707,7 @@ goog.scope(function () {
         }
 
         function mouseout(e) {
-          if (!dragState.dragStart && isOver(o, e)) {
+          if (/*!dragState.dragStart && */isOver(o, e)) {
             self.set(false)
           }
         }
