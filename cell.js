@@ -91,17 +91,16 @@ goog.scope(function () {
     if (self[info].set != null) {
       self[info].set(self, v)
     }
-                  // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
+               // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
     array.each(array.clone(self[events]), function (f) {
       f(v)
     })
   }
 
   /**
-   * @template T
    * @typedef {{ set: ((function(!Signal,*):void)|void),
-   *             bind: ((function(!Signal):T)|void),
-   *             unbind: ((function(T):void)|void) }}
+   *             bind: ((function(!Signal):*)|void),
+   *             unbind: ((function(*):void)|void) }}
    */
   var type_opt
 
@@ -183,6 +182,7 @@ goog.scope(function () {
    * @return {{ unbind: function():void }}
    */
   util.cell.event = function (a, f) {
+    /** @type {{ unbind: function():void }} */
     var o = {}
     return binder(o, a, function () {
       call(a, f)
