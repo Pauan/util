@@ -66,10 +66,11 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Object} o
+   * @param {T} o
    * @param {!util.array.ArrayLike.<!Signal>} a
    * @param {function(*):void} f
-   * @return {{ unbind: function():void }}
+   * @return {T}
+   * @template T
    */
   function binder(o, a, f) {
     array.each(a, function (x) {
