@@ -37,6 +37,24 @@ goog.scope(function () {
   }
 
   /**
+   * @param {*} x
+   * @param {*} y
+   * @return {boolean}
+   */
+  util.object.is = function (x, y) {
+    if (x === y) {
+      return true
+    // Check for NaN
+    } else {
+      return x !== x && y !== y
+    }
+  }
+
+  util.object.isnt = function (x, y) {
+    return !util.object.is(x, y)
+  }
+
+  /**
    * @param {!Object.<S>} x
    * @return {!Array.<S>}
    * @template S

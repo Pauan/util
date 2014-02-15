@@ -2,6 +2,7 @@ goog.provide("util.array")
 
 goog.require("util.func")
 goog.require("util.log")
+goog.require("util.object")
 
 goog.scope(function () {
   var func   = util.func
@@ -137,7 +138,7 @@ goog.scope(function () {
     var y
     for (var i = 0, iLen = util.array.len(a); i < iLen; ++i) {
       y = a[i]
-      if (x === y) {
+      if (util.object.is(x, y)) {
         throw new Error("sorted array cannot have duplicates")
         /*
         // TODO test this
@@ -209,7 +210,7 @@ goog.scope(function () {
    */
   util.array.indexOf = function (a, x) {
     for (var i = 0, iLen = util.array.len(a); i < iLen; ++i) {
-      if (a[i] === x) {
+      if (util.object.is(a[i], x)) {
         return i
       }
     }
