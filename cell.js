@@ -20,7 +20,7 @@ goog.scope(function () {
 
   /**
    * @param {!util.array.ArrayLike.<!Signal>} a
-   * @param {function(...[*]):T} f
+   * @param {function(*, ...[*]):T} f
    * @return {T}
    * @template T
    */
@@ -75,7 +75,7 @@ goog.scope(function () {
       bind1(x, f)
     })
     /**
-     * @type {function ():void}
+     * @type {function():void}
      */
     o.unbind = function () {
       unbind(a, f)
@@ -98,9 +98,9 @@ goog.scope(function () {
   }
 
   /**
-   * @typedef {{ set: ((function(!Signal,*):void)|undefined),
-   *             bind: ((function(!Signal):!Object)|undefined),
-   *             unbind: ((function(!Object):void)|undefined) }}
+   * @typedef {{ set: ((function(!Signal,*):void)|void),
+   *             bind: ((function(!Signal):!Object)|void),
+   *             unbind: ((function(!Object):void)|void) }}
    */
   var type_opt
 
@@ -178,7 +178,7 @@ goog.scope(function () {
    * When any of the signals change, the function is called with the value of the signals
    *
    * @param {!util.array.ArrayLike.<!Signal>} a
-   * @param {function(...[*]):void} f
+   * @param {function(*, ...[*]):void} f
    * @return {{ unbind: (function():void) }}
    */
   util.cell.event = function (a, f) {
@@ -195,7 +195,7 @@ goog.scope(function () {
    * the function is called with the value of the signals
    *
    * @param {!util.array.ArrayLike.<!Signal>} a
-   * @param {function(...[*]):*} f
+   * @param {function(*, ...[*]):*} f
    * @return {!Signal}
    */
   util.cell.bind = function (a, f) {
