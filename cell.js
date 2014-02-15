@@ -98,10 +98,10 @@ goog.scope(function () {
   }
 
   /**
+   * @template T
    * @typedef {{ set: ((function(!Signal,*):void)|void),
    *             bind: ((function(!Signal):T)|void),
    *             unbind: ((function(T):void)|void) }}
-   * @template T
    */
   var type_opt
 
