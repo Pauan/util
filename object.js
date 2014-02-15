@@ -1,7 +1,5 @@
 goog.provide("util.object")
 
-goog.require("util.array")
-
 goog.scope(function () {
   var array = util.array
 
@@ -63,7 +61,8 @@ goog.scope(function () {
     var r = []
     for (var s in x) {
       if (util.object.hasOwn(x, s)) {
-        array.push(r, s)
+        // TODO
+        r["push"](r, s)
       }
     }
     return r
