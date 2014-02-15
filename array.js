@@ -13,7 +13,7 @@ goog.scope(function () {
   util.array.ArrayLike
 
   /**
-   * @param {!util.array.ArrayLike} a
+   * @param {!util.array.ArrayLike.<string>} a
    * @param {string} s
    * @return {string}
    */
@@ -22,18 +22,20 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @param {function(*, *):number} f
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {function(T, T):number} f
+   * @template T
    */
   util.array.sort = function (a, f) {
     ;[]["sort"]["call"](a, f)
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
+   * @param {!util.array.ArrayLike.<T>} a
    * @param {number} index
-   * @param {*} x
+   * @param {T} x
    * @return {number}
+   * @template T
    */
   util.array.insertAt = function (a, index, x) {
     ;[]["splice"]["call"](a, index, 0, x)
@@ -67,9 +69,10 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @param {*} x
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {T} x
    * @return {number}
+   * @template T
    */
   util.array.push = function (a, x) {
     return []["push"]["call"](a, x) - 1
@@ -85,10 +88,11 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
+   * @param {!util.array.ArrayLike.<T>} a
    * @param {number=} start
    * @param {number=} end
-   * @return {!Array}
+   * @return {!Array.<T>}
+   * @template T
    */
   util.array.slice = function (a, start, end) {
     return []["slice"]["call"](a, start, end)
@@ -104,10 +108,11 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @param {*} x
-   * @param {function(*, *):boolean} sort
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {T} x
+   * @param {function(T, T):boolean} sort
    * @return {boolean}
+   * @template T
    */
   util.array.isElementSorted = function (a, x, sort) {
     var i = util.array.indexOf(a, x)
@@ -122,10 +127,11 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @param {*} x
-   * @param {function(*, *):boolean} sort
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {T} x
+   * @param {function(T, T):boolean} sort
    * @return {number}
+   * @template T
    */
   util.array.insertSorted = function (a, x, sort) {
     var y
@@ -150,8 +156,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @param {*} x
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {T} x
+   * @template T
    */
   util.array.remove = function (a, x) {
     var i = util.array.indexOf(a, x)
@@ -161,8 +168,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @param {function(*,number=):boolean} f
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {function(T,number=):boolean} f
+   * @template T
    */
   util.array.some = function (a, f) {
     for (var i = 0, iLen = util.array.len(a); i < iLen; ++i) {
@@ -174,8 +182,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @return {*}
+   * @param {!util.array.ArrayLike.<T>} a
+   * @return {T}
+   * @template T
    */
   util.array.last = function (a) {
     return a[util.array.len(a) - 1]
@@ -193,9 +202,10 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @param {*} x
+   * @param {!util.array.ArrayLike.<T>} a
+   * @param {T} x
    * @return {number}
+   * @template T
    */
   util.array.indexOf = function (a, x) {
     for (var i = 0, iLen = util.array.len(a); i < iLen; ++i) {
@@ -207,8 +217,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {...!util.array.ArrayLike} var_args
-   * @return {!Array}
+   * @param {...!util.array.ArrayLike.<T>} var_args
+   * @return {!Array.<T>}
+   * @template T
    */
   util.array.concat = function (var_args) {
     var r = []
@@ -237,9 +248,9 @@ goog.scope(function () {
   /**
    * @param {I} init
    * @param {!util.array.ArrayLike.<T>} a
-   * @param {function(I, T):R} f
-   * @return {R}
-   * @template I, T, R
+   * @param {function(I, T):I} f
+   * @return {I}
+   * @template I, T
    */
   util.array.foldl = function (init, a, f) {
     util.array.each(a, function (x) {
@@ -250,9 +261,9 @@ goog.scope(function () {
 
   /**
    * @param {!util.array.ArrayLike.<T>} a
-   * @param {function(T, T):R} f
-   * @return {R}
-   * @template T, R
+   * @param {function(T, T):T} f
+   * @return {T}
+   * @template T
    */
   util.array.foldl1 = function (a, f) {
     assert(util.array.len(a) > 0)
@@ -265,9 +276,9 @@ goog.scope(function () {
 
   /**
    * @param {!util.array.ArrayLike.<T>} a
-   * @param {function(T,number=):R} f
-   * @return {!Array.<R>}
-   * @template T, R
+   * @param {function(T,number=):boolean} f
+   * @return {!Array.<T>}
+   * @template T
    */
   util.array.filter = function (a, f) {
     var r = []
@@ -280,8 +291,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @return {!Array}
+   * @param {!util.array.ArrayLike.<T>} a
+   * @return {!Array.<T>}
+   * @template T
    */
   util.array.toArray = function (a) {
     return util.array.map(a, function (x) {
