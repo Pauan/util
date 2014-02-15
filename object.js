@@ -61,7 +61,7 @@ goog.scope(function () {
     var r = []
     for (var s in x) {
       if (util.object.hasOwn(x, s)) {
-        // TODO
+        // TODO util.array
         r["push"](r, s)
       }
     }

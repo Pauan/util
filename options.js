@@ -1,4 +1,4 @@
-goog.provide("lib.options")
+goog.provide("util.options")
 
 goog.require("util.object")
 goog.require("util.dom")
@@ -26,7 +26,7 @@ goog.scope(function () {
     background:         dom.hsl(211, 13, 35)
   }
 
-  lib.options.subgroup = (function () {
+  util.options.subgroup = (function () {
     var top = dom.style(function (e) {
       e.set("font-weight", "bold")
       e.set("margin-bottom", "6px")
@@ -51,7 +51,7 @@ goog.scope(function () {
     }
   })()
 
-  lib.options.textbox = (function () {
+  util.options.textbox = (function () {
     var textbox = dom.style(function (e) {
       //e.set("top", "-1px")
       e.set("box-shadow", "0px 0px 3px " + dom.hsl(0, 0, 0, 0.5))
@@ -127,7 +127,7 @@ goog.scope(function () {
     }
   })()
 
-  lib.options.checkbox = (function () {
+  util.options.checkbox = (function () {
     var wrapper = dom.style(function (e) {
       e.set("display", "inline-block")
       e.set(["margin-top", "margin-bottom"], "1px")
@@ -192,7 +192,7 @@ goog.scope(function () {
     }
   })()
 
-  lib.options.category = (function () {
+  util.options.category = (function () {
     var category = dom.style(function (e) {
       e.set("border-width", "1px")
       e.set("border-style", "outset")
@@ -254,7 +254,7 @@ goog.scope(function () {
     }
   })()
 
-  lib.options.separator = (function () {
+  util.options.separator = (function () {
     var separator = dom.style(function (e) {
       e.set("margin-top", "0.5em")
       e.set("margin-bottom", dom.calc("0.5em", "+", "2px")) // TODO a bit hacky
@@ -267,7 +267,7 @@ goog.scope(function () {
     }
   })()
 
-  lib.options.list = (function () {
+  util.options.list = (function () {
     var list = dom.style(function (e) {
       e.set("height", "20px")
       e.set("box-shadow", "0px 0px 5px lightgray")
@@ -356,7 +356,7 @@ goog.scope(function () {
     }
   })()
 
-  lib.options.radio = (function () {
+  util.options.radio = (function () {
     var radioId = 0
 
     // TODO code duplication with checkbox
@@ -429,7 +429,7 @@ goog.scope(function () {
     }
   })()
 
-  lib.options.button = (function () {
+  util.options.button = (function () {
     var button = dom.style(function (e) {
       e.set("height", "24px")
       //o.set("minHeight", "22px")
@@ -501,7 +501,7 @@ goog.scope(function () {
     }
   })()
 
-  lib.options.initialize = (function () {
+  util.options.initialize = (function () {
     var body = dom.style(function (e) {
       //e.overflow = "auto"
 
