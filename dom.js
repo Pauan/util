@@ -369,6 +369,11 @@ goog.scope(function () {
    */
   function Text() {}
   Text.prototype = new Box()
+  /**
+   * @override
+   * @type {!Object}
+   */
+  Text.prototype.value = null
   Text.prototype.sync = function (oCell) {
     var self = this
     self.bind([oCell], function (x) {
@@ -1226,9 +1231,6 @@ goog.scope(function () {
     var e = make(Text, o)
 
     // TODO closure
-    /**
-     * @override
-     */
     e.value = cell.dedupe(o["value"], {
       bind: function (self) {
         function search() {
@@ -1287,9 +1289,6 @@ goog.scope(function () {
     // TODO closure
     // TODO code duplication
     // TODO should <cell>.get() trigger <cell>bind() ?
-    /**
-     * @override
-     */
     e.value = cell.dedupe(o["value"], {
       // TODO is all this stuff necessary ?
       bind: function (self) {
@@ -1321,9 +1320,6 @@ goog.scope(function () {
 
     // TODO closure
     // TODO code duplication
-    /**
-     * @override
-     */
     e.value = cell.dedupe(o["value"], {
       bind: function (self) {
         function input() {
