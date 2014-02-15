@@ -112,6 +112,7 @@ goog.scope(function () {
    * @param {!Signal.<T>} self
    * @param {T} x
    * @param {!type_obj|void} obj
+   * @template T
    */
   function init(self, x, obj) {
     self[info]   = (obj != null ? obj : {})
