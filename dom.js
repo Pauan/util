@@ -730,6 +730,12 @@ goog.scope(function () {
     return e
   }
 
+  /**
+   * @param {function(T):void=} f
+   * @param {T} e
+   * @return {T}
+   * @template T
+   */
   function call(f, e) {
     if (f != null) {
       f(e)
@@ -887,6 +893,10 @@ goog.scope(function () {
     e.set("pointer-events", "none")
   })
 
+  /**
+   * @param {function(Box=):void} f
+   * @return {Box}
+   */
   util.dom.initialize = function (f) {
     addEventListener("selectstart", function (e) {
       if (e["target"]["localName"] !== "input") { // && !e.target.draggable
