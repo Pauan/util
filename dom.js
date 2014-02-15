@@ -731,7 +731,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {function(T):void=} f
+   * @param {function(T):void} f
    * @param {T} e
    * @return {T}
    * @template T
