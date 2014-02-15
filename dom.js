@@ -495,8 +495,22 @@ goog.scope(function () {
 
     var dragState = {}
 
+    /**
+     * @typedef {{ mouseX:    number, mouseY:    number,
+     *             halfX:     number, halfY:     number,
+     *             relativeX: number, relativeY: number }}
+     */
+    var dragInfo
+
     // TODO try to move this to Box.prototype.drag
     // TODO blur
+    /**
+     * @param {{ threshold: number,
+     *           when:  function():boolean,
+     *           start: function(!dragInfo):void,
+     *           move:  function(!dragInfo):void,
+     *           end:   function(!dragInfo):void }} info
+     */
     e.drag = function (info) {
       function mousedown(e) {
         if (e["button"] === 0 && (info.when == null || info.when())) {
@@ -579,7 +593,11 @@ goog.scope(function () {
             if (info.end != null) {
               info.end({
                 mouseX: p["clientX"],
-                mouseY: p["clientY"]
+                mouseY: p["clientY"],
+                halfX: dragState.halfX,
+                halfY: dragState.halfY,
+                relativeX: dragState.relativeX,
+                relativeY: dragState.relativeY
               })
             }
           }
