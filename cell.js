@@ -19,10 +19,10 @@ goog.scope(function () {
     , get    = Symbol("get")
 
   /**
-   * @param {!util.array.ArrayLike.<!Signal>} a
-   * @param {function(...[?]):T} f
-   * @return {T}
-   * @template T
+   * @param {!util.array.ArrayLike.<!Signal.<T>>} a
+   * @param {function(...[T]):R} f
+   * @return {R}
+   * @template T, R
    */
   function call(a, f) {
     return func.apply(f, null, array.map(a, function (x) {
@@ -31,8 +31,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Signal} x
-   * @param {function(*):void} f
+   * @param {!Signal.<T>} x
+   * @param {function(T):void} f
+   * @template T
    */
   function bind1(x, f) {
     if (array.len(x[events]) === 0 && x[info].bind != null) {
@@ -42,8 +43,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Signal} x
-   * @param {function(*):void} f
+   * @param {!Signal.<T>} x
+   * @param {function(T):void} f
+   * @template T
    */
   function unbind1(x, f) {
     var i = array.indexOf(x[events], f)
@@ -56,8 +58,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike.<!Signal>} a
-   * @param {function(*):void} f
+   * @param {!util.array.ArrayLike.<!Signal.<T>>} a
+   * @param {function(T):void} f
+   * @template T
    */
   function unbind(a, f) {
     array.each(a, function (x) {
@@ -66,11 +69,11 @@ goog.scope(function () {
   }
 
   /**
-   * @param {T} o
-   * @param {!util.array.ArrayLike.<!Signal>} a
-   * @param {function(*):void} f
-   * @return {T}
-   * @template T
+   * @param {R} o
+   * @param {!util.array.ArrayLike.<!Signal.<T>>} a
+   * @param {function(T):void} f
+   * @return {R}
+   * @template T, R
    */
   function binder(o, a, f) {
     array.each(a, function (x) {
@@ -83,8 +86,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Signal} self
-   * @param {*} v
+   * @param {!Signal.<T>} self
+   * @param {T} v
+   * @template T
    */
   function set(self, v) {
     self[get] = v
@@ -107,17 +111,24 @@ goog.scope(function () {
   /**
    * TODO more specific type for the obj parameter, using record type with optional fields
    * @constructor
-   * @param {*} x
+   * @param {T} x
    * @param {!type_opt=} obj
+   * @template T
    */
   function Signal(x, obj) {
     this[info]   = (obj != null ? obj : {})
     this[get]    = x
     this[events] = []
   }
+  /**
+   * @return {T}
+   */
   Signal.prototype.get = function () {
     return this[get]
   }
+  /**
+   * @param {T} v
+   */
   Signal.prototype.set = function (v) {
     set(this, v)
   }
@@ -128,7 +139,7 @@ goog.scope(function () {
    * TODO code duplication for the type signature with Signal
    * @constructor
    * @extends {Signal}
-   * @param {*} x
+   * @param {T} x
    * @param {!type_opt=} obj
    */
   function Dedupe(x, obj) {
@@ -152,9 +163,10 @@ goog.scope(function () {
    *
    * TODO more specific type for the obj parameter, using record type with optional fields
    * TODO code duplication for the type signature with Signal
-   * @param {*} x
+   * @param {T} x
    * @param {!type_opt=} obj
-   * @return {!Signal}
+   * @return {!Signal.<T>}
+   * @template T
    */
   util.cell.value = function (x, obj) {
     return new Signal(x, obj)
@@ -165,9 +177,10 @@ goog.scope(function () {
    *
    * TODO more specific type for the obj parameter, using record type with optional fields
    * TODO code duplication for the type signature with Signal
-   * @param {*} x
+   * @param {T} x
    * @param {!type_opt=} obj
-   * @return {!Signal}
+   * @return {!Dedupe.<T>}
+   * @template T
    */
   util.cell.dedupe = function (x, obj) {
     return new Dedupe(x, obj)
@@ -177,9 +190,10 @@ goog.scope(function () {
    * Takes an array of signals and a function
    * When any of the signals change, the function is called with the value of the signals
    *
-   * @param {!util.array.ArrayLike.<!Signal>} a
-   * @param {function(...[?]):void} f
+   * @param {!util.array.ArrayLike.<!Signal.<T>>} a
+   * @param {function(...[T]):void} f
    * @return {{ unbind: function():void }}
+   * @template T
    */
   util.cell.event = function (a, f) {
     var o = {}
@@ -193,9 +207,10 @@ goog.scope(function () {
    * Initially, and when any of the signals change,
    * the function is called with the value of the signals
    *
-   * @param {!util.array.ArrayLike.<!Signal>} a
-   * @param {function(...[?]):*} f
-   * @return {!Signal}
+   * @param {!util.array.ArrayLike.<!Signal.<T>>} a
+   * @param {function(...[T]):*} f
+   * @return {!Signal.<T>}
+   * @template T
    */
   util.cell.bind = function (a, f) {
     var x = call(a, f)
@@ -212,10 +227,11 @@ goog.scope(function () {
    * When the input signal changes, it will call the input function with the previous
    * value and the current value of the input signal
    *
-   * @param {*} init
-   * @param {!Signal} x
-   * @param {function(*, *):*} f
-   * @return {!Signal}
+   * @param {I} init
+   * @param {!Signal.<T>} x
+   * @param {function(I, T):I} f
+   * @return {!Signal.<I>}
+   * @template I, T
    */
   util.cell.fold = function (init, x, f) {
     var o = util.cell.value(init)
@@ -230,10 +246,11 @@ goog.scope(function () {
    * The function is called with the signal's value
    * If it returns true, the returned signal is updated
    *
-   * @param {*} init
-   * @param {!Signal} x
-   * @param {function(*):boolean} f
-   * @return {!Signal}
+   * @param {T} init
+   * @param {!Signal.<T>} x
+   * @param {function(T):boolean} f
+   * @return {!Signal.<T>}
+   * @template T
    */
   util.cell.filter = function (init, x, f) {
     var o = util.cell.value(init)
@@ -249,8 +266,9 @@ goog.scope(function () {
    * When the signal has a truthy value,
    * the function is called with the value of the signal
    *
-   * @param {!Signal} x
-   * @param {function(*=):void} f
+   * @param {!Signal.<T>} x
+   * @param {function(T=):void} f
+   * @template T
    */
   util.cell.when = function (x, f) {
     var y = x.get()
@@ -271,9 +289,10 @@ goog.scope(function () {
    * Takes a signal and function; returns a signal
    * Maps the function over the input signal
    *
-   * @param {!Signal} x
-   * @param {function(*):*} f
-   * @return {!Signal}
+   * @param {!Signal.<T>} x
+   * @param {function(T):R} f
+   * @return {!Signal.<R>}
+   * @template T, R
    */
   util.cell.map = function (x, f) {
     return util.cell.bind([x], f)
@@ -282,8 +301,9 @@ goog.scope(function () {
   /**
    * Takes 1 or more signals, returns the logical OR of the values
    *
-   * @param {...!Signal} var_args
-   * @return {!Signal}
+   * @param {...!Signal.<T>} var_args
+   * @return {!Signal.<T>}
+   * @template T
    */
   util.cell.or = function (var_args) {
     return util.cell.bind(arguments, function () {
@@ -296,8 +316,9 @@ goog.scope(function () {
   /**
    * Takes 1 or more signals, returns the logical AND of the values
    *
-   * @param {...!Signal} var_args
-   * @return {!Signal}
+   * @param {...!Signal.<T>} var_args
+   * @return {!Signal.<T>}
+   * @template T
    */
   util.cell.and = function (var_args) {
     return util.cell.bind(arguments, function () {
