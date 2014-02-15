@@ -157,7 +157,10 @@ goog.scope(function () {
       Object["freeze"](o) // TODO remove this later ?
       f(o)
     },
-    styles: function () {
+    /**
+     * @param {...!Style} var_args
+     */
+    styles: function (var_args) {
       this[_styles] = {}
 
       var r = []
