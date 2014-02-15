@@ -506,10 +506,10 @@ goog.scope(function () {
     // TODO blur
     /**
      * @param {{ threshold: number,
-     *           when:  function():boolean,
-     *           start: function(!dragInfo):void,
-     *           move:  function(!dragInfo):void,
-     *           end:   function(!dragInfo):void }} info
+     *           when:  (function():boolean|void),
+     *           start: (function(!dragInfo):void|void),
+     *           move:  (function(!dragInfo):void|void),
+     *           end:   (function(!dragInfo):void|void) }} info
      */
     e.drag = function (info) {
       function mousedown(e) {
@@ -1226,6 +1226,9 @@ goog.scope(function () {
     var e = make(Text, o)
 
     // TODO closure
+    /**
+     * @override
+     */
     e.value = cell.dedupe(o["value"], {
       bind: function (self) {
         function search() {
@@ -1284,6 +1287,9 @@ goog.scope(function () {
     // TODO closure
     // TODO code duplication
     // TODO should <cell>.get() trigger <cell>bind() ?
+    /**
+     * @override
+     */
     e.value = cell.dedupe(o["value"], {
       // TODO is all this stuff necessary ?
       bind: function (self) {
@@ -1315,6 +1321,9 @@ goog.scope(function () {
 
     // TODO closure
     // TODO code duplication
+    /**
+     * @override
+     */
     e.value = cell.dedupe(o["value"], {
       bind: function (self) {
         function input() {
