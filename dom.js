@@ -449,6 +449,13 @@ goog.scope(function () {
     }
   }
 
+  /**
+   * @typedef {{ mouseX:    number, mouseY:    number,
+   *             halfX:     number, halfY:     number,
+   *             relativeX: number, relativeY: number }}
+   */
+  var dragInfo
+
   function make(constructor, o) {
     var e       = new constructor()
     o[_e]       = e
@@ -499,13 +506,6 @@ goog.scope(function () {
     })
 
     var dragState = {}
-
-    /**
-     * @typedef {{ mouseX:    number, mouseY:    number,
-     *             halfX:     number, halfY:     number,
-     *             relativeX: number, relativeY: number }}
-     */
-    var dragInfo
 
     // TODO try to move this to Box.prototype.drag
     // TODO blur

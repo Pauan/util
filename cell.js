@@ -193,7 +193,7 @@ goog.scope(function () {
    *
    * @param {!util.array.ArrayLike.<!Signal.<T>>} a
    * @param {function(...[T]):void} f
-   * @return {{ unbind: function():void }}
+   * @return {{ unbind: (function():void|void) }}
    * @template T
    */
   util.cell.event = function (a, f) {
