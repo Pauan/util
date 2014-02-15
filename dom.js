@@ -373,7 +373,7 @@ goog.scope(function () {
    * @override
    * @type {!Object}
    */
-  Text.prototype.value = null
+  Text.prototype.value = {}
   Text.prototype.sync = function (oCell) {
     var self = this
     self.bind([oCell], function (x) {
