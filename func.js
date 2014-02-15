@@ -4,9 +4,9 @@ goog.scope(function () {
   var fn = (function () {})
 
   /**
-   * @param {function(this:S, ...[T]):R} f
+   * @param {function(this:S, ...[*]):R} f
    * @param {S} self
-   * @param {!Array.<T>} a
+   * @param {!Array} a
    * @return {R}
    * @template T, R, S
    */
