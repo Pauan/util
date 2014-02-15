@@ -142,6 +142,10 @@ goog.scope(function () {
     })
   }
 
+  /*
+      @param {...[!Style]} var_args
+     */
+
   /**
    * @constructor
    */
@@ -157,9 +161,6 @@ goog.scope(function () {
       Object["freeze"](o) // TODO remove this later ?
       f(o)
     },
-    /**
-     * @param {...[!Style]} var_args
-     */
     styles: function (var_args) {
       this[_styles] = {}
 
