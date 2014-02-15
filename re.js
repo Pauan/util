@@ -8,6 +8,10 @@ goog.scope(function () {
   // \ ^ $ . | ? * + ( ) [ {
   var reEscape = /[\\\^\$\.\|\?\*\+\(\)\[\{]/g
 
+  /**
+   * @param {string} s
+   * @return {string}
+   */
   util.re.escape = function (s) {
     return util.re.replace(s, reEscape, "\\$&")
   }

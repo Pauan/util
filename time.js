@@ -7,6 +7,9 @@ goog.scope(function () {
    */
   var iMax = null
 
+  /**
+   * @return {number}
+   */
   util.time.now = function () {
     return Date["now"]()
   }
@@ -25,7 +28,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {function()} f
+   * @param {function():void} f
    * @param {number=} duration
    * @return {{ iterations: number, milliseconds: number, memory: !Object }}
    */

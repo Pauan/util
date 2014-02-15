@@ -24,7 +24,7 @@ goog.scope(function () {
 
   /**
    * @param {string} s
-   * @return {uriObject}
+   * @return {!uriObject}
    */
   util.url.parseURI = function (s) {
     var a = re.exec(s, reUri)
@@ -46,7 +46,7 @@ goog.scope(function () {
   }
 
   /**
-   * @param {uriObject} o
+   * @param {!uriObject} o
    * @return {string}
    */
   util.url.printURI = function (o) {
@@ -86,8 +86,8 @@ goog.scope(function () {
   }
 
   /**
-   * @param {uriObject} x
-   * @return {uriObject}
+   * @param {!uriObject} x
+   * @return {!uriObject}
    */
   util.url.simplify = function (x) {
     var y = {}

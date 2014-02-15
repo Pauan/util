@@ -44,7 +44,14 @@ goog.scope(function () {
    */
   util.math.sqrt = Math["sqrt"]
 
+  /**
+   * @type {function(number):number}
+   */
   util.math.floor = Math["floor"]
+
+  /**
+   * @type {function(number):number}
+   */
   util.math.round = Math["round"]
 
   // TODO needs to handle 0 properly

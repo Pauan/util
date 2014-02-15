@@ -10,6 +10,9 @@ goog.scope(function () {
    */
   var hasOwn = {}["hasOwnProperty"]
 
+  /**
+   * @type {function(!Object):!Object}
+   */
   util.object.create = Object["create"]
 
   /**
@@ -23,8 +26,9 @@ goog.scope(function () {
 
   // TODO should this iterate over the prototype or not?
   /**
-   * @param {!Object} x
-   * @param {function(*, string):void} f
+   * @param {!Object.<S, T>} x
+   * @param {function(T, S):void} f
+   * @template T, S
    */
   util.object.each = function (x, f) {
     for (var s in x) {
@@ -33,8 +37,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Object} x
-   * @return {!Array}
+   * @param {!Object.<S>} x
+   * @return {!Array.<S>}
+   * @template S
    */
   util.object.keys = function (x) {
     var r = []
