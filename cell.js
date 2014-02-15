@@ -98,8 +98,9 @@ goog.scope(function () {
 
   /**
    * @typedef {{ set: ((function(!Signal,*):void)|void),
-   *             bind: ((function(!Signal):!Object)|void),
-   *             unbind: ((function(!Object):void)|void) }}
+   *             bind: ((function(!Signal):T)|void),
+   *             unbind: ((function(T):void)|void) }}
+   * @template T
    */
   var type_opt
 
