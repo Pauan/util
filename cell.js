@@ -141,6 +141,7 @@ goog.scope(function () {
    * @extends {Signal.<T>}
    * @param {T} x
    * @param {!type_opt=} obj
+   * @template T
    */
   function Dedupe(x, obj) {
     func.apply(Signal, this, [x, obj])
