@@ -894,8 +894,8 @@ goog.scope(function () {
   })
 
   /**
-   * @param {function(Box=):void} f
-   * @return {Box}
+   * @param {function(!Box):void=} f
+   * @return {!Box}
    */
   util.dom.initialize = function (f) {
     addEventListener("selectstart", function (e) {
@@ -974,6 +974,10 @@ goog.scope(function () {
     })
   }*/
 
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.box = function (f) {
     var o = document["createElement"]("div")
     o["dataset"]["box"] = ""
@@ -982,12 +986,20 @@ goog.scope(function () {
   }
 
   // TODO remove this ?
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.element = function (s, f) {
     var o = document["createElement"](s)
     o["dataset"]["box"] = ""
     return call(f, make(Box, o))
   }
 
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.label = function (f) {
     var o = document["createElement"]("label")
     o["dataset"]["box"] = ""
@@ -995,6 +1007,10 @@ goog.scope(function () {
     return call(f, make(Box, o))
   }
 
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.separator = function (f) {
     var o = document["createElement"]("hr")
     o["dataset"]["box"] = ""
@@ -1002,6 +1018,10 @@ goog.scope(function () {
     return call(f, make(Box, o))
   }
 
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.checkbox = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
@@ -1055,6 +1075,10 @@ goog.scope(function () {
     return call(f, e)
   }
 
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.radio = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
@@ -1109,6 +1133,10 @@ goog.scope(function () {
     return call(f, e)
   }
 
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.list = function (f) {
     var o = document["createElement"]("select")
     o["dataset"]["box"] = ""
@@ -1139,18 +1167,30 @@ goog.scope(function () {
     return call(f, e)
   }
 
+  /**
+   * @param {function(!ListItem):void=} f
+   * @return {!ListItem}
+   */
   util.dom.listItem = function (f) {
     var o = document["createElement"]("option")
     o["dataset"]["box"] = ""
     return call(f, make(ListItem, o))
   }
 
+  /**
+   * @param {function(!ListGroup):void=} f
+   * @return {!ListGroup}
+   */
   util.dom.listGroup = function (f) {
     var o = document["createElement"]("optgroup")
     o["dataset"]["box"] = ""
     return call(f, make(ListGroup, o))
   }
 
+  /**
+   * @param {function(!Text):void=} f
+   * @return {!Text}
+   */
   util.dom.search = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
@@ -1188,6 +1228,10 @@ goog.scope(function () {
     return call(f, e)
   }
 
+  /**
+   * @param {function(!Text):void=} f
+   * @return {!Text}
+   */
   util.dom.textbox = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
@@ -1238,6 +1282,10 @@ goog.scope(function () {
     return call(f, e)
   }
 
+  /**
+   * @param {function(!Text):void=} f
+   * @return {!Text}
+   */
   util.dom.textarea = function (f) {
     var o = document["createElement"]("textarea")
     o["dataset"]["box"] = ""
@@ -1269,18 +1317,30 @@ goog.scope(function () {
     return call(f, e)
   }
 
+  /**
+   * @param {function(!Link):void=} f
+   * @return {!Link}
+   */
   util.dom.link = function (f) {
     var o = document["createElement"]("a")
     o["dataset"]["box"] = ""
     return call(f, make(Link, o))
   }
 
+  /**
+   * @param {function(!IFrame):void=} f
+   * @return {!IFrame}
+   */
   util.dom.iframe = function (f) {
     var o = document["createElement"]("iframe")
     o["dataset"]["box"] = ""
     return call(f, make(IFrame, o))
   }
 
+  /**
+   * @param {function(!File):void=} f
+   * @return {!File}
+   */
   util.dom.file = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
@@ -1320,6 +1380,10 @@ goog.scope(function () {
     return call(f, e)
   }
 
+  /**
+   * @param {function(!Image):void=} f
+   * @return {!Image}
+   */
   util.dom.image = function (f) {
     var o = document["createElement"]("img")
     o["dataset"]["box"] = ""
@@ -1327,6 +1391,10 @@ goog.scope(function () {
     return call(f, make(Image, o))
   }
 
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.button = function (f) {
     var o = document["createElement"]("button")
     o["dataset"]["box"] = ""
@@ -1334,6 +1402,10 @@ goog.scope(function () {
     return call(f, make(Box, o))
   }
 
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.table = function (f) {
     var o = document["createElement"]("table")
     o["dataset"]["box"] = ""
@@ -1341,12 +1413,20 @@ goog.scope(function () {
     return call(f, make(Box, o))
   }
 
+  /**
+   * @param {function(!Box):void=} f
+   * @return {!Box}
+   */
   util.dom.row = function (f) {
     var o = document["createElement"]("tr")
     o["dataset"]["box"] = ""
     return call(f, make(Box, o))
   }
 
+  /**
+   * @param {function(!Table):void=} f
+   * @return {!Table}
+   */
   util.dom.cell = function (f) {
     var o = document["createElement"]("td")
     o["dataset"]["box"] = ""
@@ -1406,6 +1486,11 @@ goog.scope(function () {
     }
   }
 
+  /**
+   * @param {string} color
+   * @param {string} blur
+   * @return {string}
+   */
   util.dom.textStroke = function (color, blur) {
     return array.join(["-1px -1px " + blur + " " + color,
                        "-1px  1px " + blur + " " + color,
@@ -1424,10 +1509,16 @@ goog.scope(function () {
     document["title"] = s
   }
 
+  /**
+   * @return {number}
+   */
   util.dom.width = function () {
     return document["documentElement"]["offsetWidth"]
   }
 
+  /**
+   * @return {number}
+   */
   util.dom.height = function () {
     return document["documentElement"]["offsetHeight"]
   }
