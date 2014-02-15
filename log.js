@@ -31,7 +31,7 @@ goog.scope(function () {
   }
 
   /**
-   * @type {function(...*):void}
+   * @type {function(...[*]):void}
    */
   util.log.log = (util.log.DEBUG ? func.bind(console["log"], console) : function () {})
 })
