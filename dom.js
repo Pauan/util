@@ -157,17 +157,6 @@ goog.scope(function () {
       Object["freeze"](o) // TODO remove this later ?
       f(o)
     },
-    /**
-     * @type {function(...[!Style2]):void}
-     */
-    styles: function () {
-      this[_styles] = {}
-
-      var r = []
-      addStyleTo(r, this[_styles], arguments)
-
-      this[_e]["className"] = array.join(r, " ")
-    },
     styleWhen: function (x, b) {
       var self = this[_e]
         , o    = this[_styles]
@@ -318,6 +307,17 @@ goog.scope(function () {
         fail()
       }
     }
+  }
+  /**
+   * @param {...!Style2} var_args
+   */
+  Box.prototype.styles = function (var_args) {
+    this[_styles] = {}
+
+    var r = []
+    addStyleTo(r, this[_styles], arguments)
+
+    this[_e]["className"] = array.join(r, " ")
   }
 
   /**
