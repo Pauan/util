@@ -179,7 +179,7 @@ goog.scope(function () {
    *
    * @param {!util.array.ArrayLike.<!Signal>} a
    * @param {function(*, ...[*]):void} f
-   * @return {{ unbind: (function():void) }}
+   * @return {{ unbind: function():void }}
    */
   util.cell.event = function (a, f) {
     var o = {}
