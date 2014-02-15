@@ -109,6 +109,17 @@ goog.scope(function () {
   var type_opt
 
   /**
+   * @param {!Signal.<T>} self
+   * @param {T} x
+   * @param {!type_obj|void} obj
+   */
+  function init(self, x, obj) {
+    self[info]   = (obj != null ? obj : {})
+    self[get]    = x
+    self[events] = []
+  }
+
+  /**
    * TODO more specific type for the obj parameter, using record type with optional fields
    * @constructor
    * @param {T} x
@@ -116,9 +127,7 @@ goog.scope(function () {
    * @template T
    */
   function Signal(x, obj) {
-    this[info]   = (obj != null ? obj : {})
-    this[get]    = x
-    this[events] = []
+    init(this, x, obj)
   }
   /**
    * @return {T}
@@ -144,7 +153,7 @@ goog.scope(function () {
    * @template T
    */
   function Dedupe(x, obj) {
-    func.apply(Signal, this, [x, obj])
+    init(this, x, obj)
   }
   Dedupe.prototype.get = Signal.prototype.get
   /**
