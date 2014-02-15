@@ -182,8 +182,8 @@ goog.scope(function () {
    * @return {{ unbind: function():void }}
    */
   util.cell.event = function (a, f) {
-    /** @type {{ unbind: function():void }} */
     var o = {}
+    /** @type {{ unbind: function():void }} */
     return binder(o, a, function () {
       call(a, f)
     })
