@@ -138,7 +138,7 @@ goog.scope(function () {
    * TODO more specific type for the obj parameter, using record type with optional fields
    * TODO code duplication for the type signature with Signal
    * @constructor
-   * @extends {Signal}
+   * @extends {Signal.<T>}
    * @param {T} x
    * @param {!type_opt=} obj
    */
