@@ -69,17 +69,16 @@ goog.scope(function () {
    * @param {!Object} o
    * @param {!util.array.ArrayLike.<!Signal>} a
    * @param {function(*):void} f
+   * @return {{ unbind: function():void }}
    */
   function binder(o, a, f) {
     array.each(a, function (x) {
       bind1(x, f)
     })
-    /**
-     * @type {function():void}
-     */
     o.unbind = function () {
       unbind(a, f)
     }
+    return o
   }
 
   /**
@@ -183,10 +182,9 @@ goog.scope(function () {
    */
   util.cell.event = function (a, f) {
     var o = {}
-    binder(o, a, function () {
+    return binder(o, a, function () {
       call(a, f)
     })
-    return o
   }
 
   /**
@@ -201,10 +199,9 @@ goog.scope(function () {
   util.cell.bind = function (a, f) {
     var x = call(a, f)
       , o = util.cell.value(x)
-    binder(o, a, function () {
+    return binder(o, a, function () {
       o.set(call(a, f))
     })
-    return o
   }
 
   /**
@@ -221,10 +218,9 @@ goog.scope(function () {
    */
   util.cell.fold = function (init, x, f) {
     var o = util.cell.value(init)
-    binder(o, [x], function (x) {
+    return binder(o, [x], function (x) {
       o.set((init = f(init, x)))
     })
-    return o
   }
 
   /**
@@ -240,12 +236,11 @@ goog.scope(function () {
    */
   util.cell.filter = function (init, x, f) {
     var o = util.cell.value(init)
-    binder(o, [x], function (x) {
+    return binder(o, [x], function (x) {
       if (f(x)) {
         o.set(x)
       }
     })
-    return o
   }
 
   /**
@@ -269,7 +264,6 @@ goog.scope(function () {
         }
       })
     }
-    //return o
   }
 
   /**
