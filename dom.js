@@ -158,9 +158,9 @@ goog.scope(function () {
       f(o)
     },
     /**
-     * @param {...!Style2} var_args
+     * @type {function(...[!Style2]):void}
      */
-    styles: function (var_args) {
+    styles: function () {
       this[_styles] = {}
 
       var r = []
