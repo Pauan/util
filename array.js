@@ -314,7 +314,7 @@ goog.scope(function () {
     })
   }
 
-  util.array.clone = util.array.toArray
+  util.array.copy = util.array.toArray
 
   /**
    * @param {!util.array.ArrayLike.<T>} a

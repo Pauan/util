@@ -96,7 +96,7 @@ goog.scope(function () {
       self[info].set(self, v)
     }
                // TODO inefficient, it's here to prevent a bug when unbinding inside the called function
-    array.each(array.clone(self[events]), function (f) {
+    array.each(array.copy(self[events]), function (f) {
       f(v)
     })
   }
