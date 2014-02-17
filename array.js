@@ -204,6 +204,18 @@ goog.scope(function () {
 
   /**
    * @param {!util.array.ArrayLike.<T>} a
+   * @param {function(T,number=):void} f
+   * @template T
+   */
+  util.array.eachReverse = function (a, f) {
+    var i = util.array.len(a)
+    while (i--) {
+      f(a[i], i)
+    }
+  }
+
+  /**
+   * @param {!util.array.ArrayLike.<T>} a
    * @param {T} x
    * @return {number}
    * @template T
