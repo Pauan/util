@@ -131,12 +131,14 @@ goog.scope(function () {
     init(this, x, obj)
   }
   /**
-   * @return {T}
+   * TODO @return {T}
+   * @return {*}
    */
   Signal.prototype.get = function () {
     return this[get]
   }
   /**
+   * TODO @param {T} v
    * @param {*} v
    */
   Signal.prototype.set = function (v) {
