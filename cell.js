@@ -176,7 +176,7 @@ goog.scope(function () {
    * TODO code duplication for the type signature with Signal
    * @param {T} x
    * @param {!type_opt=} obj
-   * @return {!Signal.<T>}
+   * @return {!Signal.<*>}
    * @template T
    */
   util.cell.value = function (x, obj) {
@@ -190,7 +190,7 @@ goog.scope(function () {
    * TODO code duplication for the type signature with Signal
    * @param {T} x
    * @param {!type_opt=} obj
-   * @return {!Dedupe.<T>}
+   * @return {!Dedupe.<*>}
    * @template T
    */
   util.cell.dedupe = function (x, obj) {
