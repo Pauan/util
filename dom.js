@@ -275,6 +275,14 @@ goog.scope(function () {
     title: function (s) {
       this[_e]["title"] = s
     },
+    /**
+     * @return {{ bottom: number,
+     *            height: number,
+     *            left:   number,
+     *            right:  number,
+     *            top:    number,
+     *            width:  number }}
+     */
     getPosition: function () {
       var o = this[_e]["getBoundingClientRect"]()
         , r = {}
