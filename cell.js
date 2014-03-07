@@ -174,9 +174,10 @@ goog.scope(function () {
    *
    * TODO more specific type for the obj parameter, using record type with optional fields
    * TODO code duplication for the type signature with Signal
+   * TODO @return {!Signal.<T>}
    * @param {T} x
    * @param {!type_opt=} obj
-   * @return {!Signal.<*>}
+   * @return {!Signal.<T>}
    * @template T
    */
   util.cell.value = function (x, obj) {
@@ -188,9 +189,10 @@ goog.scope(function () {
    *
    * TODO more specific type for the obj parameter, using record type with optional fields
    * TODO code duplication for the type signature with Signal
+   * TODO @return {!Dedupe.<T>}
    * @param {T} x
    * @param {!type_opt=} obj
-   * @return {!Dedupe.<*>}
+   * @return {!Dedupe.<T>}
    * @template T
    */
   util.cell.dedupe = function (x, obj) {
