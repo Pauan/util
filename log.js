@@ -21,7 +21,7 @@ goog.scope(function () {
       if (s == null) {
         throw console["log"](new Error("Assertion failed")["stack"])
       } else {
-        throw new Error("Assertion failed: " + s)
+        throw console["log"](new Error("Assertion failed: " + s)["stack"])
       }
     }
   }
