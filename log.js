@@ -26,7 +26,8 @@ goog.scope(function () {
         t = new Error("Assertion failed: " + s)["stack"]
       }
       localStorage["previousAssertion"] = t
-      throw console["log"](t)
+      console["log"](t)
+      throw 42
     }
   }
 
