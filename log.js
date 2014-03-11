@@ -19,7 +19,7 @@ goog.scope(function () {
       //console.error("Assertion failed")
       //console.trace("Assertion failed")
       if (s == null) {
-        throw new Error("Assertion failed")
+        throw console["log"](new Error("Assertion failed").stack)
       } else {
         throw new Error("Assertion failed: " + s)
       }
