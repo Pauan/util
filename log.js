@@ -18,11 +18,15 @@ goog.scope(function () {
       //console.log(new Error("Assertion failed").stack.replace(/^(.*)\n    at .*/, "$1"))
       //console.error("Assertion failed")
       //console.trace("Assertion failed")
+      // TODO
+      var t
       if (s == null) {
-        throw console["log"](new Error("Assertion failed")["stack"])
+        t = new Error("Assertion failed")["stack"]
       } else {
-        throw console["log"](new Error("Assertion failed: " + s)["stack"])
+        t = new Error("Assertion failed: " + s)["stack"]
       }
+      localStorage["previousAssertion"] = t
+      throw console["log"](t)
     }
   }
 
