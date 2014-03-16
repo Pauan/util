@@ -870,9 +870,16 @@ goog.scope(function () {
     o["borderSpacing"] = "0px"
   })
 
-  /*addRule(document, "[data-text]", function (o) {
+  addRule(document, "[data-text]", function (o) {
+    o["border"] = "none"
+    o["outline"] = "none"
+
     o["cursor"] = "auto"
-  })*/
+  })
+
+  addRule(document, "[data-text]::-webkit-search-cancel-button", function (o) {
+    o["webkitAppearance"] = "none"
+  })
 
   addRule(document, "[data-search]", function (o) {
     o["border"] = "none"
@@ -1269,7 +1276,7 @@ goog.scope(function () {
   util.dom.textbox = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
-    o["dataset"]["search"] = ""
+    o["dataset"]["text"] = ""
     // TODO rather than making it "search", emulate the incremental property ?
     o["type"] = "search"
     o["incremental"] = true
