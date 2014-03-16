@@ -1271,6 +1271,7 @@ goog.scope(function () {
     o["dataset"]["box"] = ""
     o["dataset"]["text"] = ""
     o["type"] = "text"
+    o["incremental"] = true
 
     var e = make(Text, o)
 
