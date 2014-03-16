@@ -1305,7 +1305,6 @@ goog.scope(function () {
       bind: function (self) {
         // TODO is this correct; does it leak; is it inefficient; can it be replaced with cell.map ?
         return e.event([e.changed], function (x) {
-          log(o["value"], x)
           self.set(x)
         })
       },
