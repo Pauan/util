@@ -875,14 +875,17 @@ goog.scope(function () {
     o["outline"] = "none"
 
     o["cursor"] = "auto"
+
+    o["webkitAppearance"] = "textfield"
   })
 
-  addRule(document, array.join(["[data-text]::-webkit-search-decoration",
+  // TODO is this necessary ?
+  /*addRule(document, array.join(["[data-text]::-webkit-search-decoration",
                                 "[data-text]::-webkit-search-cancel-button",
                                 "[data-text]::-webkit-search-results-button",
                                 "[data-text]::-webkit-search-results-decoration"], ","), function (o) {
     o["display"] = "none"
-  })
+  })*/
 
   addRule(document, "[data-search]", function (o) {
     o["border"] = "none"
