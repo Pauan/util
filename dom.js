@@ -877,8 +877,11 @@ goog.scope(function () {
     o["cursor"] = "auto"
   })
 
-  addRule(document, "[data-text]::-webkit-search-cancel-button", function (o) {
-    o["webkitAppearance"] = "none"
+  addRule(document, array.join(["[data-text]::-webkit-search-decoration",
+                                "[data-text]::-webkit-search-cancel-button",
+                                "[data-text]::-webkit-search-results-button",
+                                "[data-text]::-webkit-search-results-decoration"], ","), function (o) {
+    o["display"] = "none"
   })
 
   addRule(document, "[data-search]", function (o) {
