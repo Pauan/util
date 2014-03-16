@@ -1270,6 +1270,7 @@ goog.scope(function () {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
     o["dataset"]["search"] = ""
+    // TODO rather than making it "search", emulate the incremental property ?
     o["type"] = "search"
     o["incremental"] = true
     o["autocomplete"] = "off"
@@ -1281,18 +1282,18 @@ goog.scope(function () {
     e.changed = cell.value(undefined, {
       bind: function (self) {
         function change() {
-          e.value.set(o["value"]) // TODO why is this here ?
+          //e.value.set(o["value"]) // TODO why is this here ?
           self.set(o["value"])
         }
 
-        o["addEventListener"]("change", change, true)
+        o["addEventListener"]("search", change, true)
 
         return {
           change: change
         }
       },
       unbind: function (e) {
-        o["removeEventListener"]("change", e.change, true)
+        o["removeEventListener"]("search", e.change, true)
       }
     })
 
@@ -1304,6 +1305,7 @@ goog.scope(function () {
       bind: function (self) {
         // TODO is this correct; does it leak; is it inefficient; can it be replaced with cell.map ?
         return e.event([e.changed], function (x) {
+          log(o["value"], x)
           self.set(x)
         })
       },
