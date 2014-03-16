@@ -872,10 +872,12 @@ goog.scope(function () {
 
   addRule(document, "[data-text]", function (o) {
     o["cursor"] = "auto"
+    // TODO this is gross
     o["webkitAppearance"] = "textfield"
   })
 
   // http://css-tricks.com/webkit-html5-search-inputs/
+  // TODO this is gross
   addRule(document, array.join(["[data-text]::-webkit-search-decoration",
                                 "[data-text]::-webkit-search-cancel-button",
                                 "[data-text]::-webkit-search-results-button",
@@ -1279,7 +1281,7 @@ goog.scope(function () {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
     o["dataset"]["text"] = ""
-    // TODO rather than making it "search", emulate the incremental property ?
+    // TODO this is gross, it only does this so it can use the "incremental" property, maybe emulate it instead with type "text" ?
     o["type"] = "search"
     o["incremental"] = true
     o["autocomplete"] = "off"
