@@ -871,21 +871,17 @@ goog.scope(function () {
   })
 
   addRule(document, "[data-text]", function (o) {
-    o["border"] = "none"
-    o["outline"] = "none"
-
     o["cursor"] = "auto"
-
     o["webkitAppearance"] = "textfield"
   })
 
-  // TODO is this necessary ?
-  /*addRule(document, array.join(["[data-text]::-webkit-search-decoration",
+  // http://css-tricks.com/webkit-html5-search-inputs/
+  addRule(document, array.join(["[data-text]::-webkit-search-decoration",
                                 "[data-text]::-webkit-search-cancel-button",
                                 "[data-text]::-webkit-search-results-button",
                                 "[data-text]::-webkit-search-results-decoration"], ","), function (o) {
     o["display"] = "none"
-  })*/
+  })
 
   addRule(document, "[data-search]", function (o) {
     o["border"] = "none"
