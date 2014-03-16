@@ -870,9 +870,9 @@ goog.scope(function () {
     o["borderSpacing"] = "0px"
   })
 
-  addRule(document, "[data-text]", function (o) {
+  /*addRule(document, "[data-text]", function (o) {
     o["cursor"] = "auto"
-  })
+  })*/
 
   addRule(document, "[data-search]", function (o) {
     o["border"] = "none"
@@ -1269,9 +1269,10 @@ goog.scope(function () {
   util.dom.textbox = function (f) {
     var o = document["createElement"]("input")
     o["dataset"]["box"] = ""
-    o["dataset"]["text"] = ""
-    o["type"] = "text"
+    o["dataset"]["search"] = ""
+    o["type"] = "search"
     o["incremental"] = true
+    o["autocomplete"] = "off"
 
     var e = make(Text, o)
 
