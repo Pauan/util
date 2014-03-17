@@ -52,6 +52,11 @@ goog.scope(function () {
   /**
    * @type {function(number):number}
    */
+  util.math.ceil = Math["ceil"]
+
+  /**
+   * @type {function(number):number}
+   */
   util.math.round = Math["round"]
 
   // TODO needs to handle 0 properly
