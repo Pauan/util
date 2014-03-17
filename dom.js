@@ -922,6 +922,11 @@ goog.scope(function () {
     e.set("flex-shrink", "1")
   })
 
+  util.dom.grow = util.dom.style(function (e) {
+    // e.set("display", "inline-block")
+    e.set("flex-grow", "1")
+  })
+
   util.dom.clip = util.dom.style(function (e) {
     e.set("flex-shrink", "1")
     e.set("overflow", "hidden")
