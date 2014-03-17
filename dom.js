@@ -952,12 +952,11 @@ goog.scope(function () {
    * @return {!Box}
    */
   util.dom.initialize = function (f) {
-    /*addEventListener("selectstart", function (e) {
-      console["log"](e)
+    addEventListener("selectstart", function (e) {
       if (e["target"]["localName"] !== "input") { // && !e.target.draggable
         e["preventDefault"]()
       }
-    }, true)*/
+    }, true)
 
     document["body"]["dataset"]["box"] = ""
     document["body"]["dataset"]["body"] = ""
