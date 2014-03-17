@@ -484,7 +484,7 @@ goog.scope(function () {
     // TODO if the window loses focus and refocuses, it doesn't update properly
     e.focused = cell.dedupe(false, {
       bind: function (self) {
-        o["tabIndex"] = -1
+        o["setAttribute"]("tabindex", "-1")
 
         function focus() {
           self.set(document["hasFocus"]())
@@ -503,7 +503,7 @@ goog.scope(function () {
         }
       },
       unbind: function (e) {
-        o["tabIndex"] = ""
+        o["removeAttribute"]("tabindex")
         o["removeEventListener"]("focus", e.focus, true)
         o["removeEventListener"]("blur", e.blur, true)
       },
