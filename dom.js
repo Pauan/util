@@ -177,7 +177,7 @@ goog.scope(function () {
         })
       }
     },
-    styleObject: function (o, prop, b) {
+    /*styleObject: function (o, prop, b) {
       b = (b && o[prop] != null)
       if (b) {
         this.styleWhen(o[prop], true)
@@ -188,7 +188,7 @@ goog.scope(function () {
           this.styleWhen(o[s], false)
         }
       }
-    },
+    },*/
     name: function (s) {
       this[_e]["name"] = s
     },
