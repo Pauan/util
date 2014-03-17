@@ -495,7 +495,7 @@ goog.scope(function () {
         }
 
         o["addEventListener"]("focus", focus, true)
-        //o["addEventListener"]("blur", blur, true)
+        o["addEventListener"]("blur", blur, true)
 
         return {
           focus: focus,
@@ -506,14 +506,14 @@ goog.scope(function () {
         o["removeAttribute"]("tabindex")
         o["removeEventListener"]("focus", e.focus, true)
         o["removeEventListener"]("blur", e.blur, true)
-      },
+      }/*,
       set: function (self, b) {
         if (b) {
           o["focus"]()
         } else {
           o["blur"]()
         }
-      }
+      }*/
     })
 
     var dragState = {}
