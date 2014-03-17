@@ -391,6 +391,9 @@ goog.scope(function () {
       oCell.set(x)
     })
   }
+  Text.prototype.select = function () {
+    this[_e]["select"]()
+  }
 
   /**
    * @constructor
