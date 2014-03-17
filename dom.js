@@ -487,7 +487,8 @@ goog.scope(function () {
         o["setAttribute"]("tabindex", "-1")
 
         function focus() {
-          self.set(document["hasFocus"]())
+          self.set(true)
+          //self.set(document["hasFocus"]())
         }
 
         function blur() {
