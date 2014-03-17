@@ -1,22 +1,25 @@
 goog.provide("util.object")
 
 goog.scope(function () {
-  var array = util.array
-
   /**
    * @type {function(string):boolean}
    */
   var hasOwn = {}["hasOwnProperty"]
 
   /**
-   * @type {function(!Object):!Object}
+   * @param {!Object.<K, V>} x
+   * @return {!Object.<K, V>}
+   * @template K, V
    */
-  util.object.create = Object["create"]
+  util.object.clone = function (x) {
+    return Object["create"](x)
+  }
 
   /**
-   * @param {!Object} o
-   * @param {string} s
+   * @param {!Object.<K>} o
+   * @param {K} s
    * @return {boolean}
+   * @template K
    */
   util.object.hasOwn = function (o, s) {
     return hasOwn["call"](o, s)
@@ -24,9 +27,9 @@ goog.scope(function () {
 
   // TODO should this iterate over the prototype or not?
   /**
-   * @param {!Object.<S, T>} x
-   * @param {function(T, S):void} f
-   * @template T, S
+   * @param {!Object.<K, V>} x
+   * @param {function(V, K):void} f
+   * @template K, V
    */
   util.object.each = function (x, f) {
     for (var s in x) {
@@ -53,9 +56,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!Object.<S>} x
-   * @return {!Array.<S>}
-   * @template S
+   * @param {!Object.<K>} x
+   * @return {!Array.<K>}
+   * @template K
    */
   util.object.keys = function (x) {
     var r = []
@@ -66,5 +69,31 @@ goog.scope(function () {
       }
     }
     return r
+  }
+
+  /**
+   * @param {!Object.<K, V>} x
+   * @param {!Object.<K, V>} y
+   * @param {K} s
+   * @template K, V
+   */
+  util.object.copyProperty = function (x, y, s) {
+    Object["defineProperty"](x, s, Object["getOwnPropertyDescriptor"](y, s))
+  }
+
+  /**
+   * @param {!Object.<K, V>} x
+   * @return {!Object.<K, V>}
+   * @template K, V
+   */
+  util.object.copy = function (x) {
+    var p = Object["getPrototypeOf"](x)
+      , o = util.object.clone(p)
+      , a = Object["getOwnPropertyNames"](x)
+    // TODO util.array
+    for (var i = 0, iLen = a["length"]; i < iLen; ++i) {
+      util.object.copyProperty(o, x, a[i])
+    }
+    return o
   }
 })
