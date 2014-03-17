@@ -494,8 +494,8 @@ goog.scope(function () {
           self.set(false)
         }
 
-        //o["addEventListener"]("focus", focus, true)
-        o["addEventListener"]("blur", blur, true)
+        o["addEventListener"]("focus", focus, true)
+        //o["addEventListener"]("blur", blur, true)
 
         return {
           focus: focus,
