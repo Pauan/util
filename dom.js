@@ -484,7 +484,7 @@ goog.scope(function () {
     // TODO if the window loses focus and refocuses, it doesn't update properly
     e.focused = cell.dedupe(false, {
       bind: function (self) {
-        o["tabIndex"] = 0
+        o["tabIndex"] = -1
 
         function focus() {
           self.set(document["hasFocus"]())
@@ -952,11 +952,12 @@ goog.scope(function () {
    * @return {!Box}
    */
   util.dom.initialize = function (f) {
-    addEventListener("selectstart", function (e) {
+    /*addEventListener("selectstart", function (e) {
+      console["log"](e)
       if (e["target"]["localName"] !== "input") { // && !e.target.draggable
         e["preventDefault"]()
       }
-    }, true)
+    }, true)*/
 
     document["body"]["dataset"]["box"] = ""
     document["body"]["dataset"]["body"] = ""
