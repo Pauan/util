@@ -899,9 +899,10 @@ goog.scope(function () {
   util.dom.horiz = util.dom.style(function (e) {
     e.set("display", "flex")
     e.set("flex-direction", "row")
-    //e.set("align-items", "center")
+    e.set("align-items", "center")
   })
 
+  // TODO Should this use "align-items: center" too ?
   util.dom.vert = util.dom.style(function (e) {
     e.set("display", "flex")
     e.set("flex-direction", "column")
