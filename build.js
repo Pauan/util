@@ -93,8 +93,14 @@ exports.compile = function (info) {
 
       command.push("--create_source_map", sourcemap)
       command.push("--source_map_format", "V3")
-      command.push("--output_wrapper", "%output%\n//# sourceMappingURL=" + file + ".map.json")
+      command.push("--output_wrapper", "%output%\n//# sourceMappingURL=" + path.basename(file + ".map.json"))
     }
+
+    if (info.nodejs) {
+      command.push("--output_wrapper", "#! /usr/bin/env node\n%output%")
+    }
+
+    console.log(command)
 
     return {
       command: command,
