@@ -26,27 +26,29 @@ goog.scope(function () {
     background:         dom.hsl(211, 13, 35)
   }
 
-  util.options.subgroup = (function () {
-    var top = dom.style(function (e) {
+  util.options.indent = (function () {
+    var indent = dom.style(function (e) {
+      e.set("margin-left", "12px")
+    })
+
+    return function (e, f) {
+      dom.box(function (e) {
+        e.styles(indent)
+        f(e)
+      }).move(e)
+    }
+  })()
+
+  util.options.header = (function () {
+    var header = dom.style(function (e) {
       e.set("font-weight", "bold")
       e.set("margin-bottom", "6px")
     })
 
-    var bottom = dom.style(function (e) {
-      e.set("margin-left", "12px")
-    })
-
-    return function (e, s, f) {
+    return function (e, s) {
       dom.box(function (e) {
-        dom.box(function (e) {
-          e.styles(top)
-          e.text(s)
-        }).move(e)
-
-        dom.box(function (e) {
-          e.styles(bottom)
-          f(e)
-        }).move(e)
+        e.styles(header)
+        e.text(s)
       }).move(e)
     }
   })()
