@@ -25,6 +25,20 @@ goog.scope(function () {
     return hasOwn["call"](o, s)
   }
 
+  /**
+   * @param {!Object} x
+   * @return {number}
+   */
+  util.object.len = function (x) {
+    var i = 0
+    for (var s in x) {
+      if (util.object.hasOwn(x, s)) {
+        ++i
+      }
+    }
+    return i
+  }
+
   // TODO should this iterate over the prototype or not?
   /**
    * @param {!Object.<K, V>} x
