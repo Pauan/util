@@ -1,11 +1,9 @@
 goog.provide("util.buffer")
 
-goog.require("util.log")
 goog.require("util.array")
 
 goog.scope(function () {
-  var assert = util.log.assert
-    , array  = util.array
+  var array = util.array
 
   util.buffer.loc = function (x, y) {
     return {
@@ -17,47 +15,34 @@ goog.scope(function () {
     }
   }
 
-  // TODO inefficient, since it doesn't generate the values lazily
   function toBuffer(a, filename, line, column) {
-    return array.map(a, function (s) {
-      var start = { line:   line
+    return util.stream.make(function () {
+      if (a.has()) {
+        var s = a.peek()
+        a.read()
+
+        var start = { line:   line
+                    , column: column }
+
+        if (s === "\n") {
+          line   = start.line + 1
+          column = 0
+        } else {
+          line   = start.line
+          column = start.column + 1
+        }
+
+        var end = { line:   line
                   , column: column }
 
-      if (s === "\n") {
-        line   = start.line + 1
-        column = 0
+        return { value: s
+               , loc: { source: filename
+                      , start:  start
+                      , end:    end } }
       } else {
-        line   = start.line
-        column = start.column + 1
+        return util.stream.end
       }
-
-      var end = { line:   line
-                , column: column }
-
-      return { value: s
-             , loc: { source: filename
-                    , start:  start
-                    , end:    end } }
     })
-  }
-
-  function toIterator(a) {
-    var i   = 0
-      , len = array.len(a)
-
-    return {
-      peek: function () {
-        assert(i < len)
-        return a[i]
-      },
-      read: function () {
-        assert(i < len)
-        ++i
-      },
-      has: function () {
-        return i < len
-      }
-    }
   }
 
   // Takes a string and returns a stream that goes through the
@@ -67,7 +52,7 @@ goog.scope(function () {
     if (filename == null) {
       filename = null
     }
-    return toIterator(toBuffer(a, filename, 1, 0))
+    return toBuffer(util.stream.fromArray(a), filename, 1, 0)
   }
 
   util.buffer.Error = function (o, s) {
