@@ -49,8 +49,7 @@ exports.compile = function (info) {
     command.push("--use_only_custom_externs")
     command.push("--summary_detail_level", "3")
     command.push("--warning_level", "VERBOSE")
-    ;[//"reportUnknownTypes",
-      "accessControls",
+    ;["accessControls",
       "ambiguousFunctionDecl",
       "checkEventfulObjectDisposal",
       "checkRegExp",
@@ -74,6 +73,7 @@ exports.compile = function (info) {
       "missingRequire",
       "missingReturn",
       "nonStandardJsDocs",
+      "reportUnknownTypes",
       "suspiciousCode",
       "strictModuleDepCheck",
       "typeInvalidation",
@@ -82,6 +82,9 @@ exports.compile = function (info) {
       "unknownDefines",
       "uselessCode",
       "visibility"].forEach(function (x) {
+      command.push("--jscomp_error", x)
+    })
+    ;[].forEach(function (x) {
       command.push("--jscomp_warning", x)
     })
     if (info.debug) {
