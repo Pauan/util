@@ -49,44 +49,43 @@ exports.compile = function (info) {
     command.push("--use_only_custom_externs")
     command.push("--summary_detail_level", "3")
     command.push("--warning_level", "VERBOSE")
+    ;[//"reportUnknownTypes",
+      "accessControls",
+      "ambiguousFunctionDecl",
+      "checkEventfulObjectDisposal",
+      "checkRegExp",
+      "checkStructDictInheritance",
+      "checkTypes",
+      "checkVars",
+      "const",
+      "constantProperty",
+      "deprecated",
+      "duplicateMessage",
+      "es3",
+      "es5Strict",
+      "externsValidation",
+      "fileoverviewTags",
+      "globalThis",
+      "internetExplorerChecks",
+      "invalidCasts",
+      "misplacedTypeAnnotation",
+      "missingProperties",
+      "missingProvide",
+      "missingRequire",
+      "missingReturn",
+      "nonStandardJsDocs",
+      "suspiciousCode",
+      "strictModuleDepCheck",
+      "typeInvalidation",
+      "undefinedNames",
+      "undefinedVars",
+      "unknownDefines",
+      "uselessCode",
+      "visibility"].forEach(function (x) {
+      command.push("--jscomp_warning", x)
+    })
     if (info.debug) {
-      ;[//"reportUnknownTypes",
-        "accessControls",
-        "ambiguousFunctionDecl",
-        "checkEventfulObjectDisposal",
-        "checkRegExp",
-        "checkStructDictInheritance",
-        "checkTypes",
-        "checkVars",
-        "const",
-        "constantProperty",
-        "deprecated",
-        "duplicateMessage",
-        "es3",
-        "es5Strict",
-        "externsValidation",
-        "fileoverviewTags",
-        "globalThis",
-        "internetExplorerChecks",
-        "invalidCasts",
-        "misplacedTypeAnnotation",
-        "missingProperties",
-        "missingProvide",
-        "missingRequire",
-        "missingReturn",
-        "nonStandardJsDocs",
-        "suspiciousCode",
-        "strictModuleDepCheck",
-        "typeInvalidation",
-        "undefinedNames",
-        "undefinedVars",
-        "unknownDefines",
-        "uselessCode",
-        "visibility"].forEach(function (x) {
-          command.push("--jscomp_warning", x)
-        })
       //command.push("--output_manifest", "manifest.MF")
-
       command.push("--debug")
       command.push("--formatting", "PRETTY_PRINT")
       command.push("--create_source_map", sourcemap)
