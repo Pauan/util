@@ -56,6 +56,10 @@ goog.scope(function () {
     return toBuffer(util.stream.fromArray(a), filename, 1, 0)
   }
 
+  /**
+   * @constructor
+   * @extends {Error}
+   */
   util.buffer.Error = function (o, s) {
     var a = [s]
     if (o != null) {
