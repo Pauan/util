@@ -139,6 +139,7 @@ exports.compile = function (info) {
 
         } else {
           console.log("exited with code " + code)
+          process.exit(code)
         }
       })
     //}, 0)
