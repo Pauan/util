@@ -73,7 +73,7 @@ exports.compile = function (info) {
       "missingRequire",
       "missingReturn",
       "nonStandardJsDocs",
-      "reportUnknownTypes",
+      //"reportUnknownTypes",
       "suspiciousCode",
       "strictModuleDepCheck",
       "typeInvalidation",
