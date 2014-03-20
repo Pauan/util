@@ -91,12 +91,14 @@ exports.compile = function (info) {
       //command.push("--output_manifest", "manifest.MF")
       command.push("--debug")
       command.push("--formatting", "PRETTY_PRINT")
+    }
+    if (info.sourcemap) {
       command.push("--create_source_map", sourcemap)
       command.push("--source_map_format", "V3")
     }
 
     var output = "%output%"
-    if (info.debug) {
+    if (info.sourcemap) {
       output = output + "\n//# sourceMappingURL=" + path.basename(sourcemap)
     }
     if (info.nodejs) {
@@ -125,7 +127,7 @@ exports.compile = function (info) {
       io.on("exit", function (code) {
         if (code === 0) {
           // TODO generic source map code
-          if (info.debug) {
+          if (info.sourcemap) {
             var y = JSON.parse(fs.readFileSync(com.sourcemap, { encoding: "utf8" }))
             if ("sourceRoot" in info) {
               y["sourceRoot"] = info.sourceRoot
