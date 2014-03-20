@@ -38,7 +38,7 @@ goog.scope(function () {
       array.push(r, a.peek())
       a.read()
     }
-    return a
+    return r
   }
 
   util.stream.fromArray = function (a) {
