@@ -1,6 +1,7 @@
 goog.provide("util.buffer")
 
 goog.require("util.array")
+goog.require("util.stream")
 
 goog.scope(function () {
   var array = util.array
