@@ -40,13 +40,15 @@ exports.compile = function (info) {
     command.push("--only_closure_dependencies")
     command.push("--closure_entry_point", s)
     command.push("--js_output_file", file)
-    command.push("--define", "util.log.DEBUG=" + !!info.debug)
+    command.push("--define", "util.log.DEBUG=" + !!info.logging)
     info.externs.forEach(function (x) {
       command.push("--externs", x)
     })
     command.push("--use_types_for_optimization")
     command.push("--compilation_level", "ADVANCED_OPTIMIZATIONS")
     command.push("--use_only_custom_externs")
+    command.push("--summary_detail_level", "3")
+    command.push("--warning_level", "VERBOSE")
     if (info.debug) {
       command.push("--debug")
       command.push("--formatting", "PRETTY_PRINT")
@@ -87,8 +89,6 @@ exports.compile = function (info) {
         "visibility"].forEach(function (x) {
           command.push("--jscomp_warning", x)
         })
-      command.push("--summary_detail_level", "3")
-      command.push("--warning_level", "VERBOSE")
       //command.push("--output_manifest", "manifest.MF")
 
       command.push("--create_source_map", sourcemap)
