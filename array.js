@@ -184,11 +184,15 @@ goog.scope(function () {
 
   /**
    * @param {!util.array.ArrayLike.<T>} a
+   * @param {number=} i
    * @return {T}
    * @template T
    */
-  util.array.last = function (a) {
-    return a[util.array.len(a) - 1]
+  util.array.last = function (a, i) {
+    if (i == null) {
+      i = 0
+    }
+    return a[util.array.len(a) - 1 - i]
   }
 
   /**

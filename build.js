@@ -3,6 +3,23 @@
 var spawn = require("child_process").spawn
   , fs    = require("fs")
   , path  = require("path")
+//  , http  = require("http")
+//  , zlib  = require("zlib")
+
+exports.normalize = function (s) {
+  return path.join.apply(null, s.split(/\//g))
+}
+
+/*var download = function(url, dest, cb) {
+  var file = fs.createWriteStream(dest);
+  var request = http.get(url, function(response) {
+    response.pipe(file);
+    file.on('finish', function() {
+      file.close();
+      cb();
+    });
+  });
+}*/
 
 // TODO async version ?
 function getFiles(p) {
@@ -23,21 +40,25 @@ function getFiles(p) {
 }
 
 exports.compile = function (info) {
+  var closure = exports.normalize(info.closure)
+  /*if (exports.mkdir(closure)) {
+
+  }*/
   var commands = Object.keys(info.modules).map(function (s) {
     var folders = info.modules[s].dirs
-      , file    = info.modules[s].outfile
+      , file    = exports.normalize(info.modules[s].outfile)
 
     var sourcemap = file + ".map.json"
 
-    var command = ["-jar", info.closure]
+    var command = ["-jar", closure]
     folders.forEach(function (x) {
-      getFiles(x).forEach(function (x) {
+      getFiles(exports.normalize(x)).forEach(function (x) {
         command.push("--js")
         command.push(x)
       })
     })
     info.externs.forEach(function (x) {
-      command.push("--externs", x)
+      command.push("--externs", exports.normalize(x))
     })
     //command.push("--process_closure_primitives")
     command.push("--only_closure_dependencies")
@@ -149,10 +170,12 @@ exports.compile = function (info) {
 // TODO mkdirp
 exports.mkdir = function (name) {
   try {
-    fs.mkdirSync(name)
+    fs.mkdirSync(exports.normalize(name))
+    return true
   } catch (e) {
     if (e.code !== "EEXIST") {
       throw e
     }
+    return false
   }
 }
