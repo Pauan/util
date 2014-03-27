@@ -15,7 +15,7 @@ goog.scope(function () {
    * @typedef {{ scheme:    string,
    *             authority: string,
    *             hostname:  string,
-   *             port:      number|string,
+   *             port:      (number|string),
    *             path:      string,
    *             query:     string,
    *             fragment:  string }}
