@@ -12,13 +12,13 @@ goog.scope(function () {
   var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*):(?:\/\/(?:([^\@]+)\@)?([^\/\?\#\:]+)(?:\:([0-9]+))?)?([^\?\#]*)?(?:\?([^\#]*))?(?:\#(.*))?$/
 
   /**
-   * @typedef {{ scheme:    (string|null),
-   *             authority: (string|null),
-   *             hostname:  (string|null),
-   *             port:      (number|null),
-   *             path:      (!Array.<string>|null),
-   *             query:     (string|null),
-   *             fragment:  (string|null) }}
+   * @typedef {{ scheme:    string,
+   *             authority: string,
+   *             hostname:  string,
+   *             port:      number|string,
+   *             path:      string,
+   *             query:     string,
+   *             fragment:  string }}
    */
   var uriObject
 
@@ -31,14 +31,14 @@ goog.scope(function () {
     if (a) {
       return {
         scheme:    util.string.lower(a[1]),
-        authority: a[2] || null,
-        hostname:  a[3] || null,
-        port:      (+a[4] || null),
-        path:      (a[5]
-                     ? re.split(a[5], /\//g)
-                     : null),
-        query:     a[6] || null,
-        fragment:  a[7] || null
+        authority: a[2] || "",
+        hostname:  a[3] || "",
+        port:      (a[4]
+										 ? +a[4]
+										 : ""),
+        path:      a[5] || "",
+        query:     a[6] || "",
+        fragment:  a[7] || ""
       }
     } else {
       throw new Error("invalid URI: " + s)
@@ -72,7 +72,7 @@ goog.scope(function () {
       }
     }
     if (o.path) {
-      array.push(s, array.join(o.path, "/"))
+      array.push(s, o.path)
     }
     if (o.query) {
       array.push(s, "?")
