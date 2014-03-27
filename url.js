@@ -9,7 +9,7 @@ goog.scope(function () {
     , re    = util.re
 
 	// http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
-	var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*:)(?:(\/\/(?:[^\@]+\@)?)([^\/\?\#\:]+)(\:[0-9]+)?)?([^\?\#]*)([^\/\?\#]*)(\?[^\#]*)?(\#.*)?$/
+	var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*:)(?:(\/\/(?:[^\@]+\@)?)([^\/\?\#\:]*)(\:[0-9]+)?)?([^\?\#]*?)([^\/\?\#]*)(\?[^\#]*)?(\#.*)?$/
 
   /**
    * @typedef {{ scheme:    string,
