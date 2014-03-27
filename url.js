@@ -29,6 +29,7 @@ goog.scope(function () {
   util.url.parseURI = function (s) {
     var a = re.exec(s, reUri)
     if (a) {
+			var path = re.split(a[5] || "", /\//g)
       return {
         scheme:    util.string.lower(a[1]),
         authority: a[2] || "",
@@ -36,7 +37,8 @@ goog.scope(function () {
         port:      (a[4]
 										 ? +a[4]
 										 : ""),
-        path:      a[5] || "",
+        path:      array.join(array.slice(path, 0, -1), "/") + "/",
+				file:      array.last(path),
         query:     a[6] || "",
         fragment:  a[7] || ""
       }
@@ -74,6 +76,9 @@ goog.scope(function () {
     if (o.path) {
       array.push(s, o.path)
     }
+		if (o.file) {
+			array.push(s, o.file)
+		}
     if (o.query) {
       array.push(s, "?")
       array.push(s, o.query)
@@ -98,28 +103,17 @@ goog.scope(function () {
       y.scheme = x.scheme
     }
 
-    if (x.authority) {
-      y.authority = x.authority
-    }
-    if (x.hostname) {
-      // http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
-      y.hostname = re.replace(re.replace(re.replace(x.hostname, /^www\.|\.\w\w$/g, ""), // .co.uk
-                                                                /\.(?:aero|asia|biz|cat|com|co|coop|info|int|jobs|mobi|museum|name|net|org|pro|tel|travel|xxx|edu|gov|mil)$/, ""),
-                                                                // TODO: is this needed?
-                                                                /\.\w\w$/, "") // .ac.edu
-    }
-    if (x.port) {
-      y.port = x.port
-    }
-    if (x.path) {
-      y.path = x.path
-    }
-    if (x.query) {
-      y.query = x.query
-    }
-    if (x.fragment) {
-      y.fragment = x.fragment
-    }
+		y.authority = x.authority
+		// http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
+		y.hostname = re.replace(re.replace(re.replace(x.hostname, /^www\.|\.\w\w$/g, ""), // .co.uk
+		                                                          /\.(?:aero|asia|biz|cat|com|co|coop|info|int|jobs|mobi|museum|name|net|org|pro|tel|travel|xxx|edu|gov|mil)$/, ""),
+		                                                          // TODO: is this needed?
+		                                                          /\.\w\w$/, "") // .ac.edu
+		y.port     = x.port
+		y.path     = x.path
+		y.file     = x.file
+		y.query    = x.query
+		y.fragment = x.fragment
     return y
   }
 })
