@@ -9,14 +9,16 @@ goog.scope(function () {
     , re    = util.re
 
 	// http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
-	var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*:)(?:(\/\/(?:[^\@]+\@)?)([^\/\?\#\:]*)(\:[0-9]+)?)?([^\?\#]*?)([^\/\?\#]*)(\?[^\#]*)?(\#.*)?$/
+	var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*:)(?:(\/\/)([^\@]+\@)?([^\/\?\#\:]*)(\:[0-9]+)?)?([^\?\#]*?)([^\/\?\#]*)(\?[^\#]*)?(\#.*)?$/
 
   /**
    * @typedef {{ scheme:    string,
+	 *             separator: string,
    *             authority: string,
    *             hostname:  string,
    *             port:      (number|string),
    *             path:      string,
+	 *             file:      string,
    *             query:     string,
    *             fragment:  string }}
    */
@@ -31,15 +33,16 @@ goog.scope(function () {
     if (a) {
       return {
         scheme:    util.string.lower(a[1]),
-        authority: a[2] || "",
-        hostname:  a[3] || "",
-        port:      (a[4]
-										 ? +a[4]
+				separator: a[2] || "",
+        authority: a[3] || "",
+        hostname:  a[4] || "",
+        port:      (a[5]
+										 ? +a[5]
 										 : ""),
-        path:      a[5] || "",
-				file:      a[6] || "",
-        query:     a[7] || "",
-        fragment:  a[8] || ""
+        path:      a[6] || "",
+				file:      a[7] || "",
+        query:     a[8] || "",
+        fragment:  a[9] || ""
       }
     } else {
       throw new Error("invalid URI: " + s)
