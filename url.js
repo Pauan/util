@@ -62,6 +62,7 @@ goog.scope(function () {
       y.scheme = x.scheme
     }
 
+		y.separator = x.separator
 		y.authority = x.authority
 		// http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
 		y.hostname = re.replace(re.replace(re.replace(x.hostname, /^www\.|\.\w\w$/g, ""), // .co.uk
