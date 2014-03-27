@@ -93,7 +93,7 @@ goog.scope(function () {
     var y = {}
 
     if (x.scheme === "http" || x.scheme === "https") {
-      y.scheme = null
+      y.scheme = ""
     } else {
       y.scheme = x.scheme
     }
