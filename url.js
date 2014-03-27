@@ -58,11 +58,12 @@ goog.scope(function () {
 
 		if (x.scheme === "http:" || x.scheme === "https:") {
       y.scheme = ""
+			y.separator = ""
     } else {
       y.scheme = x.scheme
+			y.separator = x.separator
     }
 
-		y.separator = x.separator
 		y.authority = x.authority
 		// http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
 		y.hostname = re.replace(re.replace(re.replace(x.hostname, /^www\.|\.\w\w$/g, ""), // .co.uk
