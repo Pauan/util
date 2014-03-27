@@ -8,8 +8,8 @@ goog.scope(function () {
   var array = util.array
     , re    = util.re
 
-  // http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
-  var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*):(?:\/\/(?:([^\@]+)\@)?([^\/\?\#\:]+)(?:\:([0-9]+))?)?([^\?\#]*)?(?:\?([^\#]*))?(?:\#(.*))?$/
+	// http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
+	var reUri = /^([a-zA-Z][a-zA-Z0-9\+\.\-]*:)(?:(\/\/(?:[^\@]+\@)?)([^\/\?\#\:]+)(\:[0-9]+)?)?([^\?\#]*)([^\/\?\#]*)(\?[^\#]*)?(\#.*)?$/
 
   /**
    * @typedef {{ scheme:    string,
@@ -29,7 +29,6 @@ goog.scope(function () {
   util.url.parseURI = function (s) {
     var a = re.exec(s, reUri)
     if (a) {
-			var path = re.split(a[5] || "", /\//g)
       return {
         scheme:    util.string.lower(a[1]),
         authority: a[2] || "",
@@ -37,57 +36,14 @@ goog.scope(function () {
         port:      (a[4]
 										 ? +a[4]
 										 : ""),
-        path:      array.join(array.slice(path, 0, -1), "/") + "/",
-				file:      array.last(path),
-        query:     a[6] || "",
-        fragment:  a[7] || ""
+        path:      a[5] || "",
+				file:      a[6] || "",
+        query:     a[7] || "",
+        fragment:  a[8] || ""
       }
     } else {
       throw new Error("invalid URI: " + s)
     }
-  }
-
-  /**
-   * @param {!uriObject} o
-   * @return {string}
-   */
-  util.url.printURI = function (o) {
-    var s = []
-    if (o.scheme) {
-      array.push(s, o.scheme)
-      array.push(s, ":")
-    }
-    if (o.authority || o.hostname || o.port) {
-      if (o.scheme) {
-        array.push(s, "//")
-      }
-      if (o.authority) {
-        array.push(s, o.authority)
-        array.push(s, "@")
-      }
-      if (o.hostname) {
-        array.push(s, o.hostname)
-      }
-      if (o.port) {
-        array.push(s, ":")
-        array.push(s, o.port)
-      }
-    }
-    if (o.path) {
-      array.push(s, o.path)
-    }
-		if (o.file) {
-			array.push(s, o.file)
-		}
-    if (o.query) {
-      array.push(s, "?")
-      array.push(s, o.query)
-    }
-    if (o.fragment) {
-      array.push(s, "#")
-      array.push(s, o.fragment)
-    }
-    return array.join(s, "")
   }
 
   /**
@@ -97,7 +53,7 @@ goog.scope(function () {
   util.url.simplify = function (x) {
     var y = {}
 
-    if (x.scheme === "http" || x.scheme === "https") {
+		if (x.scheme === "http:" || x.scheme === "https:") {
       y.scheme = ""
     } else {
       y.scheme = x.scheme
