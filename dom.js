@@ -60,6 +60,9 @@ goog.scope(function () {
   function Style() {}
   Style.prototype = {
     set: function (s, v, important) {
+			if (important == null) {
+				important = ""
+			}
       var self = this
       if (type.isArray(s)) {
         array.each(s, function (s) {
