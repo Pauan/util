@@ -84,6 +84,9 @@ goog.scope(function () {
           return sOld[i] === sNew && !isSameStyle(v, sNew)
         })
         if (every) {
+					array.each(props, function (s, i) {
+						log(self[_e]["getPropertyValue"](s), sOld[i])
+					})
           throw new Error(s + ": " + v)
         }
       }
