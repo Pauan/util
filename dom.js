@@ -66,7 +66,7 @@ goog.scope(function () {
       var self = this
       if (type.isArray(s)) {
         array.each(s, function (s) {
-          self.set(s, v, type)
+          self.set(s, v, important)
         })
       // TODO if v is null, convert it to ""
       //      http://dev.w3.org/csswg/cssom/#the-cssstyledeclaration-interface
