@@ -85,7 +85,7 @@ goog.scope(function () {
         })
         if (every) {
 					array.each(props, function (s, i) {
-						log(self[_e]["getPropertyValue"](s), sOld[i])
+						log(s, self[_e][s], self[_e]["getPropertyValue"](s), sOld[i])
 					})
           throw new Error(s + ": " + v)
         }
