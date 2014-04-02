@@ -196,7 +196,19 @@ module.exports = function (f) {
 		throw new Error()
 	}
 
-	console.log(actions)
+	function next() {
+		if (actions.length !== 0) {
+			var f = actions.shift()
+			f(function (x) {
+				if (x === null) {
+					next()
+				} else {
+					throw x
+				}
+			})
+		}
+	}
+	next()
 }
 
 /*var download = function(url, dest, cb) {
