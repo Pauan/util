@@ -218,17 +218,21 @@ module.exports = function (f) {
 
 	function parallel(actions, done) {
 		var i = actions.length
-		actions.forEach(function (f) {
-			f(function (x) {
-				if (x !== null) {
-					throw x
-				}
-				--i
-				if (i === 0) {
-					done()
-				}
+		if (i === 0) {
+			done()
+		} else {
+			actions.forEach(function (f) {
+				f(function (x) {
+					if (x !== null) {
+						throw x
+					}
+					--i
+					if (i === 0) {
+						done()
+					}
+				})
 			})
-		})
+		}
 	}
 
 	next(actions, function () {
