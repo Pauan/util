@@ -57,7 +57,7 @@ function closure(actions, info) {
     command.push("--only_closure_dependencies")
     command.push("--closure_entry_point", s)
     command.push("--js_output_file", file)
-    command.push("--define", "util.log.DEBUG=" + !!info.options.logging)
+    command.push("--define", "util.log.DEBUG=" + !!info.config.logging)
     command.push("--use_types_for_optimization")
     command.push("--compilation_level", "ADVANCED_OPTIMIZATIONS")
     command.push("--use_only_custom_externs")
@@ -101,21 +101,21 @@ function closure(actions, info) {
     ;[].forEach(function (x) {
       command.push("--jscomp_warning", x)
     })
-    if (info.options.debug) {
+    if (info.config.debug) {
       //command.push("--output_manifest", "manifest.MF")
       command.push("--debug")
       command.push("--formatting", "PRETTY_PRINT")
     }
-    if (info.options.sourcemap) {
+    if (info.config.sourcemap) {
       command.push("--create_source_map", sourcemap)
       command.push("--source_map_format", "V3")
     }
 
     var output = "%output%"
-    if (info.options.sourcemap) {
+    if (info.config.sourcemap) {
       output = output + "\n//# sourceMappingURL=" + path.basename(sourcemap)
     }
-    if (info.options.nodejs) {
+    if (info.config.nodejs) {
       output = "#! /usr/bin/env node\n" + output
     }
     if (output !== "%output%") {
@@ -128,10 +128,10 @@ function closure(actions, info) {
 			io.on("exit", function (code) {
 				if (code === 0) {
 					// TODO generic source map code
-					if (info.options.sourcemap) {
+					if (info.config.sourcemap) {
 						var y = JSON.parse(fs.readFileSync(sourcemap, { encoding: "utf8" }))
-						if ("sourceRoot" in info.options) {
-							y["sourceRoot"] = info.options.sourceRoot
+						if ("sourceRoot" in info.config) {
+							y["sourceRoot"] = info.config.sourceRoot
 						}
 						shift(y, "mappings")
 						shift(y, "names")
