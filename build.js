@@ -173,12 +173,12 @@ module.exports = function (f) {
 		// TODO mkdirp
 		mkdir: function (name) {
 			actions.push(function (done) {
-				fs.mkdir(normalize(name), function (err) {
-					/*if (e.code !== "EEXIST") {
-						throw e
-					}*/
-					console.log(err)
-					done(err)
+				fs.mkdir(normalize(name), function (e) {
+					if (e === null || e.code === "EEXIST") {
+						done(null)
+					} else {
+						done(e)
+					}
 				})
 			})
 		}
