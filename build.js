@@ -196,7 +196,7 @@ module.exports = function (f) {
 	var async = []
 
 	if (o.closure != null) {
-		closure(async, o)
+		closure(actions, o)
 	} else {
 		throw new Error()
 	}
