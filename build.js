@@ -6,20 +6,9 @@ var spawn = require("child_process").spawn
 //  , http  = require("http")
 //  , zlib  = require("zlib")
 
-exports.normalize = function (s) {
+function normalize(s) {
   return path.join.apply(null, s.split(/\//g))
 }
-
-/*var download = function(url, dest, cb) {
-  var file = fs.createWriteStream(dest);
-  var request = http.get(url, function(response) {
-    response.pipe(file);
-    file.on('finish', function() {
-      file.close();
-      cb();
-    });
-  });
-}*/
 
 // TODO async version ?
 function getFiles(p) {
@@ -39,14 +28,18 @@ function getFiles(p) {
   return r
 }
 
-exports.compile = function (info) {
-  var closure = exports.normalize(info.closure)
-  /*if (exports.mkdir(closure)) {
+function shift(x, s) {
+	var old = x[s]
+	delete x[s]
+	x[s] = old
+}
 
-  }*/
-  var commands = Object.keys(info.modules).map(function (s) {
-    var folders = info.modules[s].dirs
-      , file    = exports.normalize(info.modules[s].outfile)
+function closure(actions, info) {
+  var closure = normalize(info.closure.path)
+
+  Object.keys(info.closure.modules).forEach(function (s) {
+    var folders = info.closure.modules[s].dirs
+      , file    = exports.normalize(info.closure.modules[s].outfile)
 
     var sourcemap = file + ".map.json"
 
@@ -57,14 +50,14 @@ exports.compile = function (info) {
         command.push(x)
       })
     })
-    info.externs.forEach(function (x) {
+    info.closure.externs.forEach(function (x) {
       command.push("--externs", exports.normalize(x))
     })
     //command.push("--process_closure_primitives")
     command.push("--only_closure_dependencies")
     command.push("--closure_entry_point", s)
     command.push("--js_output_file", file)
-    command.push("--define", "util.log.DEBUG=" + !!info.logging)
+    command.push("--define", "util.log.DEBUG=" + !!info.options.logging)
     command.push("--use_types_for_optimization")
     command.push("--compilation_level", "ADVANCED_OPTIMIZATIONS")
     command.push("--use_only_custom_externs")
@@ -108,74 +101,108 @@ exports.compile = function (info) {
     ;[].forEach(function (x) {
       command.push("--jscomp_warning", x)
     })
-    if (info.debug) {
+    if (info.options.debug) {
       //command.push("--output_manifest", "manifest.MF")
       command.push("--debug")
       command.push("--formatting", "PRETTY_PRINT")
     }
-    if (info.sourcemap) {
+    if (info.options.sourcemap) {
       command.push("--create_source_map", sourcemap)
       command.push("--source_map_format", "V3")
     }
 
     var output = "%output%"
-    if (info.sourcemap) {
+    if (info.options.sourcemap) {
       output = output + "\n//# sourceMappingURL=" + path.basename(sourcemap)
     }
-    if (info.nodejs) {
+    if (info.options.nodejs) {
       output = "#! /usr/bin/env node\n" + output
     }
     if (output !== "%output%") {
       command.push("--output_wrapper", output)
     }
 
-    return {
-      command: command,
-      sourcemap: sourcemap
-    }
-  })
+		actions.push(function (done) {
+			var io = spawn("java", command, { stdio: "inherit" })
 
-  function shift(x, s) {
-    var old = x[s]
-    delete x[s]
-    x[s] = old
-  }
+			io.on("exit", function (code) {
+				if (code === 0) {
+					// TODO generic source map code
+					if (info.options.sourcemap) {
+						var y = JSON.parse(fs.readFileSync(sourcemap, { encoding: "utf8" }))
+						if ("sourceRoot" in info.options) {
+							y["sourceRoot"] = info.options.sourceRoot
+						}
+						shift(y, "mappings")
+						shift(y, "names")
+						fs.writeFileSync(sourcemap, JSON.stringify(y, null, 4))
+					}
+					done(null)
 
-  commands.forEach(function (com) {
-    //setTimeout(function () {
-      var io = spawn("java", com.command, { stdio: "inherit" })
-
-      io.on("exit", function (code) {
-        if (code === 0) {
-          // TODO generic source map code
-          if (info.sourcemap) {
-            var y = JSON.parse(fs.readFileSync(com.sourcemap, { encoding: "utf8" }))
-            if ("sourceRoot" in info) {
-              y["sourceRoot"] = info.sourceRoot
-            }
-            shift(y, "mappings")
-            shift(y, "names")
-            fs.writeFileSync(com.sourcemap, JSON.stringify(y, null, 4))
-          }
-
-        } else {
-          console.log("exited with code " + code)
-          process.exit(code)
-        }
-      })
-    //}, 0)
+				} else {
+					console.log("exited with code " + code)
+					done(new Error())
+				}
+			})
+		})
   })
 }
 
-// TODO mkdirp
-exports.mkdir = function (name) {
-  try {
-    fs.mkdirSync(exports.normalize(name))
-    return true
-  } catch (e) {
-    if (e.code !== "EEXIST") {
-      throw e
-    }
-    return false
-  }
+module.exports = function (f) {
+	var actions = []
+
+	var o = {
+		pull: function (s) {
+			actions.push(function (done) {
+				var old = process.cwd()
+				process.chdir(normalize(s))
+				spawn("git", ["pull"], { stdio: "inherit" }).on("exit", function (code) {
+					process.chdir(old)
+					if (code === 0) {
+						done(null)
+					} else {
+						done(new Error())
+					}
+				})
+			})
+		},
+
+		// TODO mkdirp
+		mkdir: function (name) {
+			actions.push(function (done) {
+				fs.mkdir(normalize(name), function (err) {
+					/*if (e.code !== "EEXIST") {
+						throw e
+					}*/
+					console.log(err)
+					done(null)
+				})
+			})
+		}
+	}
+
+	f(o)
+
+	if (o.config == null) {
+		o.config = {}
+	}
+
+	if (o.closure != null) {
+		closure(actions, o)
+	} else {
+		throw new Error()
+	}
+
+	console.log(actions)
 }
+
+/*var download = function(url, dest, cb) {
+  var file = fs.createWriteStream(dest);
+  var request = http.get(url, function(response) {
+    response.pipe(file);
+    file.on('finish', function() {
+      file.close();
+      cb();
+    });
+  });
+}*/
