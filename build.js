@@ -233,7 +233,9 @@ module.exports = function (f) {
 
 	next(actions, function () {
 		parallel(async, function () {
-			console.log("BUILD COMPLETE")
+			if (o.config.verbose) {
+				console.log("BUILD COMPLETE")
+			}
 		})
 	})
 }
