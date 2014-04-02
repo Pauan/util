@@ -140,8 +140,7 @@ function closure(actions, info) {
 					done(null)
 
 				} else {
-					console.log("exited with code " + code)
-					done(new Error())
+					done(new Error("Closure exited with code " + code))
 				}
 			})
 		})
@@ -156,15 +155,12 @@ module.exports = function (f) {
 			actions.push(function (done) {
 				var old = process.cwd()
 				process.chdir(normalize(s))
-				console.log("DIRECTORY CHANGED TO " + normalize(s))
 				spawn("git", ["pull"], { stdio: "inherit" }).on("exit", function (code) {
 					process.chdir(old)
-					console.log("DIRECTORY CHANGED TO " + old)
-					console.log(code)
 					if (code === 0) {
 						done(null)
 					} else {
-						done(new Error())
+						done(new Error("git pull exited with code " + code))
 					}
 				})
 			})
