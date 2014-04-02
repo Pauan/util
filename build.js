@@ -61,7 +61,11 @@ function closure(actions, info) {
     command.push("--use_types_for_optimization")
     command.push("--compilation_level", "ADVANCED_OPTIMIZATIONS")
     command.push("--use_only_custom_externs")
-    command.push("--summary_detail_level", "1")
+		if (info.config.verbose) {
+			command.push("--summary_detail_level", "3")
+		} else {
+			command.push("--summary_detail_level", "1")
+		}
     command.push("--warning_level", "VERBOSE")
     ;["accessControls",
       "ambiguousFunctionDecl",
@@ -155,7 +159,10 @@ module.exports = function (f) {
 			actions.push(function (done) {
 				var old = process.cwd()
 				process.chdir(normalize(s))
-				spawn("git", ["pull", "--quiet"], { stdio: "inherit" }).on("exit", function (code) {
+				spawn("git", (o.config.verbose
+					             ? ["pull"]
+					             : ["pull", "--quiet"]),
+					           { stdio: "inherit" }).on("exit", function (code) {
 					process.chdir(old)
 					if (code === 0) {
 						done(null)
