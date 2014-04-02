@@ -193,25 +193,31 @@ module.exports = function (f) {
 		o.config = {}
 	}
 
+	var async = []
+
 	if (o.closure != null) {
-		closure(actions, o)
+		closure(async, o)
 	} else {
 		throw new Error()
 	}
 
-	function next() {
+	function next(actions, done) {
 		if (actions.length !== 0) {
 			var f = actions.shift()
 			f(function (x) {
 				if (x === null) {
-					next()
+					next(actions, done)
 				} else {
 					throw x
 				}
 			})
+		} else {
+			done()
 		}
 	}
-	next()
+	next(actions, function () {
+		console.log("DONE")
+	})
 }
 
 /*var download = function(url, dest, cb) {
