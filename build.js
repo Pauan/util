@@ -178,7 +178,7 @@ module.exports = function (f) {
 						throw e
 					}*/
 					console.log(err)
-					done(null)
+					done(err)
 				})
 			})
 		}
