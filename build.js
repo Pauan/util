@@ -215,8 +215,26 @@ module.exports = function (f) {
 			done()
 		}
 	}
+
+	function parallel(actions, done) {
+		var i = actions.length
+		actions.forEach(function (f) {
+			f(function (x) {
+				if (x !== null) {
+					throw x
+				}
+				--i
+				if (i === 0) {
+					done()
+				}
+			})
+		})
+	}
+
 	next(actions, function () {
-		console.log("DONE")
+		parallel(async, function () {
+			console.log("BUILD COMPLETE")
+		})
 	})
 }
 
