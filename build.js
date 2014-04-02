@@ -39,19 +39,19 @@ function closure(actions, info) {
 
   Object.keys(info.closure.modules).forEach(function (s) {
     var folders = info.closure.modules[s].dirs
-      , file    = exports.normalize(info.closure.modules[s].outfile)
+      , file    = normalize(info.closure.modules[s].outfile)
 
     var sourcemap = file + ".map.json"
 
     var command = ["-jar", closure]
     folders.forEach(function (x) {
-      getFiles(exports.normalize(x)).forEach(function (x) {
+      getFiles(normalize(x)).forEach(function (x) {
         command.push("--js")
         command.push(x)
       })
     })
     info.closure.externs.forEach(function (x) {
-      command.push("--externs", exports.normalize(x))
+      command.push("--externs", normalize(x))
     })
     //command.push("--process_closure_primitives")
     command.push("--only_closure_dependencies")
