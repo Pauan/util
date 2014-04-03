@@ -261,7 +261,6 @@ module.exports = function (f) {
 	next(actions, function () {
 		parallel(async, function () {
 			if (o.config.verbose) {
-				console.log("")
 				console.log("------------------------------")
 				console.log("==============================")
 			}
