@@ -160,9 +160,11 @@ function closure(actions, info) {
       command.push("--output_wrapper", output)
     }
 
-		actions.push(function (done) {
+		if (info.config.verbose) {
 			console.log("starting compilation for module " + s)
+		}
 
+		actions.push(function (done) {
 			var io = spawn("java", command, { stdio: "inherit" })
 
 			io.on("exit", function (code) {
