@@ -178,7 +178,7 @@ function closure(actions, info) {
 						}
 						shift(y, "mappings")
 						shift(y, "names")
-						fs.writeFileSync(sourcemap, JSON.stringify(y, null, 4))
+						fs.writeFileSync(sourcemap, JSON.stringify(y, null, 1))
 					}
 					done(null)
 
