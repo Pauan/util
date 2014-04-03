@@ -161,6 +161,8 @@ function closure(actions, info) {
     }
 
 		actions.push(function (done) {
+			console.log("starting compilation for module " + s)
+
 			var io = spawn("java", command, { stdio: "inherit" })
 
 			io.on("exit", function (code) {
