@@ -150,7 +150,7 @@ function closure(actions, info) {
       command.push("--source_map_format", "V3")
     }
 
-    var output = "%output%"
+    var output = "\"use strict\";\n%output%"
     if (info.config.sourcemap) {
       output = output + "\n//# sourceMappingURL=" + path.basename(sourcemap)
     }
