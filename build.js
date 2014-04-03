@@ -49,7 +49,7 @@ function next(actions, done) {
 	}
 }
 
-function parallel(actions, done) {
+function parallel(actions, done, sep) {
 	var i = actions.length
 	if (i === 0) {
 		done()
@@ -65,6 +65,7 @@ function parallel(actions, done) {
 				}
 			})
 		})
+		sep()
 	}
 }
 
@@ -160,11 +161,11 @@ function closure(actions, info) {
       command.push("--output_wrapper", output)
     }
 
-		if (info.config.verbose) {
-			console.log("starting compilation for module " + s)
-		}
-
 		actions.push(function (done) {
+			if (info.config.verbose) {
+				console.log("starting compilation for module " + s)
+			}
+
 			var io = spawn("java", command, { stdio: "inherit" })
 
 			io.on("exit", function (code) {
@@ -267,6 +268,10 @@ module.exports = function (f) {
 			if (o.config.verbose) {
 				console.log("")
 				console.log("//====================================")
+			}
+		}, function () {
+			if (o.config.verbose) {
+				console.log("")
 			}
 		})
 	})
