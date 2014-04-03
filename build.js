@@ -220,7 +220,7 @@ module.exports = function (f) {
 			name = normalize(name)
 			actions.push(function (done) {
 				if (o.config.verbose) {
-					console.log("making directory " + s)
+					console.log("making directory " + name)
 				}
 				fs.mkdir(name, function (e) {
 					if (o.config.verbose) {
