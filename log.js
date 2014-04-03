@@ -22,7 +22,9 @@ goog.scope(function () {
       var t = (s == null
 			          ? new Error("Assertion failed")
 			          : new Error("Assertion failed: " + s))
-			Error["captureStackTrace"](t, anon)
+			if (Error["captureStackTrace"]) {
+				Error["captureStackTrace"](t, anon)
+			}
       //localStorage["previousAssertion"] = t
       console["log"](t["stack"])
       throw 42
