@@ -226,7 +226,7 @@ module.exports = function (f) {
 						if (e === null) {
 							console.log("success")
 						} else if (e.code === "EEXIST") {
-							console.log("success (directory already existed)")
+							console.log("success (directory already exists)")
 						}
 						console.log("")
 					}
@@ -255,14 +255,15 @@ module.exports = function (f) {
 	}
 
 	if (o.config.verbose) {
+		console.log("==============================")
 		console.log("------------------------------")
 	}
 	next(actions, function () {
 		parallel(async, function () {
 			if (o.config.verbose) {
 				console.log("")
-				console.log("BUILD COMPLETE")
 				console.log("------------------------------")
+				console.log("==============================")
 			}
 		})
 	})
