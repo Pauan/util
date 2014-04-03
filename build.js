@@ -206,6 +206,9 @@ module.exports = function (f) {
 					             : ["pull", "--quiet"]),
 					           { stdio: "inherit" }).on("exit", function (code) {
 					process.chdir(old)
+					if (o.config.verbose) {
+						console.log("")
+					}
 					if (code === 0) {
 						done(null)
 					} else {
@@ -229,6 +232,7 @@ module.exports = function (f) {
 						} else if (e.code === "EEXIST") {
 							console.log("success, but directory already existed")
 						}
+						console.log("")
 					}
 					if (e === null || e.code === "EEXIST") {
 						done(null)
@@ -257,7 +261,9 @@ module.exports = function (f) {
 	next(actions, function () {
 		parallel(async, function () {
 			if (o.config.verbose) {
+				console.log("")
 				console.log("BUILD COMPLETE")
+				console.log("")
 			}
 		})
 	})
