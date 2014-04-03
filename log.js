@@ -31,8 +31,8 @@ goog.scope(function () {
     }
   }
 
-  util.log.fail = function () {
-    util.log.assert(false)
+  util.log.fail = function (s) {
+    util.log.assert(false, s)
   }
 
   /**
