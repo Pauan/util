@@ -161,10 +161,6 @@ function closure(actions, info) {
     }
 
 		actions.push(function (done) {
-			if (info.config.verbose) {
-				console.log("compiling module " + s)
-			}
-
 			var io = spawn("java", command, { stdio: "inherit" })
 
 			io.on("exit", function (code) {
@@ -230,7 +226,7 @@ module.exports = function (f) {
 						if (e === null) {
 							console.log("success")
 						} else if (e.code === "EEXIST") {
-							console.log("success, but directory already existed")
+							console.log("success (directory already existed)")
 						}
 						console.log("")
 					}
@@ -258,6 +254,7 @@ module.exports = function (f) {
 		throw new Error()
 	}
 
+	console.log("")
 	next(actions, function () {
 		parallel(async, function () {
 			if (o.config.verbose) {
