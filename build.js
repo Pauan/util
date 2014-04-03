@@ -256,10 +256,12 @@ module.exports = function (f) {
 
 	if (o.config.verbose) {
 		console.log("//------------------------------------")
+		console.log("")
 	}
 	next(actions, function () {
 		parallel(async, function () {
 			if (o.config.verbose) {
+				console.log("")
 				console.log("//====================================")
 			}
 		})
