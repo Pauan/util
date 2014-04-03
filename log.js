@@ -12,7 +12,7 @@ goog.scope(function () {
    * @param {boolean} x
    * @param {string=} s
    */
-  util.log.assert = function (x, s) {
+  util.log.assert = function anon(x, s) {
     if (util.log.DEBUG && !x) {
       // Shows the stack trace, with the call to util.log.assert stripped out
       //console.log(new Error("Assertion failed").stack.replace(/^(.*)\n    at .*/, "$1"))
@@ -21,12 +21,13 @@ goog.scope(function () {
       // TODO
       var t
       if (s == null) {
-        t = new Error("Assertion failed")["stack"]
+        t = new Error("Assertion failed")
       } else {
-        t = new Error("Assertion failed: " + s)["stack"]
+        t = new Error("Assertion failed: " + s)
       }
+			//Error["captureStackTrace"](t, anon)
       //localStorage["previousAssertion"] = t
-      console["log"](t)
+      console["log"](t["stack"])
       throw 42
     }
   }
