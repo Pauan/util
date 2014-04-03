@@ -19,12 +19,9 @@ goog.scope(function () {
       //console.error("Assertion failed")
       //console.trace("Assertion failed")
       // TODO
-      var t
-      if (s == null) {
-        t = new Error("Assertion failed")
-      } else {
-        t = new Error("Assertion failed: " + s)
-      }
+      var t = (s == null
+			          ? new Error("Assertion failed")
+			          : new Error("Assertion failed: " + s))
 			Error["captureStackTrace"](t, anon)
       //localStorage["previousAssertion"] = t
       console["log"](t["stack"])
