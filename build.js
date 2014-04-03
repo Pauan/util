@@ -34,6 +34,40 @@ function shift(x, s) {
 	x[s] = old
 }
 
+function next(actions, done) {
+	if (actions.length !== 0) {
+		var f = actions.shift()
+		f(function (x) {
+			if (x === null) {
+				next(actions, done)
+			} else {
+				throw x
+			}
+		})
+	} else {
+		done()
+	}
+}
+
+function parallel(actions, done) {
+	var i = actions.length
+	if (i === 0) {
+		done()
+	} else {
+		actions.forEach(function (f) {
+			f(function (x) {
+				if (x !== null) {
+					throw x
+				}
+				--i
+				if (i === 0) {
+					done()
+				}
+			})
+		})
+	}
+}
+
 function closure(actions, info) {
   var closure = normalize(info.closure.path)
 
@@ -127,6 +161,10 @@ function closure(actions, info) {
     }
 
 		actions.push(function (done) {
+			if (info.config.verbose) {
+				console.log("compiling module " + s)
+			}
+
 			var io = spawn("java", command, { stdio: "inherit" })
 
 			io.on("exit", function (code) {
@@ -156,9 +194,13 @@ module.exports = function (f) {
 
 	var o = {
 		pull: function (s) {
+			s = normalize(s)
 			actions.push(function (done) {
 				var old = process.cwd()
-				process.chdir(normalize(s))
+				process.chdir(s)
+				if (o.config.verbose) {
+					console.log("changing to directory " + s)
+				}
 				spawn("git", (o.config.verbose
 					             ? ["pull"]
 					             : ["pull", "--quiet"]),
@@ -175,8 +217,19 @@ module.exports = function (f) {
 
 		// TODO mkdirp
 		mkdir: function (name) {
+			name = normalize(name)
 			actions.push(function (done) {
-				fs.mkdir(normalize(name), function (e) {
+				if (o.config.verbose) {
+					console.log("making directory " + s)
+				}
+				fs.mkdir(name, function (e) {
+					if (o.config.verbose) {
+						if (e === null) {
+							console.log("success")
+						} else if (e.code === "EEXIST") {
+							console.log("success, but directory already existed")
+						}
+					}
 					if (e === null || e.code === "EEXIST") {
 						done(null)
 					} else {
@@ -199,40 +252,6 @@ module.exports = function (f) {
 		closure(async, o)
 	} else {
 		throw new Error()
-	}
-
-	function next(actions, done) {
-		if (actions.length !== 0) {
-			var f = actions.shift()
-			f(function (x) {
-				if (x === null) {
-					next(actions, done)
-				} else {
-					throw x
-				}
-			})
-		} else {
-			done()
-		}
-	}
-
-	function parallel(actions, done) {
-		var i = actions.length
-		if (i === 0) {
-			done()
-		} else {
-			actions.forEach(function (f) {
-				f(function (x) {
-					if (x !== null) {
-						throw x
-					}
-					--i
-					if (i === 0) {
-						done()
-					}
-				})
-			})
-		}
 	}
 
 	next(actions, function () {
