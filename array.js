@@ -153,7 +153,7 @@ goog.scope(function () {
       } else if (prev) {
         end = pivot
       } else if (next) {
-        i = pivot
+        i = pivot + 1
       }
     }
     while (i < end) {
