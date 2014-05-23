@@ -1,5 +1,6 @@
 goog.provide("util.array")
 
+goog.require("util.math")
 goog.require("util.func")
 goog.require("util.log")
 goog.require("util.object")
@@ -140,7 +141,7 @@ goog.scope(function () {
     // TODO verify that this is correct
     // TODO check whether 10 is a good cutoff or not
     while ((end - i) > 10) {
-      var pivot = Math.floor((end - i) / 2)
+      var pivot = util.math.floor((end - i) / 2)
       assert(util.array.indexInRange(a, pivot - 1))
       assert(util.array.indexInRange(a, pivot))
       var prev = sort(a[pivot - 1], x)
