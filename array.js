@@ -135,23 +135,18 @@ goog.scope(function () {
    * @template T
    */
   util.array.insertSorted = function (a, x, sort) {
-    var y
-    for (var i = 0, iLen = util.array.len(a); i < iLen; ++i) {
-      y = a[i]
+    var i   = 0
+      , end = util.array.len(a)
+    /*while (end - i > 10) {
+    }*/
+    while (i < end) {
+      var y = a[i]
       if (util.object.is(x, y)) {
         throw new Error("sorted array cannot have duplicates")
-        /*
-        // TODO test this
-        if (i + 1 === iLen || sort(x, a[i + 1])) {
-          return i
-        } else {
-          a.splice(i, 1)
-          console.log("HIYAAAAAA")
-          --i
-        }*/
       } else if (sort(x, y)) {
         return util.array.insertAt(a, i, x)
       }
+      ++i
     }
     return util.array.push(a, x)
   }

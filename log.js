@@ -20,11 +20,12 @@ goog.scope(function () {
       //console.trace("Assertion failed")
       // TODO
       var t = (s == null
-			          ? new Error("Assertion failed")
-			          : new Error("Assertion failed: " + s))
-			if (Error["captureStackTrace"]) {
-				Error["captureStackTrace"](t, anon)
-			}
+                ? new Error("Assertion failed")
+                : new Error("Assertion failed: " + s))
+      // https://code.google.com/p/v8/wiki/JavaScriptStackTraceApi
+      if (Error["captureStackTrace"]) {
+        Error["captureStackTrace"](t, anon)
+      }
       //localStorage["previousAssertion"] = t
       console["log"](t["stack"])
       throw 42
