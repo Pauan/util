@@ -142,7 +142,7 @@ goog.scope(function () {
     // TODO check whether 10 is a good cutoff or not
     while ((end - i) > 10) {
       var pivot = util.math.floor((end - i) / 2)
-      console["log"](i, end, pivot)
+      //console["log"](i, end, pivot)
       assert(util.array.indexInRange(a, pivot - 1))
       assert(util.array.indexInRange(a, pivot))
       var prev = sort(a[pivot - 1], x)
