@@ -167,6 +167,20 @@ goog.scope(function () {
     return util.array.push(a, x)
   }
 
+  var a = [1, 2, 3, 5, 6, 7]
+  function sort(x, y) {
+    return x <= y
+  }
+  util.array.insertSorted(a, 4, sort)
+  console["log"](a)
+
+  var a = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13]
+  function sort(x, y) {
+    return x <= y
+  }
+  util.array.insertSorted(a, 7, sort)
+  console["log"](a)
+
   /**
    * @param {!util.array.ArrayLike.<T>} a
    * @param {T} x
