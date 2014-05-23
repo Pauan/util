@@ -32,9 +32,9 @@ goog.scope(function () {
     }
   }
 
-	/**
-	 * @param {string=} s
-	 */
+  /**
+   * @param {string=} s
+   */
   util.log.fail = function (s) {
     util.log.assert(false, s)
   }

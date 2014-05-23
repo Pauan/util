@@ -137,8 +137,23 @@ goog.scope(function () {
   util.array.insertSorted = function (a, x, sort) {
     var i   = 0
       , end = util.array.len(a)
-    /*while (end - i > 10) {
-    }*/
+    // TODO verify that this is correct
+    // TODO check whether 10 is a good cutoff or not
+    while ((end - i) > 10) {
+      var pivot = Math.floor((end - i) / 2)
+      assert(util.array.indexInRange(a, pivot - 1))
+      assert(util.array.indexInRange(a, pivot))
+      var prev = sort(a[pivot - 1], x)
+        , next = sort(x, a[pivot])
+      // TODO is this correct ?
+      if (prev && next) {
+        return util.array.insertAt(a, pivot, x)
+      } else if (prev) {
+        end = pivot
+      } else if (next) {
+        i = pivot
+      }
+    }
     while (i < end) {
       var y = a[i]
       if (util.object.is(x, y)) {
