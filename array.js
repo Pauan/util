@@ -151,9 +151,9 @@ goog.scope(function () {
       if (prev && next) {
         return util.array.insertAt(a, pivot, x)
       } else if (prev) {
-        end = pivot
-      } else if (next) {
         i = pivot + 1
+      } else if (next) {
+        end = pivot
       }
     }
     while (i < end) {
