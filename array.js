@@ -141,9 +141,9 @@ goog.scope(function () {
     while (start < end) {
       var pivot = (start + end) >> 1
       if (sort(x, a[pivot])) {
-        start = pivot + 1
-      } else {
         end = pivot
+      } else {
+        start = pivot + 1
       }
     }
     return util.array.insertAt(a, start, x)
