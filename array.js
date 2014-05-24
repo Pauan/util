@@ -140,7 +140,7 @@ goog.scope(function () {
       , end = util.array.len(a)
     // TODO verify that this is correct
     // TODO check whether 10 is a good cutoff or not
-    while ((end - i) > 10) {
+    /*while ((end - i) > 10) {
       var pivot = util.math.floor((end - i) / 2)
       //console["log"](i, end, pivot)
       assert(util.array.indexInRange(a, pivot - 1))
@@ -155,7 +155,7 @@ goog.scope(function () {
       } else if (next) {
         end = pivot
       }
-    }
+    }*/
     while (i < end) {
       var y = a[i]
       if (util.object.is(x, y)) {
