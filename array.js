@@ -140,6 +140,7 @@ goog.scope(function () {
       , end   = util.array.len(a)
     while (start < end) {
       var pivot = (start + end) >> 1
+      console["log"](pivot)
       if (sort(x, a[pivot])) {
         end = pivot
       } else {
