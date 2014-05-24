@@ -134,11 +134,13 @@ goog.scope(function () {
    * @return {number}
    * @template T
    * TODO this algorithm can probably be improved
+   * TODO benchmark this vs the O(n) algorithm
    * TODO how well does this algorithm work with duplicates ?
    */
   util.array.insertSorted = function (a, x, sort) {
-    var start = 0
-      , end   = util.array.len(a)
+    var len   = util.array.len(a)
+      , start = 0
+      , end   = len
     while (start < end) {
       // TODO is this faster/slower than using Math.floor ?
       var pivot = (start + end) >> 1
@@ -148,7 +150,12 @@ goog.scope(function () {
         start = pivot + 1
       }
     }
-    return util.array.insertAt(a, start, x)
+    // TODO shouldn't this be a part of util.array.insertAt ?
+    if (start === len) {
+      return util.array.push(a, x)
+    } else {
+      return util.array.insertAt(a, start, x)
+    }
   }
 
   /**
