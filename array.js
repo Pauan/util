@@ -1,6 +1,5 @@
 goog.provide("util.array")
 
-goog.require("util.math")
 goog.require("util.func")
 goog.require("util.log")
 goog.require("util.object")
@@ -134,13 +133,15 @@ goog.scope(function () {
    * @param {function(T, T):boolean} sort
    * @return {number}
    * @template T
+   * TODO this algorithm can probably be improved
+   * TODO how well does this algorithm work with duplicates ?
    */
   util.array.insertSorted = function (a, x, sort) {
     var start = 0
       , end   = util.array.len(a)
     while (start < end) {
+      // TODO is this faster/slower than using Math.floor ?
       var pivot = (start + end) >> 1
-      console["log"](pivot)
       if (sort(x, a[pivot])) {
         end = pivot
       } else {
@@ -149,26 +150,6 @@ goog.scope(function () {
     }
     return util.array.insertAt(a, start, x)
   }
-
-  function sort(x, y) {
-    return x <= y
-  }
-
-  var a1 = [1, 2, 3, 5, 6, 7]
-  util.array.insertSorted(a1, 4, sort)
-  console["log"](a1)
-
-  var a2 = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13]
-  util.array.insertSorted(a2, 7, sort)
-  console["log"](a2)
-
-  var a3 = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14]
-  util.array.insertSorted(a3, 7, sort)
-  console["log"](a3)
-
-  var a4 = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15]
-  util.array.insertSorted(a4, 7, sort)
-  console["log"](a4)
 
   /**
    * @param {!util.array.ArrayLike.<T>} a
