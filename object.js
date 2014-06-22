@@ -52,6 +52,16 @@ goog.scope(function () {
   }
 
   /**
+   * TODO should check types or something ?
+   * @param {*} x
+   * @param {*} y
+   * @return {boolean}
+   */
+  util.object.lt = function (x, y) {
+    return x < y
+  }
+
+  /**
    * @param {*} x
    * @param {*} y
    * @return {boolean}

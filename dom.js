@@ -792,6 +792,11 @@ goog.scope(function () {
     o.textOverflow = "ellipsis"
   })*/
 
+  // Overwriting Webkit's silly user agent style
+  addRule(document, "input, textarea, keygen, select, button", function (o) {
+    o["fontFamily"] = "inherit"
+  })
+
   // TODO replace these with util.dom.style ?
   addRule(document, "[data-box]", function (o) {
     o["MozBoxSizing"] = "border-box" // TODO

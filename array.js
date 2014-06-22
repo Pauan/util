@@ -80,12 +80,12 @@ goog.scope(function () {
   }
 
   /**
-   * @param {!util.array.ArrayLike} a
-   * @return {number}
+   * @param {!util.array.ArrayLike.<T>} a
+   * @return {T}
+   * @template T
    */
   util.array.pop = function (a) {
-    ;[]["pop"]["call"](a)
-    return util.array.len(a)
+    return []["pop"]["call"](a)
   }
 
   /**

@@ -3,29 +3,12 @@
 var spawn = require("child_process").spawn
   , fs    = require("fs")
   , path  = require("path")
+  , dir   = require("./dir")
 //  , http  = require("http")
 //  , zlib  = require("zlib")
 
 function normalize(s) {
   return path.join.apply(null, s.split(/\//g))
-}
-
-// TODO async version ?
-function getFiles(p) {
-  var r = []
-  ;(function anon(p) {
-    fs.readdirSync(p).forEach(function (x) {
-      if (x[0] !== ".") {
-        var full = path.join(p, x)
-        if (fs.statSync(full).isDirectory()) {
-          anon(full)
-        } else if (path.extname(x) === ".js") {
-          r.push(full)
-        }
-      }
-    })
-  })(p)
-  return r
 }
 
 function shift(x, s) {
@@ -80,7 +63,9 @@ function closure(actions, info) {
 
     var command = ["-jar", closure]
     folders.forEach(function (x) {
-      getFiles(normalize(x)).forEach(function (x) {
+      dir.getFilesRecursive(normalize(x)).filter(function (x) {
+        return path.extname(x) === ".js"
+      }).forEach(function (x) {
         command.push("--js")
         command.push(x)
       })
