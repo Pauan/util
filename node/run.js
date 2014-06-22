@@ -1,5 +1,3 @@
-#! /usr/bin/env node
-
 var dir  = require("./dir")
   , path = require("path")
   , fs   = require("fs")
