@@ -97,12 +97,15 @@ goog.scope(function () {
 
     var o         = {}
 
+    o.year        = getDiff(x2, y2, "getFullYear")
+
+    //o.month       = getDiff(x2, y2, "getMonth")
+
     o.millisecond = util.math.abs(y2 - x2)
     o.second      = util.math.floor(o.millisecond / util.time.second)
     o.minute      = util.math.floor(o.millisecond / util.time.minute)
     o.hour        = util.math.floor(o.millisecond / util.time.hour)
     o.day         = util.math.floor(o.millisecond / util.time.day)
-    o.year        = getDiff(x2, y2, "getFullYear")
 
     if (o.second === 0 && isDiff(x2, y2, "getSeconds")) {
       o.second = 1
@@ -130,18 +133,18 @@ goog.scope(function () {
    * @param {number} y
    * @return {!date_diff}
    */
-  /*util.time.relativeDifference = function (x, y) {
+  util.time.difference = function (x, y) {
     var diff = util.math.abs(y - x)
     return {
       millisecond: diff,
       second: util.math.floor(diff / util.time.second),
       minute: util.math.floor(diff / util.time.minute),
       hour:   util.math.floor(diff / util.time.hour),
-      day:    util.math.floor(diff / util.time.day),
-      week:   util.math.floor(diff / util.time.week),
-      year:   util.math.floor(diff / util.time.year)
+      day:    util.math.floor(diff / util.time.day)
+      //week:   util.math.floor(diff / util.time.week),
+      //year:   util.math.floor(diff / util.time.year)
     }
-  }*/
+  }
 
   /**
    * @param {function():void} f
