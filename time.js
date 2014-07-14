@@ -64,8 +64,8 @@ goog.scope(function () {
    *             minute: number,
    *             hour: number,
    *             day: number,
-   *             month: number,
-   *             year: number }}
+   *             month: (number|undefined),
+   *             year: (number|undefined) }}
    */
   var date_diff
 
