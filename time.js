@@ -49,7 +49,19 @@ goog.scope(function () {
    * @param {number} x
    * @return {number}
    */
-  util.time.toMidnight = function (x) {
+  util.time.roundToHour = function (x) {
+    var t = new Date(x)
+    t["setMinutes"](0)
+    t["setSeconds"](0)
+    t["setMilliseconds"](0)
+    return +t
+  }
+
+  /**
+   * @param {number} x
+   * @return {number}
+   */
+  util.time.roundToDay = function (x) {
     var t = new Date(x)
     t["setHours"](0)
     t["setMinutes"](0)
