@@ -8,6 +8,8 @@ goog.scope(function () {
   /** @define {boolean} */
   util.log.DEBUG = true
 
+  util.log.onAssertFail = function () {}
+
   /**
    * @param {boolean} x
    * @param {string=} s
@@ -27,6 +29,7 @@ goog.scope(function () {
         Error["captureStackTrace"](t, anon)
       }
       //localStorage["previousAssertion"] = t
+      util.log.onAssertFail()
       console["log"](t["stack"])
       throw 42
     }

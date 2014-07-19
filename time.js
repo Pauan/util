@@ -49,6 +49,27 @@ goog.scope(function () {
    * @param {number} x
    * @return {number}
    */
+  util.time.roundToSecond = function (x) {
+    var t = new Date(x)
+    t["setMilliseconds"](0)
+    return +t
+  }
+
+  /**
+   * @param {number} x
+   * @return {number}
+   */
+  util.time.roundToMinute = function (x) {
+    var t = new Date(x)
+    t["setSeconds"](0)
+    t["setMilliseconds"](0)
+    return +t
+  }
+
+  /**
+   * @param {number} x
+   * @return {number}
+   */
   util.time.roundToHour = function (x) {
     var t = new Date(x)
     t["setMinutes"](0)
@@ -63,6 +84,35 @@ goog.scope(function () {
    */
   util.time.roundToDay = function (x) {
     var t = new Date(x)
+    t["setHours"](0)
+    t["setMinutes"](0)
+    t["setSeconds"](0)
+    t["setMilliseconds"](0)
+    return +t
+  }
+
+  /**
+   * @param {number} x
+   * @return {number}
+   */
+  util.time.roundToMonth = function (x) {
+    var t = new Date(x)
+    t["setDate"](1)
+    t["setHours"](0)
+    t["setMinutes"](0)
+    t["setSeconds"](0)
+    t["setMilliseconds"](0)
+    return +t
+  }
+
+  /**
+   * @param {number} x
+   * @return {number}
+   */
+  util.time.roundToYear = function (x) {
+    var t = new Date(x)
+    t["setMonth"](0)
+    t["setDate"](1)
     t["setHours"](0)
     t["setMinutes"](0)
     t["setSeconds"](0)
@@ -110,8 +160,7 @@ goog.scope(function () {
     var o         = {}
 
     o.year        = getDiff(x2, y2, "getFullYear")
-
-    //o.month       = getDiff(x2, y2, "getMonth")
+    o.month       = (util.time.roundToMonth(x1) - util.time.roundToMonth(y1)) / 12
 
     o.millisecond = util.math.abs(y2 - x2)
     o.second      = util.math.floor(o.millisecond / util.time.second)
