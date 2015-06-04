@@ -4,7 +4,7 @@ goog.scope(function () {
   var fn = (function () {})
 
   /**
-   * @param {function(this:S, ...[T]):R} f
+   * @param {function(this:S, ...T):R} f
    * @param {S} self
    * @param {!Array.<T>} a
    * @return {R}
@@ -15,9 +15,9 @@ goog.scope(function () {
   }
 
   /**
-   * @param {function(...[T]):R} f
+   * @param {function(...T):R} f
    * @param {S} self
-   * @return {function(this:S, ...[T]):R}
+   * @return {function(this:S, ...T):R}
    * @template T, R, S
    */
   util.func.bind = function (f, self) {

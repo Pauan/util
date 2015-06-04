@@ -20,7 +20,7 @@ goog.scope(function () {
 
   /**
    * @param {!util.array.ArrayLike.<!Signal.<T>>} a
-   * @param {function(...[T]):R} f
+   * @param {function(...T):R} f
    * @return {R}
    * @template T, R
    */
@@ -203,7 +203,7 @@ goog.scope(function () {
    * When any of the signals change, the function is called with the value of the signals
    *
    * @param {!util.array.ArrayLike.<!Signal.<T>>} a
-   * @param {function(...[T]):void} f
+   * @param {function(...T):void} f
    * @return {{ unbind: (function():void|void) }}
    * @template T
    */
@@ -220,7 +220,7 @@ goog.scope(function () {
    * the function is called with the value of the signals
    *
    * @param {!util.array.ArrayLike.<!Signal.<T>>} a
-   * @param {function(...[T]):*} f
+   * @param {function(...T):*} f
    * @return {!Signal.<T>}
    * @template T
    */
