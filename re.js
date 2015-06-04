@@ -46,7 +46,7 @@ goog.scope(function () {
   /**
    * @param {string} str
    * @param {!RegExp} re
-   * @param {string|function(...[string]):string} rep
+   * @param {string|function(...string):string} rep
    * @return {string}
    */
   util.re.replace = function (str, re, rep) {
